@@ -1,33 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jake Viefhaus — Cybersecurity & Web Development</title>
-<meta name="description" content="Jake Viefhaus — Computer Science / Cybersecurity Engineering student at CTU. Full-stack web development, security research, and IT support. St. Louis, MO.">
-<style>
-  :root { --gold: #c5a059; --obsidian: #0a0a0a; --cream: #fdfdfb; }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; background: var(--obsidian); color: var(--cream); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
-  h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 400; letter-spacing: 1px; }
-  h1 span { color: var(--gold); }
-  .sub { margin-top: 0.6rem; font-size: clamp(0.9rem, 2.5vw, 1.1rem); color: #bbb; max-width: 40rem; line-height: 1.6; }
-  .links { margin-top: 2.5rem; display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
-  .links a { display: inline-block; padding: 0.7rem 1.6rem; border: 1px solid var(--gold); color: var(--gold); text-decoration: none; font-size: 0.95rem; letter-spacing: 0.5px; transition: all 0.25s; }
-  .links a:hover { background: var(--gold); color: var(--obsidian); }
-  .links a.primary { background: var(--gold); color: var(--obsidian); }
-  .links a.primary:hover { background: transparent; color: var(--gold); }
-  .footer { position: fixed; bottom: 1.2rem; font-size: 0.8rem; color: #666; letter-spacing: 1px; }
-</style>
-</head>
-<body>
-  <h1>Jake <span>Viefhaus</span></h1>
-  <p class="sub">Computer Science / Cybersecurity Engineering student at CTU &mdash; 3.9 GPA, Dean's List. Full-stack web developer, security researcher, and IT support. Florissant, MO.</p>
-  <div class="links">
-    <a class="primary" href="Viefhaus_Resume_1Page.pdf" target="_blank">Resume (PDF)</a>
-    <a href="https://github.com/geekhaus314" target="_blank">GitHub</a>
-    <a href="https://myhairloss.com" target="_blank">myhairloss.com</a>
-  </div>
-  <div class="footer">STL &middot; 2026</div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="pwn4g3 — Jake Viefhaus, full-stack developer and cybersecurity engineering student in St. Louis, MO. Web apps, APIs, automation, and secure infrastructure." />
+    <meta name="theme-color" content="#9e1b32" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="pwn4g3 — Jake Viefhaus" />
+    <meta property="og:description" content="Full-stack developer and cybersecurity engineering student in St. Louis, MO. Web apps, APIs, automation, and secure infrastructure." />
+    <meta property="og:url" content="https://pwn4g3.pages.dev" />
+    <meta property="og:image" content="/geekhaus-self-1.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="pwn4g3 — Jake Viefhaus" />
+    <meta name="twitter:description" content="Full-stack developer and cybersecurity engineering student in St. Louis, MO." />
+
+    <title>pwn4g3 — Jake Viefhaus</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
