@@ -1,16 +1,27 @@
-# React + Vite
+# pwn4g3 engineering portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+The public portfolio is an Astro static site with deliberately compartmentalized interactive surfaces:
 
-Currently, two official plugins are available:
+- **Astro** owns routing, content, SEO, and static delivery.
+- **React** owns the framework architecture matrix.
+- **Vue** owns the deployment-boundary matrix.
+- **Solid** owns the live system status control.
+- **Svelte** owns the edge-signal control.
+- **Vite** powers Astro's development and production bundling.
+- **Node.js** is the service/runtime boundary represented by the architecture matrix.
+- `apps/next-lab` and `apps/nuxt-lab` are isolated application labs for framework-specific product surfaces.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Commands
 
-## React Compiler
+```sh
+npm install
+npm run dev
+npm run build
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Run an application lab from its directory:
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```sh
+npm --workspace @pwn4g3/next-lab run dev
+npm --workspace @pwn4g3/nuxt-lab run dev
+```

@@ -1,0 +1,13 @@
+{
+  "name": "@pwn4g3/nuxt-lab",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "preview": "nuxt preview"
+  },
+  "devDependencies": {
+    "nuxt": "^4.0.3",
+    "vue": "^3.5.41"
+  }
+}
