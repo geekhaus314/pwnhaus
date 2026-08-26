@@ -16,7 +16,8 @@ const layers = [
   { name: 'Cloudflare', role: 'Edge platform', focus: 'Secure delivery, DNS, and globally distributed runtime' },
   { name: 'Rust', role: 'Systems service', focus: 'Explicit memory safety and predictable performance' },
   { name: 'Go', role: 'Network service', focus: 'Concurrent APIs with a small operational footprint' },
-  { name: 'Ruby', role: 'Product service', focus: 'Fast iteration for business workflows and APIs' }
+  { name: 'Ruby', role: 'Product service', focus: 'Fast iteration for business workflows and APIs' },
+  { name: 'Solidity', role: 'Contract surface', focus: 'Auditable on-chain logic and security research' }
 ];
 const active = ref(layers[0].name);
 const selected = computed(() => layers.find((layer) => layer.name === active.value) ?? layers[0]);

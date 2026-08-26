@@ -11,6 +11,7 @@ const layers = [
 	['Rust', 'Backend service', 'Fast, explicit systems programming'],
 	['Go', 'Backend service', 'Small, concurrent network services'],
 	['Ruby', 'Backend service', 'Readable product and automation APIs']
+	,['Solidity', 'Smart contracts', 'Auditable on-chain security surfaces']
 ];
 
 export default function ArchitectureMatrix() {
