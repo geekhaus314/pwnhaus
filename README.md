@@ -41,3 +41,7 @@ GitHub Actions deploys the Pages site and Worker when
 
 The backend Worker lives under `workers/site-backend` and does not require R2 or
 billing verification. R2 remains an optional future asset store.
+
+Viper-Web3 is available through the Worker as a chain-agnostic, read-only
+Solidity triage service at `/api/viper-web3` and
+`POST /api/viper-web3/analyze`.
