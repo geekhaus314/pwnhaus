@@ -28,13 +28,14 @@ npm --workspace @pwn4g3/nuxt-lab run dev
 
 ## Cloudflare backend
 
-The site backend Worker and R2 asset bucket live under `workers/site-backend`.
-Create the bucket once, then deploy the Worker:
+The site backend Worker lives under `workers/site-backend` and does not require
+R2 or billing verification:
 
 ```sh
-npx wrangler r2 bucket create pwn4g3-portfolio-assets
 npx wrangler deploy --config workers/site-backend/wrangler.jsonc --env production
 ```
 
-GitHub Actions can deploy both the Worker and `public/projects` assets when
+GitHub Actions can deploy the Worker when
 `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured as repository secrets.
+R2 remains an optional future asset store; the static site serves project
+snapshots directly from GitHub Pages for now.
