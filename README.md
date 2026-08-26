@@ -26,16 +26,18 @@ npm --workspace @pwn4g3/next-lab run dev
 npm --workspace @pwn4g3/nuxt-lab run dev
 ```
 
-## Cloudflare backend
+## Cloudflare deployment
 
-The site backend Worker lives under `workers/site-backend` and does not require
-R2 or billing verification:
+The primary frontend target is `https://pwnhaus.pages.dev`. GitHub is used for
+source control; Cloudflare Pages serves the Astro build:
 
 ```sh
-npx wrangler deploy --config workers/site-backend/wrangler.jsonc --env production
+npm run build
+npx wrangler pages deploy dist --project-name pwnhaus --branch main
 ```
 
-GitHub Actions can deploy the Worker when
+GitHub Actions deploys the Pages site and Worker when
 `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured as repository secrets.
-R2 remains an optional future asset store; the static site serves project
-snapshots directly from GitHub Pages for now.
+
+The backend Worker lives under `workers/site-backend` and does not require R2 or
+billing verification. R2 remains an optional future asset store.
