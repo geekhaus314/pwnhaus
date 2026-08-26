@@ -1,0 +1,17 @@
+{
+  "name": "pwn4g3 — Jake Viefhaus",
+  "short_name": "pwn4g3",
+  "description": "Jake Viefhaus — full-stack developer and cybersecurity engineering student in St. Louis, MO.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07070a",
+  "theme_color": "#9e1b32",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
