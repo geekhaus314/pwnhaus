@@ -2,6 +2,10 @@
 dist/
 # generated types
 .astro/
+.next/
+.nuxt/
+.output/
+node_modules/.cache/
 
 # dependencies
 node_modules/

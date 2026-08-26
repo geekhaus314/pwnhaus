@@ -1,3 +1,0 @@
-module.exports=[97421,a=>{"use strict";var b=a.i(7997);a.s(["default",0,function({children:a}){return(0,b.jsx)("html",{lang:"en",children:(0,b.jsx)("body",{children:a})})},"metadata",0,{title:"pwn4g3 Next.js Lab",description:"An isolated Next.js application lab in the pwn4g3 engineering portfolio."}])},4740,function(a){a.n(a.i(97421))}];
-
-//# sourceMappingURL=apps_next-lab_app_layout_tsx_02yvmhb._.js.map
