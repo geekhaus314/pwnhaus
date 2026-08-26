@@ -3,6 +3,7 @@ dist/
 # generated types
 .astro/
 .wrangler/
+goroot/
 .next/
 .nuxt/
 .output/
