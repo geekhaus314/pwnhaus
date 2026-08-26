@@ -33,11 +33,3 @@ jobs:
 
       - name: Deploy Worker
         run: npx wrangler deploy --config workers/site-backend/wrangler.jsonc --env production
-
-      - name: Sync project assets to R2
-        shell: bash
-        run: |
-          find public/projects -type f -print0 | while IFS= read -r -d '' file; do
-            key="${file#public/projects/}"
-            npx wrangler r2 object put "pwn4g3-portfolio-assets/projects/$key" --file "$file"
-          done

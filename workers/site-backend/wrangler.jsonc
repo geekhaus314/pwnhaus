@@ -4,21 +4,9 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-08-26",
   "workers_dev": true,
-  "r2_buckets": [
-    {
-      "binding": "ASSETS",
-      "bucket_name": "pwn4g3-portfolio-assets"
-    }
-  ],
   "env": {
     "production": {
-      "name": "pwn4g3-site-backend",
-      "r2_buckets": [
-        {
-          "binding": "ASSETS",
-          "bucket_name": "pwn4g3-portfolio-assets"
-        }
-      ]
+      "name": "pwn4g3-site-backend"
     }
   }
 }
