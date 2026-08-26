@@ -1,5 +1,14 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
+import solid from '@astrojs/solid-js';
+import svelte from '@astrojs/svelte';
+import vue from '@astrojs/vue';
 
-// https://astro.build/config
-export default defineConfig({});
+export default defineConfig({
+	integrations: [
+		react({ include: ['**/*.tsx'] }),
+		solid({ include: ['**/*.solid.tsx'] }),
+		svelte(),
+		vue()
+	]
+});

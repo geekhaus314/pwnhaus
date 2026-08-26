@@ -2,6 +2,11 @@
   "name": "pwn4g3-portfolio",
   "type": "module",
   "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "apps/next-lab",
+    "apps/nuxt-lab"
+  ],
   "engines": {
     "node": ">=22.12.0"
   },
@@ -12,6 +17,21 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.2.3"
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/solid-js": "^7.0.2",
+    "@astrojs/svelte": "^9.0.1",
+    "@astrojs/vue": "^7.0.2",
+    "astro": "^7.2.3",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "solid-js": "^1.9.15",
+    "svelte": "^5.56.9",
+    "vue": "^3.5.41"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  },
+  "devDependencies": {
+    "wrangler": "^4.126.0"
   }
 }
