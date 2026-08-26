@@ -25,3 +25,16 @@ Run an application lab from its directory:
 npm --workspace @pwn4g3/next-lab run dev
 npm --workspace @pwn4g3/nuxt-lab run dev
 ```
+
+## Cloudflare backend
+
+The site backend Worker and R2 asset bucket live under `workers/site-backend`.
+Create the bucket once, then deploy the Worker:
+
+```sh
+npx wrangler r2 bucket create pwn4g3-portfolio-assets
+npx wrangler deploy --config workers/site-backend/wrangler.jsonc --env production
+```
+
+GitHub Actions can deploy both the Worker and `public/projects` assets when
+`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured as repository secrets.

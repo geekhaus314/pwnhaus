@@ -6,6 +6,7 @@ dist/
 .nuxt/
 .output/
 node_modules/.cache/
+*.cpuprofile
 
 # dependencies
 node_modules/
