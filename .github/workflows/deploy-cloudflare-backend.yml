@@ -1,0 +1,43 @@
+name: Deploy Cloudflare backend
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "workers/site-backend/**"
+      - "public/projects/**"
+      - ".github/workflows/deploy-cloudflare-backend.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy Worker
+        run: npx wrangler deploy --config workers/site-backend/wrangler.jsonc --env production
+
+      - name: Sync project assets to R2
+        shell: bash
+        run: |
+          find public/projects -type f -print0 | while IFS= read -r -d '' file; do
+            key="${file#public/projects/}"
+            npx wrangler r2 object put "pwn4g3-portfolio-assets/projects/$key" --file "$file"
+          done
