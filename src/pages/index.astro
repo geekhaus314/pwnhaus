@@ -23,9 +23,9 @@ const projects = [
 ];
 
 const betaProjects = [
-	{ name: 'pwn4g3-web', status: 'Beta / active build', detail: 'Next.js product surface under active development. This is a real local project and belongs in the testing queue.', repo: 'https://github.com/geekhaus314/pwn4g3-web' },
-	{ name: 'pwn4g3-api', status: 'Beta / service', detail: 'Go API and streaming telemetry component for testing real-time service boundaries.', repo: 'https://github.com/geekhaus314/pwn4g3-api' },
-	{ name: 'pwn4g3-rebuild', status: 'Beta / redesign', detail: 'Local redesign project for iterating on the portfolio surface before release.', repo: 'https://github.com/geekhaus314/pwn4g3-rebuild' }
+	{ name: 'KananOS', status: 'Beta / platform', detail: 'Active product work around the KananOS operating surface and its commerce-focused application boundaries.', repo: 'https://github.com/geekhaus314/kananos' },
+	{ name: 'Bug Bounty Setup', status: 'Beta / security', detail: 'Local security-research environment for repeatable bug bounty workflows, tooling, and target setup.', repo: '' },
+	{ name: 'Packet Realms', status: 'Beta / networking', detail: 'Local networking and packet-analysis project under active experimentation and testing.', repo: '' }
 ];
 
 const capabilities = [
@@ -111,12 +111,19 @@ const filters = ['All', 'Production', 'Security', 'Platform', 'SaaS', 'Client', 
 
 				<section id="beta" class="section beta-workbench">
 					<div class="section-heading"><div><span class="section-kicker">01A / PRIVATE WORKBENCH</span><h2>Not ready for a <em>teaser.</em></h2></div><p>Unreleased projects get a visible place without invented screenshots or premature claims. This is where testing access, notes, and release status can live when each beta is ready.</p></div>
-					<div class="beta-grid">{betaProjects.map((project, index) => <article class="beta-card"><span class="beta-index">BETA / {String(index + 1).padStart(2, '0')}</span><span class="project-type">{project.status}</span><h3>{project.name}</h3><p>{project.detail}</p><a class="beta-link" href={project.repo} target="_blank" rel="noreferrer">Open repository ↗</a></article>)}</div>
+					<div class="beta-grid">{betaProjects.map((project, index) => <article class="beta-card"><span class="beta-index">BETA / {String(index + 1).padStart(2, '0')}</span><span class="project-type">{project.status}</span><h3>{project.name}</h3><p>{project.detail}</p>{project.repo ? <a class="beta-link" href={project.repo} target="_blank" rel="noreferrer">Open repository ↗</a> : <span class="beta-link">Local workspace / snapshot pending</span>}</article>)}</div>
 				</section>
 
 				<section id="capabilities" class="section capabilities"><div class="section-heading"><div><span class="section-kicker">02 / HOW I WORK</span><h2>More than <em>screens.</em></h2></div><p>A good interface is the visible edge of a much larger decision: data shape, failure mode, deployment model, and who has to live with it later.</p></div><div class="cap-grid">{capabilities.map(([number, title, description]) => <div class="cap"><span>{number}</span><h3>{title}</h3><p>{description}</p></div>)}</div></section>
 
 				<section id="security" class="section security"><div class="security-panel"><div class="security-copy"><span class="section-kicker">03 / THREAT MODEL</span><h2>Assume it<br /><em>will break.</em></h2><p>I look for the interesting failure before it becomes the expensive one. Security is a design constraint, an engineering discipline, and a habit of asking one more uncomfortable question.</p><div class="security-list"><span>01 / What is exposed?</span><span>02 / What can be automated?</span><span>03 / What happens when trust fails?</span><span>04 / What will the logs tell us?</span><span>05 / Can the next person operate it?</span></div></div><div class="security-visual"><div class="radar"><i></i><i></i><i></i><i></i><b>STAY<br />CURIOUS</b></div><div class="scanline"></div></div></div></section>
+				<section id="viper-web3" class="section viper-console">
+					<div class="section-heading"><div><span class="section-kicker">03A / VIPER-WEB3 SERVICE</span><h2>Read the<br /><em>contract.</em></h2></div><p>Paste Solidity for a fast, chain-agnostic triage pass. The service is read-only and returns heuristic signals for deeper Foundry, Slither, Mythril, and human review.</p></div>
+					<div class="viper-panel">
+						<div class="viper-editor"><label for="solidity-source">Solidity source</label><textarea id="solidity-source" spellcheck="false" placeholder="// paste a contract to begin&#10;pragma solidity ^0.8.20;"></textarea><div class="viper-actions"><button class="button primary" id="viper-analyze" type="button">Analyze source <span aria-hidden="true">↗</span></button><span id="viper-status" role="status">READY / READ-ONLY</span></div></div>
+						<div class="viper-results" aria-live="polite"><div class="viper-results-head"><span>TRIAGE OUTPUT</span><strong id="viper-count">Awaiting source</strong></div><div id="viper-findings" class="viper-findings"><p class="viper-empty">No analysis yet. Your source stays in the browser until you submit it.</p></div></div>
+					</div>
+				</section>
 
 				<section id="stack" class="section"><div class="section-heading"><div><span class="section-kicker">04 / THE BENCH</span><h2>Tools I reach for <em>often.</em></h2></div><p>Tools are instruments, not personality traits. The interesting part is knowing when to stop adding them.</p></div><div class="stack-cloud">{stack.map((item) => <span>{item}</span>)}</div></section>
 				<section id="architecture" class="section architecture"><div class="section-heading"><div><span class="section-kicker">05 / SYSTEM DESIGN</span><h2>Compartmentalized by <em>intent.</em></h2></div><p>Each tool has a boundary and a job. Islands stay small, services stay replaceable, and the public surface stays fast.</p></div><div class="architecture-grid"><div><ArchitectureMatrix client:load /></div><div><ArchitectureMatrixVue client:visible /></div><div class="architecture-status"><LiveStatus client:load /><Signal client:load /></div></div></section>
