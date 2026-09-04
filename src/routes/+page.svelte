@@ -1,435 +1,573 @@
 <script lang="ts">
-	import Terminal from '$lib/components/Terminal.svelte';
-	import HeroCanvas from '$lib/components/HeroCanvas.svelte';
-	import Signal from '$lib/components/Signal.svelte';
-	import ProjectCard from '$lib/components/ProjectCard.svelte';
-	import ProjectModal from '$lib/components/ProjectModal.svelte';
-	import GitHubStats from '$lib/components/GitHubStats.svelte';
-	import BookingForm from '$lib/components/BookingForm.svelte';
+  import { onMount } from 'svelte';
+  import { themeConfig } from '$lib/stores/theme';
+  import HeroHeadline from '$lib/components/HeroHeadline.svelte';
 
-	import { projects, projectFilters, type ProjectFilter } from '$lib/data/projects';
-	import { profile, capabilities, stack } from '$lib/data/profile';
-	import type { Project } from '$lib/data/projects';
+  interface Microfrontend {
+    id: 'react' | 'vue' | 'solid' | 'qwik' | 'angular';
+    name: string;
+    description: string;
+    color: string;
+    devUrl: string;
+    prodUrl: string;
+  }
 
-	let activeProject = $state<Project | null>(null);
-	let activeFilter = $state<ProjectFilter>('All');
+  interface CliCommand {
+    prompt: string;
+    input: string;
+    output: string[];
+    success: boolean;
+  }
 
-	const filtered = $derived(
-		activeFilter === 'All'
-			? projects
-			: projects.filter((p) => p.type === activeFilter)
-	);
+  interface TerminalState {
+    history: CliCommand[];
+    currentCommand: string;
+  }
+
+  let mfeReady: boolean = false;
+  let selectedMfe: Microfrontend | null = null;
+  let mfeContainer: HTMLDivElement;
+  let terminalState: TerminalState = {
+    history: [
+      {
+        prompt: '$',
+        input: 'whoami',
+        output: ['pwn4g3 — full-stack engineer'],
+        success: true,
+      },
+      {
+        prompt: '$',
+        input: 'ls skills/',
+        output: [
+          'microfrontends/',
+          'workers/',
+          'pages/',
+          'd1/',
+          'r2/',
+          'kv/',
+          'github-actions/',
+        ],
+        success: true,
+      },
+      {
+        prompt: '$',
+        input: 'npm start',
+        output: ['▶ loading frameworks...'],
+        success: true,
+      },
+    ],
+    currentCommand: '',
+  };
+
+  const MICROFRONTENDS: Microfrontend[] = [
+    {
+      id: 'react',
+      name: '⚛️ React 19',
+      description: 'Modern React with Server Components & Concurrent Rendering',
+      color: '#61dafb',
+      devUrl: 'http://localhost:5174/remoteEntry.js',
+      prodUrl: 'https://pwnhaus-react.pages.dev/remoteEntry.js',
+    },
+    {
+      id: 'vue',
+      name: '🔶 Vue 3',
+      description: 'Progressive framework with Composition API',
+      color: '#42b983',
+      devUrl: 'http://localhost:5175/remoteEntry.js',
+      prodUrl: 'https://pwnhaus-vue.pages.dev/remoteEntry.js',
+    },
+    {
+      id: 'solid',
+      name: '⚡ SolidJS',
+      description: 'Fine-grained reactivity with zero virtual DOM',
+      color: '#4f46e5',
+      devUrl: 'http://localhost:5176/remoteEntry.js',
+      prodUrl: 'https://pwnhaus-solid.pages.dev/remoteEntry.js',
+    },
+    {
+      id: 'qwik',
+      name: '⚡ Qwik',
+      description: 'Resumability for instant-on web applications',
+      color: '#18b6f6',
+      devUrl: 'http://localhost:5177/remoteEntry.js',
+      prodUrl: 'https://pwnhaus-qwik.pages.dev/remoteEntry.js',
+    },
+    {
+      id: 'angular',
+      name: '🅰️ Angular 18',
+      description: 'TypeScript-first framework with RxJS & DI',
+      color: '#dd0031',
+      devUrl: 'http://localhost:5178/remoteEntry.js',
+      prodUrl: 'https://pwnhaus-angular.pages.dev/remoteEntry.js',
+    },
+  ];
+
+  async function loadMicrofrontend(mfe: Microfrontend): Promise<void> {
+    selectedMfe = mfe;
+    mfeReady = false;
+
+    try {
+      const isDev = import.meta.env.DEV;
+      const remoteUrl = isDev ? mfe.devUrl : mfe.prodUrl;
+
+      // Load remote entry
+      const script = document.createElement('script');
+      script.src = remoteUrl;
+      script.type = 'text/javascript';
+      script.async = true;
+      document.body.appendChild(script);
+
+      await new Promise<void>((resolve, reject) => {
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error(`Failed to load ${mfe.name} MFE`));
+      });
+
+      mfeReady = true;
+    } catch (error) {
+      console.error(`Failed to load ${mfe.name} microfrontend:`, error);
+      selectedMfe = null;
+    }
+  }
+
+  function closeMfe(): void {
+    selectedMfe = null;
+    mfeReady = false;
+    if (mfeContainer) {
+      mfeContainer.innerHTML = '';
+    }
+  }
+
+  function handleTerminalCommand(command: string): void {
+    if (!command.trim()) return;
+
+    const newCommand: CliCommand = {
+      prompt: '$',
+      input: command,
+      output: [],
+      success: true,
+    };
+
+    switch (command.toLowerCase()) {
+      case 'help':
+        newCommand.output = ['Available commands:', 'whoami - Show identity', 'skills - List technical skills', 'projects - View portfolio', 'contact - Get in touch'];
+        break;
+      case 'whoami':
+        newCommand.output = ['Jake Viefhaus (pwn4g3)', 'Full-stack Engineer', 'Security Researcher', 'Bug Bounty Hunter'];
+        break;
+      case 'skills':
+        newCommand.output = [
+          'Frontend: React, Vue, Svelte, SolidJS, Qwik, Angular',
+          'Backend: Node.js, Go, Rust, Ruby',
+          'Cloud: Cloudflare Workers, Pages, D1, R2, KV',
+          'DevOps: GitHub Actions, Docker, CI/CD',
+        ];
+        break;
+      case 'projects':
+        newCommand.output = ['Scroll down to see projects →'];
+        break;
+      case 'contact':
+        newCommand.output = [
+          'Email: geekhaus314@proton.me',
+          'GitHub: https://github.com/geekhaus314',
+          'Ready to discuss opportunities',
+        ];
+        break;
+      default:
+        newCommand.output = [`Command not found: ${command}`, 'Type "help" for available commands'];
+        newCommand.success = false;
+    }
+
+    terminalState.history = [...terminalState.history, newCommand];
+    terminalState.currentCommand = '';
+  }
+
+  onMount(() => {
+    // Initialize Module Federation shared scope
+    if (!window.__webpack_share_scopes__) {
+      window.__webpack_share_scopes__ = {};
+    }
+  });
 </script>
 
 <svelte:head>
-	<title>pwn4g3 — Software + Security Engineering</title>
-	<meta name="description" content="pwn4g3 — full-stack development and security engineering by Jake Viefhaus. Web applications, APIs, automation, AI systems, infrastructure." />
+  <title>{$themeConfig.name} — pwn4g3 Microfrontends Showcase</title>
 </svelte:head>
 
-<!-- ═══════════════════════════════════════════════════════
-     HERO CANVAS BANNER
-════════════════════════════════════════════════════════ -->
-<HeroCanvas />
+<div id="top" class="hero section">
+  <div class="hero-copy">
+    <HeroHeadline />
+  </div>
+  <div class="hero-visual">
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span></span>
+        <span></span>
+        <span></span>
+        <b>portfolio.sh</b>
+      </div>
+      <div class="cli-terminal">
+        <div class="cli-history">
+          {#each terminalState.history as command}
+            <div class="cli-line-prompt">
+              <span class="prompt">{command.prompt}</span>
+              <span class="input">{command.input}</span>
+            </div>
+            {#each command.output as line}
+              <div class="cli-line-output" class:success={command.success}>
+                {line}
+              </div>
+            {/each}
+          {/each}
+        </div>
+        <form
+          class="cli-prompt"
+          on:submit={(e) => {
+            e.preventDefault();
+            handleTerminalCommand(terminalState.currentCommand);
+          }}
+        >
+          <span>$</span>
+          <input
+            type="text"
+            placeholder="Type 'help' for commands"
+            bind:value={terminalState.currentCommand}
+            autocomplete="off"
+          />
+          <span class="cursor">_</span>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
-<!-- ═══════════════════════════════════════════════════════
-     HERO
-════════════════════════════════════════════════════════ -->
-<section id="top" class="hero">
-	<div class="hero-copy">
-		<p class="eyebrow">
-			<i aria-hidden="true"></i>
-			Full-Stack Developer · St. Louis, MO
-		</p>
+<section id="portfolio" class="section">
+  <div class="section-heading">
+    <div>
+      <div class="eyebrow">
+        <i></i>
+        MICROFRONTEND SHOWCASE
+      </div>
+      <h2>Multi-Framework Excellence</h2>
+      <p>
+        Each framework deployed independently via Module Federation, showcasing production-ready architectural
+        patterns.
+      </p>
+    </div>
+  </div>
 
-		<div class="mono-tag">
-			<span class="accent">[whoami]$</span> Jake Viefhaus (aka
-			<a href={profile.github} target="_blank" rel="noopener noreferrer">@geekhaus314</a>
-			on GitHub)
-		</div>
-
-		<h1>pwn<em>4g3</em></h1>
-
-		<p class="hero-lede">{profile.summary}</p>
-
-		<div class="hero-actions">
-			<a href="#booking" class="button primary">Book a project <span>→</span></a>
-			<a href="#portfolio" class="button ghost">See my work <span>→</span></a>
-			<a href={profile.github} target="_blank" rel="noopener noreferrer" class="button ghost">
-				GitHub <span>↗</span>
-			</a>
-		</div>
-
-		<div class="hero-meta">
-			<span>St. Louis, MO</span>
-			<span>Full-Stack · Security</span>
-			<span>Open to work</span>
-		</div>
-	</div>
-
-	<div class="hero-visual">
-		<Terminal />
-		<span class="hero-code" aria-hidden="true">0x</span>
-		<div class="orbit orbit-a" aria-hidden="true"></div>
-		<div class="orbit orbit-b" aria-hidden="true"></div>
-	</div>
+  <div class="mfe-grid">
+    {#each MICROFRONTENDS as mfe (mfe.id)}
+      <div
+        class="mfe-card"
+        style="--accent-color: {mfe.color}"
+        on:click={() => loadMicrofrontend(mfe)}
+        on:keydown={(e) => e.key === 'Enter' && loadMicrofrontend(mfe)}
+        role="button"
+        tabindex="0"
+      >
+        <div class="mfe-header">
+          <h3>{mfe.name}</h3>
+          <span class="mfe-status">Ready</span>
+        </div>
+        <p>{mfe.description}</p>
+        <div class="mfe-footer">
+          <span class="mfe-action">Explore →</span>
+        </div>
+      </div>
+    {/each}
+  </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     ABOUT
-════════════════════════════════════════════════════════ -->
-<section id="about" class="section" aria-label="About">
-	<div class="section-heading">
-		<div>
-			<span class="section-kicker">001 / About</span>
-			<h2>Who I <em>am</em></h2>
-		</div>
-		<div class="hero-photo-wrap">
-			<img src={profile.heroPhoto} alt="Jake Viefhaus" loading="lazy" />
-		</div>
-	</div>
-
-	<div class="about-body">
-		<div class="about-copy reveal">
-			{#each profile.about as para, i}
-				<p class:italic={i === 2}>{para}</p>
-			{/each}
-
-			<ul class="about-facts">
-				{#each profile.facts as fact}
-					<li><strong>{fact.label}:</strong> {fact.value}</li>
-				{/each}
-			</ul>
-		</div>
-
-		<aside class="about-aside reveal">
-			<GitHubStats />
-
-			<!-- Instagram embed -->
-			<div class="instagram-wrap" aria-label="Instagram profile">
-				<blockquote
-					class="instagram-media"
-					data-instgrm-permalink="https://www.instagram.com/pwn4g3.io/?utm_source=ig_embed&utm_campaign=loading"
-					data-instgrm-version="14"
-					style="background:#FFF;border:0;border-radius:3px;box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15);max-width:540px;width:99.375%"
-				></blockquote>
-				<!-- Load embed script only on client -->
-				<svelte:element this={'script'} async src="//www.instagram.com/embed.js"></svelte:element>
-			</div>
-		</aside>
-	</div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════
-     PORTFOLIO
-════════════════════════════════════════════════════════ -->
-<section id="portfolio" class="section" aria-label="Portfolio">
-	<div class="section-heading reveal">
-		<div>
-			<span class="section-kicker">002 / Portfolio</span>
-			<h2>Selected <em>work</em></h2>
-		</div>
-		<p>Click any card to see the full breakdown and screenshots.</p>
-	</div>
-
-	<div class="filters reveal" role="group" aria-label="Filter projects">
-		{#each projectFilters as filter}
-			<button
-				class:active={activeFilter === filter}
-				onclick={() => (activeFilter = filter)}
-				aria-pressed={activeFilter === filter}
-			>{filter}</button>
-		{/each}
-	</div>
-
-	<div class="project-grid">
-		{#each filtered as project (project.id)}
-			<div class="reveal">
-				<ProjectCard {project} onopen={(p) => (activeProject = p)} />
-			</div>
-		{/each}
-	</div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════
-     CAPABILITIES
-════════════════════════════════════════════════════════ -->
-<section class="section capabilities" aria-label="Capabilities">
-	<div class="section-heading reveal">
-		<div>
-			<span class="section-kicker">003 / Capabilities</span>
-			<h2>What I <em>build</em></h2>
-		</div>
-	</div>
-
-	<div class="cap-grid">
-		{#each capabilities as cap}
-			<div class="cap reveal">
-				<span>{cap.index}</span>
-				<h3>{cap.title}</h3>
-				<p>{cap.description}</p>
-			</div>
-		{/each}
-	</div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════
-     STACK
-════════════════════════════════════════════════════════ -->
-<section class="section" aria-label="Tech stack">
-	<div class="section-heading reveal">
-		<div>
-			<span class="section-kicker">004 / Stack</span>
-			<h2>Tools &amp; <em>languages</em></h2>
-		</div>
-	</div>
-
-	<div class="stack-cloud reveal">
-		{#each stack as tech}
-			<span>{tech}</span>
-		{/each}
-	</div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════
-     SECURITY PANEL
-════════════════════════════════════════════════════════ -->
-<section class="section security" aria-label="Security engineering">
-	<div class="security-panel">
-		<div class="security-copy">
-			<span class="section-kicker">005 / Security</span>
-			<h2>Breaking <em>things</em> to build better ones</h2>
-			<p>Bug bounty programs, smart contract auditing, offensive-security tooling, and application hardening — I work across the full attack surface.</p>
-			<ul class="security-list">
-				<li>→ Bug bounty reconnaissance &amp; ASM</li>
-				<li>→ Smart contract auditing (Viper-Web3)</li>
-				<li>→ Web application security testing</li>
-				<li>→ Firewall &amp; infrastructure hardening</li>
-				<li>→ Automated exploit development tooling</li>
-			</ul>
-		</div>
-
-		<div class="security-visual" aria-hidden="true">
-			<div class="radar">
-				<i></i><i></i><i></i><i></i>
-				<b>ATTACK<br/>SURFACE<br/>ACTIVE</b>
-			</div>
-			<div class="scanline"></div>
-		</div>
-	</div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════
-     ARCHITECTURE STATUS
-════════════════════════════════════════════════════════ -->
-<section class="section architecture" aria-label="System architecture">
-	<div class="section-heading reveal">
-		<div>
-			<span class="section-kicker">006 / Architecture</span>
-			<h2>Live <em>infrastructure</em></h2>
-		</div>
-	</div>
-
-	<div class="architecture-grid">
-		<div class="arch-card reveal">
-			<span class="section-kicker">Frontend</span>
-			<div class="architecture-detail">
-				<span>SvelteKit</span>
-				<strong>pwnhaus.pages.dev</strong>
-				<p>SvelteKit + adapter-cloudflare deployed to Cloudflare Pages. Full SSR/SSG, edge-ready, zero cold starts.</p>
-			</div>
-		</div>
-		<div class="arch-card reveal">
-			<span class="section-kicker">Backend</span>
-			<div class="architecture-detail">
-				<span>Cloudflare Worker</span>
-				<strong>site-backend</strong>
-				<p>TypeScript Worker exposing /health, /api/components, /api/viper-web3, and /api/viper-web3/analyze.</p>
-			</div>
-		</div>
-		<div class="arch-card reveal architecture-status">
-			<Signal />
-			<div class="live-status">
-				<i class="online" aria-hidden="true"></i>
-				<span>WORKER ONLINE</span>
-			</div>
-		</div>
-	</div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════
-     MANIFESTO
-════════════════════════════════════════════════════════ -->
-<section class="manifesto" aria-label="Manifesto">
-	<p class="manifesto-mark" aria-hidden="true">—</p>
-	<blockquote>
-		I build things that work — in the <em>messy middle</em> where product decisions meet infrastructure and security.
-	</blockquote>
-	<p>pwn4g3 · Jake Viefhaus · St. Louis, MO</p>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════
-     CAREER
-════════════════════════════════════════════════════════ -->
-<section id="career" class="section" aria-label="Career">
-	<div class="section-heading reveal">
-		<div>
-			<span class="section-kicker">007 / Career</span>
-			<h2>For <em>recruiters</em></h2>
-		</div>
-		<p>My goal, my standing, and my resume — for hiring managers and talent teams.</p>
-	</div>
-
-	<div class="career-grid">
-		<div class="career-card reveal">
-			<h3>Career Goal</h3>
-			<p>{profile.careerGoal}</p>
-		</div>
-		<div class="career-card reveal">
-			<h3>Resume</h3>
-			<p>One page, current, with live links to every project on this site.</p>
-			<a
-				href={profile.resumeUrl}
-				target="_blank"
-				rel="noopener noreferrer"
-				class="button primary"
-			>
-				Download resume (PDF) →
-			</a>
-		</div>
-	</div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════
-     BOOKING
-════════════════════════════════════════════════════════ -->
-<section id="booking" class="section booking-section" aria-label="Book a project">
-	<div class="section-heading reveal" style="text-align: center; display: block;">
-		<span class="section-kicker">008 / Book</span>
-		<h2>Book a <em>project</em></h2>
-		<p>Tell me what you need — I'll get back to you within a day.</p>
-	</div>
-	<div class="reveal">
-		<BookingForm />
-	</div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════
-     PROJECT MODAL
-════════════════════════════════════════════════════════ -->
-{#if activeProject}
-	<ProjectModal
-		project={activeProject}
-		onclose={() => (activeProject = null)}
-	/>
+{#if selectedMfe && mfeReady}
+  <div class="mfe-modal-overlay" on:click={closeMfe}>
+    <div class="mfe-modal" on:click={(e) => e.stopPropagation()}>
+      <button class="mfe-modal-close" on:click={closeMfe}>✕</button>
+      <div class="mfe-modal-content" bind:this={mfeContainer}>
+        <!-- Microfrontend will be mounted here -->
+        <div class="mfe-loading">
+          <p>Loading {selectedMfe.name}...</p>
+        </div>
+      </div>
+    </div>
+  </div>
 {/if}
 
+<section class="section">
+  <div class="section-heading">
+    <div>
+      <h2>Architecture Highlights</h2>
+      <p>Production-grade infrastructure demonstrating enterprise-scale patterns.</p>
+    </div>
+  </div>
+
+  <div class="architecture-grid">
+    <div>
+      <span class="section-kicker">🔧 Module Federation</span>
+      <strong>Dynamic Loading</strong>
+      <p>
+        Independent deployment of React, Vue, Solid, Qwik, and Angular microfrontends with shared dependencies.
+      </p>
+    </div>
+    <div>
+      <span class="section-kicker">⚡ Cloudflare Workers</span>
+      <strong>Edge API Gateway</strong>
+      <p>CORS-enabled API with rate limiting, D1 analytics, R2 asset proxying, and Solidity auditing.</p>
+    </div>
+    <div>
+      <span class="section-kicker">📦 Cloudflare Pages</span>
+      <strong>Global CDN</strong>
+      <p>Multi-project deployment: main shell, React, Vue, Solid, Qwik, Angular all served from edge.</p>
+    </div>
+    <div>
+      <span class="section-kicker">💾 Cloudflare D1</span>
+      <strong>Edge Database</strong>
+      <p>Analytics tracking, project metadata, booking submissions, and Solidity audit cache.</p>
+    </div>
+    <div>
+      <span class="section-kicker">🗂️ Cloudflare R2</span>
+      <strong>Asset Storage</strong>
+      <p>Portfolio images, project assets, and resumes served via Worker proxy with cache headers.</p>
+    </div>
+    <div>
+      <span class="section-kicker">🔐 Cloudflare KV</span>
+      <strong>Rate Limiting</strong>
+      <p>Distributed cache for API rate limiting, session data, and ephemeral state management.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-heading">
+    <div>
+      <h2>Tech Stack</h2>
+      <p>Everything built, deployed, and scaled for production.</p>
+    </div>
+  </div>
+
+  <div class="stack-cloud">
+    <span>SvelteKit</span>
+    <span>React 19</span>
+    <span>Vue 3</span>
+    <span>SolidJS</span>
+    <span>Qwik</span>
+    <span>Angular 18</span>
+    <span>TypeScript</span>
+    <span>Vite</span>
+    <span>Module Federation</span>
+    <span>Cloudflare Workers</span>
+    <span>Cloudflare Pages</span>
+    <span>Cloudflare D1</span>
+    <span>Cloudflare R2</span>
+    <span>Cloudflare KV</span>
+    <span>GitHub Actions</span>
+    <span>CSS-in-JS</span>
+  </div>
+</section>
+
 <style>
-	.mono-tag {
-		font: 0.8rem var(--font-mono, monospace);
-		color: rgba(236, 231, 224, 0.5);
-		margin-bottom: 1rem;
-	}
-	.mono-tag .accent { color: var(--accent, #a51d37); }
-	.mono-tag a { text-decoration: underline; text-decoration-color: rgba(236, 231, 224, 0.3); }
-	.mono-tag a:hover { color: var(--accent, #a51d37); }
+  .hero-copy,
+  .hero-visual {
+    position: relative;
+    z-index: 1;
+  }
 
-	/* About layout */
-	.about-body {
-		display: grid;
-		grid-template-columns: 1.2fr 0.8fr;
-		gap: 4rem;
-		margin-top: 2rem;
-	}
-	.about-copy p {
-		color: rgba(236, 231, 224, 0.7);
-		line-height: 1.8;
-		margin: 0 0 1rem;
-	}
-	.about-copy p.italic { font-style: italic; color: rgba(236, 231, 224, 0.45); }
-	.about-facts {
-		list-style: none;
-		padding: 0;
-		margin: 1.5rem 0 0;
-		display: grid;
-		gap: 0.5rem;
-	}
-	.about-facts li { font-size: 0.85rem; color: rgba(236, 231, 224, 0.6); }
-	.about-facts strong { color: rgba(236, 231, 224, 0.8); }
+  .cli-history {
+    min-height: 176px;
+    margin-bottom: 1rem;
+    overflow-wrap: break-word;
+    font-size: 0.7rem;
+    line-height: 1.6;
+  }
 
-	.hero-photo-wrap {
-		border: 1px solid rgba(236, 231, 224, 0.1);
-		overflow: hidden;
-	}
-	.hero-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cli-line-prompt {
+    display: flex;
+    gap: 0.5rem;
+    color: var(--accent-bright);
+  }
 
-	.instagram-wrap {
-		margin-top: 2rem;
-		max-width: 540px;
-		overflow: hidden;
-		border: 1px solid rgba(236, 231, 224, 0.1);
-	}
+  .cli-line-prompt .prompt {
+    color: var(--accent);
+    font-weight: bold;
+  }
 
-	/* Architecture cards */
-	.arch-card {
-		min-height: 220px;
-		border: 1px solid rgba(236, 231, 224, 0.1);
-		background: var(--surface, #080a0d);
-		padding: 1.25rem;
-	}
-	.arch-card:nth-child(2) { transform: translateY(1.5rem) rotate(0.6deg); }
-	.arch-card:nth-child(3) { transform: rotate(-1.2deg); }
+  .cli-line-prompt .input {
+    color: var(--ink);
+  }
 
-	/* Career grid */
-	.career-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 1.5rem;
-		margin-top: 2rem;
-	}
-	.career-card {
-		border: 1px solid rgba(236, 231, 224, 0.1);
-		background: var(--surface, #080a0d);
-		padding: 2rem;
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-	.career-card h3 {
-		font-family: var(--font-serif, Georgia, serif);
-		font-size: 1.5rem;
-		margin: 0;
-		color: var(--ink, #ece7e0);
-	}
-	.career-card p {
-		font-size: 0.875rem;
-		color: rgba(236, 231, 224, 0.65);
-		line-height: 1.7;
-		margin: 0;
-		flex: 1;
-	}
-	.career-card .button {
-		align-self: flex-start;
-		text-decoration: none;
-		padding: 0.7rem 1.25rem;
-		font: 600 0.72rem var(--font-mono, monospace);
-		text-transform: uppercase;
-	}
-	.career-card .button.primary {
-		background: var(--accent, #a51d37);
-		border: 1px solid var(--accent, #a51d37);
-		color: #fff;
-	}
-	.career-card .button.primary:hover { opacity: 0.9; }
+  .cli-line-output {
+    color: var(--muted);
+    margin-left: 0.5rem;
+  }
 
-	.booking-section {
-		text-align: center;
-	}
-	.booking-section .section-heading { margin-bottom: 2.5rem; }
-	.booking-section .section-heading p { margin: 0.5rem auto 0; max-width: 480px; }
+  .cli-line-output.success {
+    color: #c3e88d;
+  }
 
-	@media (max-width: 900px) {
-		.about-body { grid-template-columns: 1fr; }
-		.hero-photo-wrap { max-height: 320px; }
-		.career-grid { grid-template-columns: 1fr; }
-	}
+  .mfe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .mfe-card {
+    padding: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.3s;
+    border-left: 3px solid var(--accent-color, var(--accent));
+    border-radius: 8px;
+  }
+
+  .mfe-card:hover {
+    border-color: var(--accent-color, var(--accent));
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .mfe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .mfe-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+  }
+
+  .mfe-status {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: rgba(39, 174, 96, 0.2);
+    color: #27ae60;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+  }
+
+  .mfe-card p {
+    margin: 0 0 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .mfe-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .mfe-action {
+    color: var(--accent-color, var(--accent));
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .mfe-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    backdrop-filter: blur(8px);
+  }
+
+  .mfe-modal {
+    width: min(90vw, 1200px);
+    height: min(90vh, 800px);
+    background: var(--page);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .mfe-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: 1px solid var(--border);
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    z-index: 1000;
+    transition: all 0.2s;
+    color: var(--text);
+  }
+
+  .mfe-modal-close:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .mfe-modal-content {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 3rem 2rem 2rem;
+  }
+
+  .mfe-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+  }
+
+  .architecture-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .architecture-grid > div {
+    min-height: 220px;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  .architecture-grid > div:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .architecture-grid strong {
+    display: block;
+    margin: 0.8rem 0 0.5rem;
+    font-size: 1.2rem;
+    color: var(--text);
+  }
+
+  .architecture-grid p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
 </style>
