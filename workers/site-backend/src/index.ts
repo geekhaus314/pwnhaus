@@ -66,6 +66,20 @@ export default {
 		if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: json({}).headers });
 
 		const url = new URL(request.url);
+		if (url.pathname === '/') {
+			if (request.method !== 'GET') return json({ error: 'method_not_allowed' }, 405);
+			return json({
+				service: 'pwn4ge',
+				site: 'https://pwn4g3.pages.dev',
+				status: 'available',
+				endpoints: {
+					health: 'GET /health',
+					components: 'GET /api/components',
+					viper: 'GET /api/viper-web3',
+					analyze: 'POST /api/viper-web3/analyze'
+				}
+			});
+		}
 		if (url.pathname === '/health') {
 			if (request.method !== 'GET') return json({ error: 'method_not_allowed' }, 405);
 			return json({ service: 'pwn4ge', status: 'ok', storage: 'static' });
