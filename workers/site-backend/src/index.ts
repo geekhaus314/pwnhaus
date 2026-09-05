@@ -5,7 +5,7 @@ const json = (payload: unknown, status = 200): Response =>
 			'Content-Type': 'application/json; charset=utf-8',
 			'Cache-Control': 'no-store',
 			'Access-Control-Allow-Origin': '*',
-			'Access-Control-Allow-Methods': 'GET, OPTIONS',
+			'Access-Control-Allow-Methods': 'GET, OPTIONS, POST',
 			'Access-Control-Allow-Headers': 'Content-Type'
 		}
 	});
@@ -64,13 +64,14 @@ const analyzeSolidity = (source: string) => {
 export default {
 	async fetch(request: Request): Promise<Response> {
 		if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: json({}).headers });
-		if (request.method !== 'GET') return json({ error: 'method_not_allowed' }, 405);
 
 		const url = new URL(request.url);
 		if (url.pathname === '/health') {
+			if (request.method !== 'GET') return json({ error: 'method_not_allowed' }, 405);
 			return json({ service: 'pwn4ge', status: 'ok', storage: 'static' });
 		}
 		if (url.pathname === '/api/components') {
+			if (request.method !== 'GET') return json({ error: 'method_not_allowed' }, 405);
 			return json({
 				components: [
 					{ name: 'rust', contract: '/health', port: 4101 },
@@ -80,6 +81,7 @@ export default {
 			});
 		}
 		if (url.pathname === '/api/viper-web3') {
+			if (request.method !== 'GET') return json({ error: 'method_not_allowed' }, 405);
 			return json({
 				service: 'viper-web3',
 				status: 'available',
@@ -93,6 +95,7 @@ export default {
 			});
 		}
 		if (url.pathname === '/api/viper-web3/analyze') {
+			if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
 			let body: unknown;
 			try {
 				body = await request.json();
