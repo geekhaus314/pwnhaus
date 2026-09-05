@@ -504,7 +504,7 @@ h1 em, h2 em, blockquote em { color: var(--accent); }
 	justify-content: space-between;
 	padding: 1.1rem 1.15rem 1.25rem;
 }
-.project-info h3 { margin: 0.35rem 0 0.2rem; font-size: 1.45rem; line-height: 0.95; }
+.project-info h3 { margin: 0.35rem 0 0.2rem; font-size: 1.45rem; line-height: 0.95; color: var(--ink, #ece7e0); }
 .project-info p { margin: 0; color: #706d68; font-size: 0.75rem; line-height: 1.4; }
 .arrow { color: #5c5954; font-size: 1.4rem; }
 
