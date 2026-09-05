@@ -107,7 +107,7 @@ export const projects: Project[] = [
 		stack: ['Python', 'Flask', 'Stripe', 'PostgreSQL'],
 		url: 'https://github.com/3m0h4ck3r/nightanvil',
 		repo: 'https://github.com/3m0h4ck3r/nightanvil',
-		images: [],
+		images: ['/shots/nightanvil-landing.png', '/shots/nightanvil-dashboard.png', '/shots/nightanvil-gig.png'],
 		detail: [
 			'Complete Python/Flask toolkit for freelancers: AI-powered gig generation, PDF invoices with payment tracking, Stripe checkout + webhooks.',
 			'Fiverr one-click gig sync, auth with secure sessions, dark neon brand UI, GitHub Actions CI/CD.',
@@ -122,7 +122,7 @@ export const projects: Project[] = [
 		stack: ['Go', 'ASM', 'Recon'],
 		url: 'https://github.com/3m0h4ck3r/obsidian-platform',
 		repo: 'https://github.com/3m0h4ck3r/obsidian-platform',
-		images: [],
+		images: ['/shots/obsidian.png'],
 		detail: [
 			'Production-grade Go attack surface management platform for bug bounty programs.',
 			'Hive-mind tier intelligence gathering: automated recon, scope monitoring, and target profiling.'
@@ -135,7 +135,7 @@ export const projects: Project[] = [
 		tagline: 'Automated bug bounty reconnaissance',
 		stack: ['Python', 'CLI'],
 		repo: 'https://github.com/geekhaus314',
-		images: [],
+		images: ['/shots/bb-suite-run.png'],
 		detail: [
 			'Modular Python toolkit for bug bounty recon with config, data pipelines, and scoped files.',
 			'Supports multiple reconnaissance modules with structured output for analysis.'
