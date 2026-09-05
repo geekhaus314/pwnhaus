@@ -1,6 +1,6 @@
 # pwnhaus — pwn4g3 portfolio
 
-Personal portfolio and engineering showcase for Jake Viefhaus ([@geekhaus314](https://github.com/geekhaus314)) — deployed at [pwnhaus.pages.dev](https://pwnhaus.pages.dev).
+Personal portfolio and engineering showcase for Jake Viefhaus ([@geekhaus314](https://github.com/geekhaus314)) — deployed at [pwn4g3.pages.dev](https://pwn4g3.pages.dev).
 
 ## Stack
 
@@ -73,7 +73,7 @@ The design system ships four themes toggled via the nav bar:
 GitHub Actions builds on push to `main` and deploys via:
 
 ```sh
-npx wrangler pages deploy .svelte-kit/cloudflare --project-name pwnhaus --branch main
+npx wrangler pages deploy .svelte-kit/cloudflare --project-name pwn4g3 --branch main
 ```
 
 Required secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`

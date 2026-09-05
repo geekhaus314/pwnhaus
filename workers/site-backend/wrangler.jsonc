@@ -1,12 +1,12 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
-  "name": "pwn4g3-site-backend",
+  "name": "pwn4ge",
   "main": "src/index.ts",
   "compatibility_date": "2026-08-26",
   "workers_dev": true,
   "env": {
     "production": {
-      "name": "pwn4g3-site-backend"
+      "name": "pwn4ge"
     }
   }
 }

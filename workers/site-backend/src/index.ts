@@ -68,7 +68,7 @@ export default {
 
 		const url = new URL(request.url);
 		if (url.pathname === '/health') {
-			return json({ service: 'pwn4g3-site-backend', status: 'ok', storage: 'static' });
+			return json({ service: 'pwn4ge', status: 'ok', storage: 'static' });
 		}
 		if (url.pathname === '/api/components') {
 			return json({
