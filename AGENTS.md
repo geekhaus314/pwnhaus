@@ -1,22 +1,51 @@
+## Project
+
+SvelteKit 5 + Svelte 5 portfolio (`pwn4g3`). Static+SSR frontend deployed to Cloudflare Pages (`pwn4g3.pages.dev`) via `@sveltejs/adapter-cloudflare`; backend is a Cloudflare Worker (`pwn4ge` at `pwn4ge.geekhaus314.workers.dev`).
+
 ## Development
 
-When starting the dev server, use background mode:
-
+```sh
+npm run dev        # start dev server (vite)
+npm run preview    # preview the production build
 ```
-astro dev --background
-```
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+## Verification
+
+Always run before finishing a task:
+
+```sh
+npm run check      # svelte-kit sync + svelte-check (type + a11y + diagnostics)
+```
 
 ## Documentation
 
-Full documentation: https://docs.astro.build
+- [SvelteKit docs](https://svelte.dev/docs/kit)
+- [Svelte docs](https://svelte.dev/docs/svelte)
+- [adapter-cloudflare](https://svelte.dev/docs/kit/adapter-cloudflare)
+- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/)
 
-Consult these guides before working on related tasks:
+## Structure
 
-- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
-- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
-- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
-- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
-- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
-- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+- `src/routes/` — pages (SvelteKit file-based routing)
+- `src/lib/components/` — shared components
+- `src/app.html` — document shell (canonical/OG/JSON-LD metadata lives here)
+- `workers/site-backend/` — Cloudflare Worker (TypeScript) with `wrangler.jsonc` config
+
+SSR gotcha: no `window`/`document` access during SSR. Guard browser-only code in `onMount` (see `src/lib/components/HeroCanvas.svelte`).
+
+## Deployment
+
+Frontend (build outputs to `.svelte-kit/cloudflare`):
+
+```sh
+npm run build
+npx wrangler pages deploy .svelte-kit/cloudflare --project-name pwn4g3 --branch main
+```
+
+Backend worker:
+
+```sh
+npx wrangler deploy --config workers/site-backend/wrangler.jsonc --env production
+```
+
+Requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` env vars. GitHub Actions runs both jobs automatically on push to `main`.
