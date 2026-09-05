@@ -90,12 +90,14 @@
 		resize();
 		window.addEventListener('resize', resize);
 		draw();
+		return () => {
+			window.removeEventListener('resize', resize);
+			if (rafId) cancelAnimationFrame(rafId);
+		};
 	});
 
 	onDestroy(() => {
 		unsubscribe();
-		window.removeEventListener('resize', resize);
-		if (rafId) cancelAnimationFrame(rafId);
 	});
 </script>
 
