@@ -12,21 +12,6 @@ export interface Project {
 
 export const projects: Project[] = [
 	{
-		id: 'kananos',
-		name: 'KananOS / United Distribution',
-		type: 'Production',
-		tagline: 'Multi-tenant B2B e-commerce wholesale platform',
-		stack: ['Next.js', 'TypeScript', 'Vercel'],
-		url: 'https://united-distro.vercel.app/united',
-		repo: 'https://github.com/geekhaus314/kanan-e',
-		images: ['/shots/united-distro.png', '/shots/kananos-home.png', '/shots/kanan-e-checkout.png'],
-		detail: [
-			'E-commerce infrastructure built for Kanan Enterprises LLC, DBA United Distribution, a wholesale smoke shop distributor in Florissant, MO.',
-			'Multi-tenant Next.js architecture supporting branded storefronts (united-distro and kanan-e) with product catalogs, brands, and browse routes.',
-			'Production deployment on Vercel with checkout flow, product imagery pipelines, and catalog management.'
-		]
-	},
-	{
 		id: 'myhairloss',
 		name: 'Brian Ivie Hair — myhairloss.com',
 		type: 'Client',
@@ -68,6 +53,21 @@ export const projects: Project[] = [
 			'Full photography portfolio — hero, manifesto, gallery, and lightbox — for a wildlife photographer.',
 			'Serif-forward editorial design (Cormorant Garamond) with a dark, gallery-grade presentation.',
 			'Deployed to Cloudflare Pages; the same design language powers this portfolio.'
+		]
+	},
+	{
+		id: 'kananos',
+		name: 'KananOS / United Distribution',
+		type: 'Production',
+		tagline: 'Multi-tenant B2B e-commerce wholesale platform',
+		stack: ['Next.js', 'TypeScript', 'Vercel'],
+		url: 'https://kanan-e.vercel.app',
+		repo: 'https://github.com/geekhaus314/kanan-e',
+		images: ['/shots/united-distro.png', '/shots/kananos-home.png', '/shots/kanan-e-checkout.png'],
+		detail: [
+			'E-commerce infrastructure built for Kanan Enterprises LLC, DBA United Distribution, a wholesale smoke shop distributor in Florissant, MO.',
+			'Multi-tenant Next.js architecture supporting branded storefronts (united-distro and kanan-e) with product catalogs, brands, and browse routes.',
+			'Production deployment on Vercel with checkout flow, product imagery pipelines, and catalog management.'
 		]
 	},
 	{
