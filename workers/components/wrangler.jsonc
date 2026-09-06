@@ -1,12 +1,7 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
-  "name": "pwn4ge",
+  "name": "pwn4ge-components",
   "main": "src/index.ts",
   "compatibility_date": "2026-08-26",
-  "workers_dev": true,
-  "env": {
-    "production": {
-      "name": "pwn4ge"
-    }
-  }
+  "workers_dev": false
 }

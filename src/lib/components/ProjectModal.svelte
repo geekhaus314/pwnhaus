@@ -9,6 +9,9 @@
 
 	let { project, onclose }: Props = $props();
 
+	const avifSrc = (src: string) => src.replace(/\.(png|jpe?g)$/i, '.avif');
+	const webpSrc = (src: string) => src.replace(/\.(png|jpe?g)$/i, '.webp');
+
 	let imageIndex = $state(0);
 	let dialogEl: HTMLDialogElement;
 
@@ -58,10 +61,14 @@
 		{#if project.images.length > 0}
 			<div class="modal-images">
 				<div class="main-image">
-					<img
-						src={project.images[imageIndex]}
-						alt="{project.name} screenshot {imageIndex + 1} of {project.images.length}"
-					/>
+					<picture>
+						<source srcset={avifSrc(project.images[imageIndex])} type="image/avif" />
+						<source srcset={webpSrc(project.images[imageIndex])} type="image/webp" />
+						<img
+							src={project.images[imageIndex]}
+							alt="{project.name} screenshot {imageIndex + 1} of {project.images.length}"
+						/>
+					</picture>
 					{#if project.images.length > 1}
 						<button class="nav-btn prev" onclick={prev} aria-label="Previous image">‹</button>
 						<button class="nav-btn next" onclick={next} aria-label="Next image">›</button>
@@ -84,7 +91,11 @@
 								onclick={() => (imageIndex = i)}
 								aria-label="View image {i + 1}"
 							>
-								<img src={img} alt="" loading="lazy" />
+								<picture>
+									<source srcset={avifSrc(img)} type="image/avif" />
+									<source srcset={webpSrc(img)} type="image/webp" />
+									<img src={webpSrc(img)} alt="" loading="lazy" />
+								</picture>
 							</button>
 						{/each}
 					</div>

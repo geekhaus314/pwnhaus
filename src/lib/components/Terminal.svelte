@@ -81,20 +81,9 @@
 			input = '';
 		}
 	}
-
-	function focusInput() {
-		inputEl?.focus();
-	}
 </script>
 
-<div
-	class="terminal"
-	onclick={focusInput}
-	onkeydown={(e) => e.key === 'Enter' && focusInput()}
-	role="button"
-	tabindex="0"
-	aria-label="Interactive terminal — click to focus input"
->
+<div class="terminal">
 	<div class="terminal-bar">
 		<span></span><span></span><span></span>
 		<b>pwn4g3@terminal</b>
