@@ -7,6 +7,9 @@
 	}
 
 	let { project, onopen }: Props = $props();
+
+	const avifSrc = (src: string) => src.replace(/\.(png|jpe?g)$/i, '.avif');
+	const webpSrc = (src: string) => src.replace(/\.(png|jpe?g)$/i, '.webp');
 </script>
 
 <button
@@ -16,7 +19,11 @@
 >
 	<div class="project-media">
 		{#if project.images[0]}
-			<img src={project.images[0]} alt="{project.name} preview" loading="lazy" />
+			<picture>
+				<source srcset={avifSrc(project.images[0])} type="image/avif" />
+				<source srcset={webpSrc(project.images[0])} type="image/webp" />
+				<img src={project.images[0]} alt="{project.name} preview" loading="lazy" />
+			</picture>
 		{:else}
 			<div class="project-placeholder">
 				<span>{project.type}</span>

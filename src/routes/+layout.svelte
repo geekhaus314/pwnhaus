@@ -5,7 +5,7 @@
 	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
 	import { profile } from '$lib/data/profile';
 
-	let { children } = $props();
+	let { children, data }: { children: import('svelte').Snippet; data: { canonical: string } } = $props();
 
 	let activeSection = $state('top');
 
@@ -57,6 +57,9 @@
 		const cleanReveal = setupReveal();
 		const cleanSpy = setupScrollSpy();
 		window.addEventListener('mousemove', trackPointer, { passive: true });
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/sw.js').catch(() => {});
+		}
 		return () => {
 			cleanReveal();
 			cleanSpy();
@@ -67,9 +70,12 @@
 
 <svelte:head>
 	<title>pwn4g3 — Software + Security Engineering</title>
+	<link rel="canonical" href={data.canonical} />
 </svelte:head>
 
 <div class="site-shell">
+	<a href="#main" class="skip-link">Skip to content</a>
+
 	<!-- ── Navigation ── -->
 	<header class="nav">
 		<a href="/#top" class="brand">pwn<span>4g3</span></a>
@@ -89,7 +95,7 @@
 	</header>
 
 	<!-- ── Page content ── -->
-	<main>
+	<main id="main" tabindex="-1">
 		{@render children()}
 	</main>
 
@@ -121,6 +127,22 @@
 </div>
 
 <style>
+	.skip-link {
+		position: fixed;
+		top: -100px;
+		left: 1rem;
+		z-index: 100;
+		background: var(--accent, #a51d37);
+		color: #fff;
+		padding: 0.75rem 1.25rem;
+		font: 600 0.7rem var(--font-mono, monospace);
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		transition: top 0.2s;
+		border-radius: 0 0 4px 4px;
+	}
+	.skip-link:focus-visible { top: 0; }
+
 	.nav-right {
 		display: flex;
 		align-items: center;
@@ -142,12 +164,12 @@
 		text-align: center;
 		padding: 0.75rem 5vw 1.25rem;
 		font: 0.55rem var(--font-mono, monospace);
-		color: rgba(236, 231, 224, 0.2);
+		color: rgba(236, 231, 224, 0.55);
 		text-transform: none;
 	}
 	.build-info a {
 		text-decoration: underline;
-		text-decoration-color: rgba(236, 231, 224, 0.2);
+		text-decoration-color: rgba(236, 231, 224, 0.45);
 	}
-	.build-info a:hover { color: rgba(236, 231, 224, 0.5); }
+	.build-info a:hover { color: rgba(236, 231, 224, 0.85); }
 </style>

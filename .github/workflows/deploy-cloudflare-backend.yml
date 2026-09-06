@@ -5,8 +5,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "workers/site-backend/**"
-      - "public/projects/**"
+      - "workers/**"
+      - "static/projects/**"
       - ".github/workflows/deploy-cloudflare-backend.yml"
 
 permissions:
@@ -31,5 +31,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Deploy Worker
-        run: npx wrangler deploy --config workers/site-backend/wrangler.jsonc --env production
+      - name: Deploy Workers
+        run: |
+          npx wrangler deploy --config workers/assets/wrangler.jsonc
+          npx wrangler deploy --config workers/health/wrangler.jsonc
+          npx wrangler deploy --config workers/components/wrangler.jsonc
+          npx wrangler deploy --config workers/viper/wrangler.jsonc
+          npx wrangler deploy --config workers/gateway/wrangler.jsonc

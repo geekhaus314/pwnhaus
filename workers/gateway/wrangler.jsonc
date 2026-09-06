@@ -1,0 +1,16 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "pwn4ge",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-26",
+  "workers_dev": true,
+  "vars": {
+    "PWN4G3_ASSETS_URL": "https://pwn4ge.geekhaus314.workers.dev/assets"
+  },
+  "services": [
+    { "binding": "HEALTH_SERVICE", "service": "pwn4ge-health" },
+    { "binding": "COMPONENTS_SERVICE", "service": "pwn4ge-components" },
+    { "binding": "VIPER_SERVICE", "service": "pwn4ge-viper" },
+    { "binding": "ASSETS_SERVICE", "service": "pwn4ge-assets" }
+  ]
+}

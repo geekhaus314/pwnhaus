@@ -4,11 +4,11 @@ Personal portfolio and engineering showcase for Jake Viefhaus ([@geekhaus314](ht
 
 ## Stack
 
-- **SvelteKit** — framework, routing, SSR/SSG
+- **SvelteKit** — framework, routing, prerendered SSR/SSG
 - **Svelte 5** — components with runes (`$state`, `$derived`, `$props`)
 - **@sveltejs/adapter-cloudflare** — Cloudflare Pages deployment
 - **TypeScript** — throughout
-- **Cloudflare Worker** (`workers/site-backend`) — `/health`, `/api/components`, `/api/viper-web3`
+- **Cloudflare Workers** — gateway + service workers under `workers/` (`/health`, `/api/components`, `/api/viper-web3`)
 
 ## Commands
 
@@ -17,24 +17,26 @@ npm install
 npm run dev        # dev server
 npm run build      # production build → .svelte-kit/cloudflare/
 npm run preview    # preview production build locally
-npm run check      # svelte-check + TypeScript
+npm run check      # svelte-kit sync + svelte-check (types, a11y, diagnostics)
 ```
 
 ## Project structure
 
 ```
 src/
-  app.html                  # HTML template with SEO meta + JSON-LD
+  app.html                  # HTML template with SEO meta + JSON-LD + manifest link
   app.css                   # Global design system (4 themes: nocturne, matrix, cyan, paper)
   routes/
-    +layout.svelte          # Nav, footer, scroll-spy, reveal observer, pointer tracking
-    +page.svelte            # Main page (Hero, About, Portfolio, Career, Booking)
-    api/booking/+server.ts  # Booking form API endpoint
+    +layout.svelte          # Nav, footer, scroll-spy, reveal observer, pointer tracking, canonical
+    +page.svelte            # Main page (Hero, About, Portfolio, Career, Booking) — prerendered
+    services/+page.svelte   # Services & pricing page — prerendered
+    +error.svelte           # branded 404 / error page
+    api/booking/+server.ts  # Booking form API endpoint (sends email via Resend)
   lib/
     components/             # Svelte components
       Terminal.svelte       # Interactive CLI terminal with theme/whoami/help commands
       HeroCanvas.svelte     # Canvas crosshair + particle effect
-      Signal.svelte         # Edge signal toggle
+      Signal.svelte         # Live Worker health check indicator
       ThemeSwitcher.svelte  # Nocturne / Matrix / Cyan / Paper switcher
       ProjectCard.svelte    # Portfolio card
       ProjectModal.svelte   # Fullscreen project lightbox (native <dialog>)
@@ -47,12 +49,9 @@ src/
     stores/
       theme.ts              # Reactive theme store
 
-workers/
-  site-backend/             # Cloudflare Worker (deployed separately)
-    src/index.ts            # /health, /api/components, /api/viper-web3
-
-public/                     # Static assets (images, resume, favicon, etc.)
-apps/                       # Isolated lab apps (next-lab, nuxt-lab, services)
+static/                    # Static assets (shots/, hero photos, sw.js, manifest, robots.txt, sitemap.xml)
+workers/                   # Cloudflare Workers (deployed separately; see deploy-cloudflare-backend.yml)
+apps/                      # Isolated lab apps (next-lab, nuxt-lab, services)
 ```
 
 ## Themes
@@ -78,13 +77,9 @@ npx wrangler pages deploy .svelte-kit/cloudflare --project-name pwn4g3 --branch 
 
 Required secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
 
-### Backend Worker
+### Backend Workers
 
-```sh
-npx wrangler deploy --config workers/site-backend/wrangler.jsonc --env production
-```
-
-Deployed separately via `.github/workflows/deploy-cloudflare-backend.yml`.
+Deployed by `.github/workflows/deploy-cloudflare-backend.yml` (triggered on `workers/**`). See `TASKS.md` for the in-progress gateway/service restructure.
 
 ## Terminal commands
 
@@ -101,3 +96,7 @@ theme <name>     switch visual theme
 clear            reset terminal
 help             show all commands
 ```
+
+## Agent notes
+
+See `AGENTS.md` and `TASKS.md` for multi-agent coordination and the active task list.

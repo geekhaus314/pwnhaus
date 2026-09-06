@@ -84,7 +84,17 @@
 			<h2>Who I <em>am</em></h2>
 		</div>
 		<div class="hero-photo-wrap">
-			<img src={profile.heroPhoto} alt="Jake Viefhaus" loading="lazy" />
+			<picture>
+				<source srcset="/geekhaus-self-1.avif" type="image/avif" />
+				<source srcset="/geekhaus-self-1.webp" type="image/webp" />
+				<img
+					src={profile.heroPhoto}
+					alt="Jake Viefhaus"
+					loading="lazy"
+					width="1280"
+					height="720"
+				/>
+			</picture>
 		</div>
 	</div>
 

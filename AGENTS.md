@@ -1,3 +1,7 @@
+## Multi-agent coordination
+
+Two opencode agents work on this repo in parallel. **Read `TASKS.md` first** and claim every task you start (set Owner + Status) before editing its files. One owner per file; check `git status` before writing to avoid clobbering the other agent.
+
 ## Project
 
 SvelteKit 5 + Svelte 5 portfolio (`pwn4g3`). Static+SSR frontend deployed to Cloudflare Pages (`pwn4g3.pages.dev`) via `@sveltejs/adapter-cloudflare`; backend is a Cloudflare Worker (`pwn4ge` at `pwn4ge.geekhaus314.workers.dev`).

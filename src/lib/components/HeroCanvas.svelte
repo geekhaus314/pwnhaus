@@ -7,6 +7,8 @@
 	let ctx: CanvasRenderingContext2D;
 	let rafId: number;
 	let mouse = { x: 0, y: 0, active: false };
+	let reduced = false;
+	let hidden = false;
 
 	interface Particle {
 		x: number;
@@ -76,7 +78,7 @@
 			ctx.fillRect(p.x - 1, p.y - 1, 3, 3);
 		}
 
-		rafId = requestAnimationFrame(draw);
+		if (!reduced && !hidden) rafId = requestAnimationFrame(draw);
 	}
 
 	function resize() {
@@ -85,13 +87,26 @@
 		canvasEl.height = 260;
 	}
 
+	function onVisibility() {
+		hidden = document.visibilityState !== 'visible';
+		if (hidden && rafId) {
+			cancelAnimationFrame(rafId);
+			rafId = 0;
+		} else if (!hidden && !reduced) {
+			draw();
+		}
+	}
+
 	onMount(() => {
 		ctx = canvasEl.getContext('2d')!;
+		reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		resize();
 		window.addEventListener('resize', resize);
+		document.addEventListener('visibilitychange', onVisibility);
 		draw();
 		return () => {
 			window.removeEventListener('resize', resize);
+			document.removeEventListener('visibilitychange', onVisibility);
 			if (rafId) cancelAnimationFrame(rafId);
 		};
 	});
