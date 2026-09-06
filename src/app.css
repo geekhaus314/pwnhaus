@@ -758,13 +758,17 @@ footer {
 
 /* ----------------------------------------------------------
    Reveal animations
+   Content is visible by default (no-JS / pre-hydration safe).
+   Only when `html.js` is present do we hide first and reveal
+   via the IntersectionObserver — so a failed/blocked hydration
+   can never leave the page blank.
    ---------------------------------------------------------- */
-.reveal {
+html.js .reveal {
 	opacity: 0;
 	transform: translateY(18px);
 	transition: opacity 0.65s ease, transform 0.65s ease;
 }
-.reveal.revealed {
+html.js .reveal.revealed {
 	opacity: 1;
 	transform: none;
 }
@@ -848,5 +852,5 @@ footer {
 		animation-iteration-count: 1 !important;
 		transition-duration: 0.01ms !important;
 	}
-	.reveal { opacity: 1; transform: none; }
+	html.js .reveal { opacity: 1; transform: none; }
 }

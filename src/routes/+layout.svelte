@@ -54,6 +54,10 @@
 	const buildTime: string = import.meta.env.VITE_BUILD_TIME ?? '';
 
 	onMount(() => {
+		// Hydration is running — from here the reveal observer can safely
+		// manage visibility. Before this class is set, `.reveal` content stays
+		// visible so a failed/blocked hydration never leaves the page blank.
+		document.documentElement.classList.add('js');
 		const cleanReveal = setupReveal();
 		const cleanSpy = setupScrollSpy();
 		window.addEventListener('mousemove', trackPointer, { passive: true });
