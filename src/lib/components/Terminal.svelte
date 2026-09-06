@@ -8,9 +8,15 @@
 		type: 'output' | 'success' | 'error' | 'input';
 	}
 
+	// Stable across SSR + hydration: derived from a build-time constant inlined
+	// identically into both the prerendered HTML and the client bundle. A live
+	// `new Date()` here would differ from the prerendered value on later visits
+	// and abort Svelte hydration — leaving the whole page hidden until JS ran.
+	const SESSION_DATE = (import.meta.env.VITE_BUILD_TIME ?? '').slice(0, 10);
+
 	const BOOT: TerminalLine[] = [
 		{ text: `pwn4g3 terminal v2.0 — type "help" for commands`, type: 'output' },
-		{ text: `session established · ${new Date().toISOString().slice(0, 10)}`, type: 'success' }
+		{ text: `session established${SESSION_DATE ? ` · ${SESSION_DATE}` : ''}`, type: 'success' }
 	];
 
 	let history = $state<TerminalLine[]>([...BOOT]);
