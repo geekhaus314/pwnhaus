@@ -1,4 +1,29 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /admin
 
 Sitemap: https://pwn4g3.pages.dev/sitemap.xml
+
+# Crawl budget for Cloudflare Pages
+Crawl-delay: 1
+
+# AI crawler directives
+Allow: Googlebot
+Allow: Bingbot
+Allow: DuckDuckBot
+Disallow: GPTBot
+Disallow: ChatGPT-User
+Disallow: CCBot
+Disallow: Bytespider
+Disallow: Omgilibot
+Disallow: Applebot-Extended
+
+# Image and media directives
+Allow: *.webp
+Allow: *.avif
+Allow: *.png
+Allow: *.jpg
+Allow: *.svg
+Allow: *.pdf
+Disallow: /shots/*

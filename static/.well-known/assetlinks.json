@@ -1,0 +1,14 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "web",
+    "site": "https://pwn4g3.pages.dev"
+  }
+},
+{
+  "relation": ["delegate_permission/common.get_login_data"],
+  "target": {
+    "namespace": "web",
+    "site": "https://pwn4g3.pages.dev"
+  }
+}]

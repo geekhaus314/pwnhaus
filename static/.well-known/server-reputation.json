@@ -1,0 +1,11 @@
+{
+  "security_txt": true,
+  "privacy_policy": "https://pwn4g3.pages.dev/privacy",
+  "terms_of_service": "https://pwn4g3.pages.dev/terms",
+  "cookie_policy": "https://pwn4g3.pages.dev/cookie-policy",
+  "dmca": "https://pwn4g3.pages.dev/dmca",
+  "gdpr": "https://pwn4g3.pages.dev/gdpr",
+  "last_updated": "2026-09-07T00:00:00Z",
+  "domain": "pwn4g3.pages.dev",
+  "infrastructure": "Cloudflare Pages + Workers"
+}

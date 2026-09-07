@@ -9,6 +9,19 @@
 	let service = $state(bookingServices[0]);
 	let timeline = $state('');
 	let details = $state('');
+	let errors = $state<Record<string, string>>({});
+
+	function validate(): boolean {
+		const e: Record<string, string> = {};
+		if (!name.trim()) e.name = 'Name is required';
+		else if (name.trim().length < 2) e.name = 'Name must be at least 2 characters';
+		if (!email.trim()) e.email = 'Email is required';
+		else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = 'Enter a valid email';
+		if (!details.trim()) e.details = 'Project details are required';
+		else if (details.trim().length < 10) e.details = 'Please provide more detail (at least 10 chars)';
+		errors = e;
+		return Object.keys(e).length === 0;
+	}
 
 	function buildMailtoHref(): string {
 		const subject = encodeURIComponent(`Booking request — ${service}${timeline ? ` (${timeline})` : ''}`);
@@ -20,6 +33,7 @@
 
 	async function submit(e: SubmitEvent) {
 		e.preventDefault();
+		if (!validate()) return;
 		status = 'sending';
 		try {
 			const res = await fetch('/api/booking', {
@@ -34,6 +48,7 @@
 			service = bookingServices[0];
 			timeline = '';
 			details = '';
+			errors = {};
 		} catch {
 			status = 'error';
 		}
@@ -44,11 +59,13 @@
 	<div class="row">
 		<div class="field">
 			<label for="bk-name">Name</label>
-			<input id="bk-name" required bind:value={name} placeholder="Your name" />
+			<input id="bk-name" required bind:value={name} placeholder="Your name" class:error={!!errors.name} />
+			{#if errors.name}<span class="field-error">{errors.name}</span>{/if}
 		</div>
 		<div class="field">
 			<label for="bk-email">Email</label>
-			<input id="bk-email" type="email" required bind:value={email} placeholder="you@example.com" />
+			<input id="bk-email" type="email" required bind:value={email} placeholder="you@example.com" class:error={!!errors.email} />
+			{#if errors.email}<span class="field-error">{errors.email}</span>{/if}
 		</div>
 	</div>
 
@@ -69,7 +86,8 @@
 
 	<div class="field">
 		<label for="bk-details">Project details</label>
-		<textarea id="bk-details" required rows={5} bind:value={details} placeholder="Tell me what you're building…"></textarea>
+		<textarea id="bk-details" required rows={5} bind:value={details} placeholder="Tell me what you're building…" class:error={!!errors.details}></textarea>
+		{#if errors.details}<span class="field-error">{errors.details}</span>{/if}
 	</div>
 
 	<button type="submit" disabled={status === 'sending'} class="submit-btn">
@@ -125,6 +143,14 @@
 	input:focus, select:focus, textarea:focus {
 		outline: none;
 		border-color: var(--accent, #a51d37);
+	}
+	input.error, textarea.error {
+		border-color: #f07178;
+	}
+
+	.field-error {
+		font: 0.65rem var(--font-mono, monospace);
+		color: #f07178;
 	}
 
 	textarea { resize: vertical; }

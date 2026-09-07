@@ -1,0 +1,8 @@
+Contact: mailto:geekhaus314@proton.me
+Encryption: https://geekhaus314.asciinema.org/pgp-public-key.asc
+Preferred-Language: en
+Signature: https://pwn4g3.pages.dev/.well-known/pgp-signature.asc
+Policy: https://pwn4g3.pages.dev/security-policy
+Acknowledgments: https://pwn4g3.pages.dev/security-hall-of-fame
+Canonical: https://pwn4g3.pages.dev/.well-known/security.txt
+Expiration: 2027-09-07T00:00:00Z

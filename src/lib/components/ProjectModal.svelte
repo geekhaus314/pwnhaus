@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
-	import type { Project } from '$lib/data/projects';
+import { onMount, onDestroy } from 'svelte';
+import type { Project } from '$lib/data/projects';
 
 	interface Props {
 		project: Project;
@@ -14,6 +14,9 @@
 
 	let imageIndex = $state(0);
 	let dialogEl: HTMLDialogElement;
+	let touchStartX = 0;
+	let touchStartY = 0;
+	let touchStartTime = 0;
 
 	function prev() {
 		imageIndex = (imageIndex - 1 + project.images.length) % project.images.length;
@@ -32,15 +35,37 @@
 		if (e.target === dialogEl) onclose();
 	}
 
+	function onTouchStart(e: TouchEvent) {
+		touchStartX = e.touches[0].clientX;
+		touchStartY = e.touches[0].clientY;
+		touchStartTime = Date.now();
+	}
+
+	function onTouchEnd(e: TouchEvent) {
+		const dx = e.changedTouches[0].clientX - touchStartX;
+		const dy = e.changedTouches[0].clientY - touchStartY;
+		const dt = Date.now() - touchStartTime;
+		if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) && dt < 500) {
+			if (dx < 0) next();
+			else prev();
+		}
+	}
+
 	onMount(() => {
 		document.body.style.overflow = 'hidden';
 		dialogEl?.showModal();
 		window.addEventListener('keydown', onKeydown);
+		dialogEl?.addEventListener('touchstart', onTouchStart, { passive: true });
+		dialogEl?.addEventListener('touchend', onTouchEnd, { passive: true });
 	});
 
 	onDestroy(() => {
 		document.body.style.overflow = '';
 		window.removeEventListener('keydown', onKeydown);
+		if (dialogEl) {
+			dialogEl.removeEventListener('touchstart', onTouchStart);
+			dialogEl.removeEventListener('touchend', onTouchEnd);
+		}
 	});
 </script>
 
@@ -60,7 +85,7 @@
 
 		{#if project.images.length > 0}
 			<div class="modal-images">
-				<div class="main-image">
+				<div class="main-image" ontouchstart={onTouchStart} ontouchend={onTouchEnd}>
 					<picture>
 						<source srcset={avifSrc(project.images[imageIndex])} type="image/avif" />
 						<source srcset={webpSrc(project.images[imageIndex])} type="image/webp" />
@@ -81,6 +106,9 @@
 								></button>
 							{/each}
 						</div>
+					{/if}
+					{#if project.images.length > 1}
+						<p class="swipe-hint">Swipe ← → to navigate</p>
 					{/if}
 				</div>
 				{#if project.images.length > 1}
@@ -188,12 +216,24 @@
 	.main-image {
 		position: relative;
 		background: rgba(0, 0, 0, 0.4);
+		touch-action: pan-x;
 	}
 	.main-image img {
 		width: 100%;
 		max-height: 50vh;
 		object-fit: contain;
 		display: block;
+	}
+
+	.swipe-hint {
+		position: absolute;
+		bottom: 0.75rem;
+		left: 50%;
+		transform: translateX(-50%);
+		font: 0.6rem var(--font-mono, monospace);
+		color: rgba(236, 231, 224, 0.3);
+		letter-spacing: 0.1em;
+		pointer-events: none;
 	}
 
 	.nav-btn {
