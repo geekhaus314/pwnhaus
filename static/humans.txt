@@ -1,0 +1,15 @@
+<!-- pwn4g3 team -->
+Team: Jake Viefhaus (geekhaus314)
+Role: Full-Stack Developer & Security Engineer
+Location: St. Louis, MO, US
+Email: geekhaus314@proton.me
+Web: https://pwn4g3.pages.dev
+GitHub: https://github.com/geekhaus314
+GitLab: https://gitlab.com/geekhaus314
+Instagram: https://www.instagram.com/pwn4g3.io/
+LinkedIn: https://linkedin.com/in/geekhaus314
+Twitter: https://twitter.com/pwn4g3io
+Co-conspirator: Thomas Ivie — graphic design, management, booking & customer service
+Language: en
+Owner: Jake Viefhaus
+Updated: 2026-09-07

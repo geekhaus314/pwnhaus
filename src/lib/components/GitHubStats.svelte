@@ -8,25 +8,54 @@
 	}
 
 	let stats = $state<Stats | null>(null);
+	let error = $state(false);
 
-	onMount(async () => {
+	function loadStats() {
+		// Check localStorage cache first (TTL: 1 hour)
 		try {
-			const res = await fetch('https://api.github.com/users/geekhaus314/repos?per_page=100&sort=updated');
-			if (!res.ok) return;
-			const repos: Array<{ fork: boolean; stargazers_count: number; language: string | null }> = await res.json();
-			const pub = repos.filter((r) => !r.fork);
-			stats = {
-				repos: pub.length,
-				stars: pub.reduce((sum, r) => sum + (r.stargazers_count ?? 0), 0),
-				languages: new Set(pub.map((r) => r.language).filter(Boolean)).size
-			};
-		} catch {
-			// silently suppress — stats are decorative
-		}
-	});
+			const cached = localStorage.getItem('gh-stats-cache');
+			if (cached) {
+				const { data, timestamp } = JSON.parse(cached);
+				if (Date.now() - timestamp < 3_600_000) {
+					stats = data;
+				}
+			}
+		} catch { /* ignore cache errors */ }
+
+		fetch('https://api.github.com/users/geekhaus314/repos?per_page=100&sort=updated', {
+			headers: { 'Accept': 'application/vnd.github.v3+json' }
+		})
+			.then((res) => {
+				if (!res.ok) throw new Error('GitHub API error');
+				return res.json();
+			})
+			.then((repos: Array<{ fork: boolean; stargazers_count: number; language: string | null }>) => {
+				const pub = repos.filter((r) => !r.fork);
+				stats = {
+					repos: pub.length,
+					stars: pub.reduce((sum, r) => sum + (r.stargazers_count ?? 0), 0),
+					languages: new Set(pub.map((r) => r.language).filter(Boolean)).size
+				};
+				try {
+					localStorage.setItem('gh-stats-cache', JSON.stringify({ data: stats, timestamp: Date.now() }));
+				} catch { /* ignore storage errors */ }
+			})
+			.catch(() => { error = true; });
+	}
+
+	onMount(loadStats);
 </script>
 
-{#if stats}
+{#if error}
+	<div class="github-stats reveal">
+		<div class="stat">
+			<p class="value">—</p>
+			<p class="label">Stats unavailable</p>
+		</div>
+	</div>
+{/if}
+
+{#if stats && !error}
 	<div class="github-stats reveal">
 		<div class="stat">
 			<p class="value">{stats.repos}</p>

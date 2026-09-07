@@ -23,31 +23,6 @@
 	let input = $state('');
 	let inputEl: HTMLInputElement;
 
-	const commands: Record<string, () => TerminalLine[]> = {
-		whoami: () => [
-			{ text: `${profile.name} // ${profile.alias} // ${profile.role}`, type: 'output' },
-			{ text: profile.summary, type: 'output' }
-		],
-		about: () => commands.whoami(),
-		identity: () => commands.whoami(),
-		work: () => [{ text: 'Production commerce, client platforms, AI infrastructure, reconnaissance tooling, and security research.', type: 'output' }],
-		skills: () => [{ text: '[+] Web, APIs, automation, AI systems, infrastructure, and security engineering.', type: 'success' }],
-		stack: () => [{ text: 'React / Next.js / Vue / Nuxt / Solid / Svelte / Astro / TypeScript / Python / Java / Go / Rust / Ruby.', type: 'output' }],
-		contact: () => [{ text: `${profile.email} // github.com/geekhaus314`, type: 'output' }],
-		themes: () => [{ text: `Themes: ${Object.keys(themes).join(' / ')}`, type: 'output' }],
-		help: () => [
-			{ text: 'Available commands:', type: 'output' },
-			{ text: '  whoami / about / identity — who I am', type: 'output' },
-			{ text: '  work          — focus areas and selected work', type: 'output' },
-			{ text: '  skills        — capabilities and engineering focus', type: 'output' },
-			{ text: '  stack         — frameworks, languages, and tools', type: 'output' },
-			{ text: '  contact       — ways to get in touch', type: 'output' },
-			{ text: '  themes        — list available visual themes', type: 'output' },
-			{ text: '  theme <name>  — switch visual theme', type: 'output' },
-			{ text: '  clear         — reset the console', type: 'output' }
-		]
-	};
-
 	function run(raw: string) {
 		const trimmed = raw.trim();
 		if (!trimmed) return;
@@ -66,6 +41,7 @@
 			if (!name) {
 				history = [...history, { text: 'Usage: theme <nocturne|matrix|cyan|paper>', type: 'error' }];
 			} else if (themeStore.apply(name)) {
+				try { localStorage.setItem('pwn4g3-theme', name); } catch { /* ignore */ }
 				history = [...history, { text: `Theme loaded: ${name}. Palette, surfaces, and laser treatment updated.`, type: 'success' }];
 			} else {
 				history = [...history, { text: `Unknown theme: ${name}. Run "themes" to list available themes.`, type: 'error' }];
@@ -73,12 +49,33 @@
 			return;
 		}
 
-		const handler = commands[cmd];
-		if (handler) {
-			history = [...history, ...handler()];
-		} else {
-			history = [...history, { text: `command not found: ${trimmed}. Try "help".`, type: 'error' }];
-		}
+	const handler = {
+		whoami: () => [{ text: `${profile.name} // ${profile.alias} // ${profile.role}`, type: 'output' as const }, { text: profile.summary, type: 'output' as const }],
+		about: () => [{ text: `${profile.name} // ${profile.alias} // ${profile.role}`, type: 'output' as const }, { text: profile.summary, type: 'output' as const }],
+		identity: () => [{ text: `${profile.name} // ${profile.alias} // ${profile.role}`, type: 'output' as const }, { text: profile.summary, type: 'output' as const }],
+		work: () => [{ text: 'Production commerce, client platforms, AI infrastructure, reconnaissance tooling, and security research.', type: 'output' as const }],
+		skills: () => [{ text: '[+] Web, APIs, automation, AI systems, infrastructure, and security engineering.', type: 'success' as const }],
+		stack: () => [{ text: 'SvelteKit · Svelte 5 · Cloudflare Pages · Workers · TypeScript · Go · Python · Rust.', type: 'output' as const }],
+		contact: () => [{ text: `${profile.email} // github.com/geekhaus314`, type: 'output' as const }],
+		themes: () => [{ text: `Themes: ${Object.keys(themes).join(' / ')}`, type: 'output' as const }],
+		help: () => [
+			{ text: 'Available commands:', type: 'output' as const },
+			{ text: '  whoami / about / identity — who I am', type: 'output' as const },
+			{ text: '  work          — focus areas and selected work', type: 'output' as const },
+			{ text: '  skills        — capabilities and engineering focus', type: 'output' as const },
+			{ text: '  stack         — frameworks, languages, and tools', type: 'output' as const },
+			{ text: '  contact       — ways to get in touch', type: 'output' as const },
+			{ text: '  themes        — list available visual themes', type: 'output' as const },
+			{ text: '  theme <name>  — switch visual theme (persisted)', type: 'output' as const },
+			{ text: '  clear         — reset the console', type: 'output' as const }
+		]
+	}[cmd];
+
+	if (handler) {
+		history = [...history, ...handler()];
+	} else {
+		history = [...history, { text: `command not found: ${trimmed}. Try "help".`, type: 'error' as const }];
+	}
 	}
 
 	function onKeydown(e: KeyboardEvent) {

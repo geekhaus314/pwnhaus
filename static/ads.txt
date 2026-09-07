@@ -1,0 +1,3 @@
+google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+# No active ad monetization — this file declares intent for future ad placements.
+# See https://support.google.com/admanager/answer/9304355 for format details.
