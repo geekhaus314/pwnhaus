@@ -8,8 +8,14 @@
 
 	let { project, onopen }: Props = $props();
 
-	const avifSrc = (src: string) => src.replace(/\.(png|jpe?g)$/i, '.avif');
-	const webpSrc = (src: string) => src.replace(/\.(png|jpe?g)$/i, '.webp');
+	// NOTE (#23): R2 currently serves only the PNG originals — the .avif/.webp
+	// variants were never mirrored (404). <picture> picks the first supported
+	// <source> and does NOT fall back to <img> when it 404s, so derive modern
+	// variants from local /shots/* (served by Pages) and keep the R2 PNG as
+	// the <img> fallback. Flip back to CDN derivatives once R2 has the variants.
+	const fileName = (src: string) => src.split('/').pop() ?? src;
+	const avifSrc = (src: string) => `/shots/${fileName(src).replace(/\.(png|jpe?g)$/i, '.avif')}`;
+	const webpSrc = (src: string) => `/shots/${fileName(src).replace(/\.(png|jpe?g)$/i, '.webp')}`;
 </script>
 
 <button
