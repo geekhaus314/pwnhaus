@@ -9,7 +9,6 @@
 
 	import { projects, projectFilters, type ProjectFilter } from '$lib/data/projects';
 	import { profile, capabilities, stack } from '$lib/data/profile';
-	import { assetUrl } from '$lib/config';
 	import type { Project } from '$lib/data/projects';
 
 	let activeProject = $state<Project | null>(null);
@@ -83,19 +82,6 @@
 		<div>
 			<span class="section-kicker">001 / About</span>
 			<h2>Who I <em>am</em></h2>
-		</div>
-		<div class="hero-photo-wrap">
-			<picture>
-				<source srcset={assetUrl('/geekhaus-self-1.avif')} type="image/avif" />
-				<source srcset={assetUrl('/geekhaus-self-1.webp')} type="image/webp" />
-				<img
-					src={profile.heroPhoto}
-					alt="Jake Viefhaus"
-					loading="lazy"
-					width="1280"
-					height="720"
-				/>
-			</picture>
 		</div>
 	</div>
 
@@ -367,12 +353,6 @@
 	.about-facts li { font-size: 0.85rem; color: rgba(236, 231, 224, 0.6); }
 	.about-facts strong { color: rgba(236, 231, 224, 0.8); }
 
-	.hero-photo-wrap {
-		border: 1px solid rgba(236, 231, 224, 0.1);
-		overflow: hidden;
-	}
-	.hero-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
 	.instagram-wrap {
 		margin-top: 2rem;
 		max-width: 540px;
@@ -440,7 +420,6 @@
 
 	@media (max-width: 900px) {
 		.about-body { grid-template-columns: 1fr; }
-		.hero-photo-wrap { max-height: 320px; }
 		.career-grid { grid-template-columns: 1fr; }
 	}
 </style>

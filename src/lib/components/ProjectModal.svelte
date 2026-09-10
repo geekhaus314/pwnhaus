@@ -9,8 +9,11 @@ import type { Project } from '$lib/data/projects';
 
 	let { project, onclose }: Props = $props();
 
-	const avifSrc = (src: string) => src.replace(/\.(png|jpe?g)$/i, '.avif');
-	const webpSrc = (src: string) => src.replace(/\.(png|jpe?g)$/i, '.webp');
+	// NOTE (#23): same as ProjectCard — R2 404s .avif/.webp, so <source>
+	// srcsets use local /shots/* variants; <img> stays on the R2 PNG.
+	const fileName = (src: string) => src.split('/').pop() ?? src;
+	const avifSrc = (src: string) => `/shots/${fileName(src).replace(/\.(png|jpe?g)$/i, '.avif')}`;
+	const webpSrc = (src: string) => `/shots/${fileName(src).replace(/\.(png|jpe?g)$/i, '.webp')}`;
 
 	let imageIndex = $state(0);
 	let dialogEl: HTMLDialogElement;
