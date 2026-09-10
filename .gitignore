@@ -36,3 +36,7 @@ goroot/
 
 # Editor
 .idea/
+
+# Agent skills (local tooling, `npx skills add` side effects)
+.agents/
+skills-lock.json
