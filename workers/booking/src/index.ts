@@ -26,6 +26,7 @@ import { getClientIp, rateLimitOr429 } from '../../shared/rate-limit';
 interface Env {
 	DB: D1Database;
 	BOOKING_QUEUE: Queue<BookingMessage>;
+	TELEMETRY_SERVICE?: { fetch(request: Request): Promise<Response> };
 	TURNSTILE_SECRET_KEY?: string;
 	TURNSTILE_SITE_KEY?: string;
 	TURNSTILE_HOSTNAMES?: string;
@@ -269,6 +270,46 @@ export default {
 	},
 
 	async queue(batch: MessageBatch<BookingMessage>, env: Env): Promise<void> {
+		// The DLQ consumer shares this handler — distinguish by queue name so
+		// poisoned messages become admin-visible instead of rotting unseen.
+		// DLQ envelopes carry the original BookingMessage body; they are acked
+		// unconditionally: their retry story is already over.
+		if (batch.queue === 'pwn4g3-booking-dlq') {
+			for (const message of batch.messages) {
+				const b = message.body as Partial<BookingMessage> | null;
+				const id = b?.id ?? 'unknown';
+				console.error(JSON.stringify({ msg: 'booking_dlq', id, reason: 'max_retries_exhausted' }));
+
+				// Mark the ledger row so status lookups tell the truth.
+				await env.DB.prepare(
+					"UPDATE bookings_log SET status = 'failed', error = COALESCE(NULLIF(error, ''), 'dlq_max_retries'), updated_at = ? WHERE id = ?"
+				)
+					.bind(Date.now(), id)
+					.run();
+
+				// Push an admin telemetry event if the telemetry service is bound.
+				if (env.TELEMETRY_SERVICE) {
+					try {
+						await env.TELEMETRY_SERVICE.fetch(
+							new Request('https://internal/api/telemetry', {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify({
+									service: 'pwn4g3-booking',
+									event: 'booking.dead_letter',
+									level: 'error',
+									data: { id }
+								})
+							})
+						);
+					} catch (e) {
+						console.error(JSON.stringify({ msg: 'booking_dlq_telemetry_failed', id }));
+					}
+				}
+			}
+			return;
+		}
+
 		for (const message of batch.messages) {
 			const booking = message.body;
 			const now = Date.now();

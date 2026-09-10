@@ -18,6 +18,9 @@
       "migrations_dir": "../migrations"
     }
   ],
+  "services": [
+    { "binding": "TELEMETRY_SERVICE", "service": "pwn4g3-telemetry" }
+  ],
   "queues": {
     "producers": [{ "binding": "BOOKING_QUEUE", "queue": "pwn4g3-booking" }],
     "consumers": [
@@ -27,6 +30,10 @@
         "dead_letter_queue": "pwn4g3-booking-dlq",
         "max_retries": 3,
         "retry_delay": 30
+      },
+      {
+        "queue": "pwn4g3-booking-dlq",
+        "max_batch_size": 10
       }
     ]
   },
