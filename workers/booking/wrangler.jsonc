@@ -23,6 +23,7 @@
     "consumers": [
       {
         "queue": "pwn4g3-booking",
+        "max_batch_size": 10,
         "dead_letter_queue": "pwn4g3-booking-dlq",
         "max_retries": 3,
         "retry_delay": 30
