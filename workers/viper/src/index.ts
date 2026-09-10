@@ -1,4 +1,5 @@
 import { jsonResponse, handleOptions } from '../../shared/cors';
+import { rateLimitOr429 } from '../../shared/rate-limit';
 import { viperAuditPlan } from '../../shared/commands';
 
 const checks = [
@@ -60,6 +61,12 @@ export default {
 
 		if (url.pathname === '/api/viper-web3') {
 			if (request.method !== 'GET') return jsonResponse({ error: 'method_not_allowed', route: 'viper-info' }, 405);
+			const limited = rateLimitOr429(
+				request,
+				{ limit: 60, windowMs: 60_000, prefix: 'viper-info' },
+				'viper-info'
+			);
+			if (limited) return limited;
 			return jsonResponse({
 				service: 'viper-web3',
 				status: 'available',
@@ -73,6 +80,14 @@ export default {
 
 		if (url.pathname === '/api/viper-web3/analyze') {
 			if (request.method !== 'POST') return jsonResponse({ error: 'method_not_allowed', route: 'viper-analyze' }, 405);
+
+			// Expensive route: 10 analyses/min per client IP.
+			const limited = rateLimitOr429(
+				request,
+				{ limit: 10, windowMs: 60_000, prefix: 'viper-analyze' },
+				'viper-analyze'
+			);
+			if (limited) return limited;
 
 			let body: unknown;
 			try {

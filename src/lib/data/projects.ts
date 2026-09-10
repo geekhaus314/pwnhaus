@@ -1,3 +1,5 @@
+import { shotUrl } from '$lib/config';
+
 export interface Project {
 	id: string;
 	name: string;
@@ -19,7 +21,7 @@ export const projects: Project[] = [
 		stack: ['Next.js', 'MDX', 'Cloudflare Pages'],
 		url: 'https://www.myhairloss.com',
 		repo: 'https://github.com/geekhaus314/myhairloss-stl',
-		images: ['/shots/myhairloss.png', '/shots/brian-home.png', '/shots/brian-services.png', '/shots/brian-shop.png'],
+		images: [shotUrl('myhairloss.png'), shotUrl('brian-home.png'), shotUrl('brian-services.png'), shotUrl('brian-shop.png')],
 		detail: [
 			'Production Next.js site for Brian Ivie Hair, deployed to Cloudflare Pages with custom domains (myhairloss.com, www, admin subdomain).',
 			'Service pages, shop section, and admin tooling — maintained and updated continuously.',
@@ -33,7 +35,7 @@ export const projects: Project[] = [
 		tagline: 'Private journaling companion for psychedelic experiences',
 		stack: ['React', 'Vite', 'JavaScript'],
 		repo: 'https://github.com/geekhaus314/Compass-Psychadelic-Trip-Journal',
-		images: ['/shots/compass.png'],
+		images: [shotUrl('compass.png')],
 		detail: [
 			'Vite + React journaling app for documenting psychedelic experiences in a calm, private space.',
 			'Clean single-page interface with session entries and reflection-oriented UI.',
@@ -48,7 +50,7 @@ export const projects: Project[] = [
 		stack: ['React', 'TypeScript', 'Tailwind', 'Cloudflare Pages'],
 		url: 'https://angie-viefhaus.pages.dev',
 		repo: 'https://github.com/geekhaus314/angie-viefhaus',
-		images: ['/shots/angie-pages.png'],
+		images: [shotUrl('angie-pages.png')],
 		detail: [
 			'Full photography portfolio — hero, manifesto, gallery, and lightbox — for a wildlife photographer.',
 			'Serif-forward editorial design (Cormorant Garamond) with a dark, gallery-grade presentation.',
@@ -63,7 +65,7 @@ export const projects: Project[] = [
 		stack: ['Next.js', 'TypeScript', 'Vercel'],
 		url: 'https://kanan-e.vercel.app',
 		repo: 'https://github.com/geekhaus314/kanan-e',
-		images: ['/shots/united-distro.png', '/shots/kananos-home.png', '/shots/kanan-e-checkout.png'],
+		images: [shotUrl('united-distro.png'), shotUrl('kananos-home.png'), shotUrl('kanan-e-checkout.png')],
 		detail: [
 			'E-commerce infrastructure built for Kanan Enterprises LLC, DBA United Distribution, a wholesale smoke shop distributor in Florissant, MO.',
 			'Multi-tenant Next.js architecture supporting branded storefronts (united-distro and kanan-e) with product catalogs, brands, and browse routes.',
@@ -107,7 +109,7 @@ export const projects: Project[] = [
 		stack: ['Python', 'Flask', 'Stripe', 'PostgreSQL'],
 		url: 'https://github.com/3m0h4ck3r/nightanvil',
 		repo: 'https://github.com/3m0h4ck3r/nightanvil',
-		images: ['/shots/nightanvil-landing.png', '/shots/nightanvil-dashboard.png', '/shots/nightanvil-gig.png'],
+		images: [shotUrl('nightanvil-landing.png'), shotUrl('nightanvil-dashboard.png'), shotUrl('nightanvil-gig.png')],
 		detail: [
 			'Complete Python/Flask toolkit for freelancers: AI-powered gig generation, PDF invoices with payment tracking, Stripe checkout + webhooks.',
 			'Fiverr one-click gig sync, auth with secure sessions, dark neon brand UI, GitHub Actions CI/CD.',
@@ -122,7 +124,7 @@ export const projects: Project[] = [
 		stack: ['Go', 'ASM', 'Recon'],
 		url: 'https://github.com/3m0h4ck3r/obsidian-platform',
 		repo: 'https://github.com/3m0h4ck3r/obsidian-platform',
-		images: ['/shots/obsidian.png'],
+		images: [shotUrl('obsidian.png')],
 		detail: [
 			'Production-grade Go attack surface management platform for bug bounty programs.',
 			'Hive-mind tier intelligence gathering: automated recon, scope monitoring, and target profiling.'
@@ -135,7 +137,7 @@ export const projects: Project[] = [
 		tagline: 'Automated bug bounty reconnaissance',
 		stack: ['Python', 'CLI'],
 		repo: 'https://github.com/geekhaus314',
-		images: ['/shots/bb-suite-run.png'],
+		images: [shotUrl('bb-suite-run.png')],
 		detail: [
 			'Modular Python toolkit for bug bounty recon with config, data pipelines, and scoped files.',
 			'Supports multiple reconnaissance modules with structured output for analysis.'

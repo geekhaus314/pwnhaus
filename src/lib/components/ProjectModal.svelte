@@ -85,7 +85,7 @@ import type { Project } from '$lib/data/projects';
 
 		{#if project.images.length > 0}
 			<div class="modal-images">
-				<div class="main-image" ontouchstart={onTouchStart} ontouchend={onTouchEnd}>
+				<div class="main-image" role="group" aria-label="{project.name} screenshots" ontouchstart={onTouchStart} ontouchend={onTouchEnd}>
 					<picture>
 						<source srcset={avifSrc(project.images[imageIndex])} type="image/avif" />
 						<source srcset={webpSrc(project.images[imageIndex])} type="image/webp" />

@@ -9,7 +9,6 @@ export default defineConfig({
 	},
 	build: {
 		target: 'es2022',
-		outDir: '.svelte-kit/vite',
 		assetsInlineLimit: 4096,
 		cssCodeSplit: true,
 		sourcemap: false
