@@ -11,6 +11,7 @@
     { "binding": "HEALTH_SERVICE", "service": "pwn4g3-health" },
     { "binding": "COMPONENTS_SERVICE", "service": "pwn4g3-components" },
     { "binding": "VIPER_SERVICE", "service": "pwn4g3-viper" },
-    { "binding": "ASSETS_SERVICE", "service": "pwn4g3-assets" }
+    { "binding": "ASSETS_SERVICE", "service": "pwn4g3-assets" },
+    { "binding": "TELEMETRY_SERVICE", "service": "pwn4g3-telemetry" }
   ]
 }
