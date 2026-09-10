@@ -41,4 +41,5 @@ jobs:
           npx wrangler deploy --config workers/viper/wrangler.jsonc
           npx wrangler deploy --config workers/telemetry/wrangler.jsonc
           npx wrangler deploy --config workers/scheduler/wrangler.jsonc
+          npx wrangler deploy --config workers/booking/wrangler.jsonc
           npx wrangler deploy --config workers/gateway/wrangler.jsonc

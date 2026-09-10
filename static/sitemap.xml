@@ -44,10 +44,4 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-
-  <url>
-    <loc>https://pwn4g3.pages.dev/404</loc>
-    <changefreq>never</changefreq>
-    <priority>0.0</priority>
-  </url>
 </urlset>
