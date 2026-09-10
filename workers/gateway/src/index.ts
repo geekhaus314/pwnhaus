@@ -1,4 +1,5 @@
 import { jsonResponse, handleOptions } from '../../shared/cors';
+import { rateLimitOr429 } from '../../shared/rate-limit';
 
 interface Env {
 	HEALTH_SERVICE: { fetch(request: Request): Promise<Response> };
@@ -15,6 +16,10 @@ export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		const preflight = handleOptions(request);
 		if (preflight) return preflight;
+
+		// Global abuse guard: 120 req/min per client IP across all routes.
+		const limited = rateLimitOr429(request, { limit: 120, windowMs: 60_000, prefix: 'gw' }, 'gateway');
+		if (limited) return limited;
 
 		const url = new URL(request.url);
 		const { pathname } = url;

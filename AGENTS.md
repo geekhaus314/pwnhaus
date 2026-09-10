@@ -36,7 +36,7 @@ npm run check      # svelte-kit sync + svelte-check (type + a11y + diagnostics)
 - `static/` — static assets served at root (`shots/`, hero photos, favicon, `sw.js`, `manifest.webmanifest`). Does NOT include `_headers` (that lives at the repo root — adapter-cloudflare fails the build if placed in `static/`)
 - `_headers` (repo root) — Cloudflare Pages security headers, merged into the build output
 - `src/app.html` — document shell (canonical/OG/JSON-LD metadata lives here)
-- `workers/site-backend/` — Cloudflare Worker (TypeScript) with `wrangler.jsonc` config
+- `workers/` — Cloudflare Workers (gateway + services, TypeScript). `workers/gateway/` is the public service `pwn4ge`; `workers/{health,components,viper,assets}/` are internal services reached via Service Bindings; `workers/shared/` holds shared modules (`cors.ts`, `commands.ts`, `rate-limit.ts`). Each worker has its own `wrangler.jsonc`.
 
 SSR gotcha: no `window`/`document` access during SSR. Guard browser-only code in `onMount` (see `src/lib/components/HeroCanvas.svelte`).
 
@@ -49,10 +49,14 @@ npm run build
 npx wrangler pages deploy .svelte-kit/cloudflare --project-name pwn4g3 --branch main
 ```
 
-Backend worker:
+Backend workers (deploy each in order — services before the gateway that binds them):
 
 ```sh
-npx wrangler deploy --config workers/site-backend/wrangler.jsonc --env production
+npx wrangler deploy --config workers/assets/wrangler.jsonc
+npx wrangler deploy --config workers/health/wrangler.jsonc
+npx wrangler deploy --config workers/components/wrangler.jsonc
+npx wrangler deploy --config workers/viper/wrangler.jsonc
+npx wrangler deploy --config workers/gateway/wrangler.jsonc
 ```
 
 Requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` env vars. GitHub Actions runs both jobs automatically on push to `main`.

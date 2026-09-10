@@ -9,7 +9,48 @@ interface BookingPayload {
 	details: string;
 }
 
-export const POST: RequestHandler = async ({ request, platform }) => {
+// Abuse guard: sending email costs money via Resend. Best-effort
+// per-isolate sliding window — 5 bookings / 10 min per client IP.
+const BOOKING_LIMIT = 5;
+const BOOKING_WINDOW_MS = 10 * 60_000;
+const bookingHits = new Map<string, number[]>();
+
+const getBookingIp = (request: Request, getClientAddress: () => string): string => {
+	try {
+		const direct = getClientAddress();
+		if (direct) return direct;
+	} catch {
+		// getClientAddress() throws during prerender / dev — fall through to headers.
+	}
+	return (
+		request.headers.get('cf-connecting-ip')?.trim() ||
+		request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+		'unknown'
+	);
+};
+
+const checkBookingLimit = (ip: string): number => {
+	const now = Date.now();
+	const cutoff = now - BOOKING_WINDOW_MS;
+	const hits = (globalThis as unknown as { __bookingHits?: Map<string, number[]> }).__bookingHits ?? bookingHits;
+	(globalThis as unknown as { __bookingHits?: Map<string, number[]> }).__bookingHits = hits;
+	const recent = (hits.get(ip) ?? []).filter((t) => t > cutoff);
+	if (recent.length >= BOOKING_LIMIT) {
+		const oldest = recent[0] ?? now;
+		hits.set(ip, recent);
+		return Math.max(1, Math.ceil((oldest + BOOKING_WINDOW_MS - now) / 1000));
+	}
+	recent.push(now);
+	hits.set(ip, recent);
+	return 0;
+};
+
+export const POST: RequestHandler = async ({ request, platform, getClientAddress }) => {
+	const retryAfter = checkBookingLimit(getBookingIp(request, getClientAddress));
+	if (retryAfter > 0) {
+		return json({ error: 'rate_limited', retry_after_seconds: retryAfter }, { status: 429, headers: { 'Retry-After': String(retryAfter) } });
+	}
+
 	let body: unknown;
 	try {
 		body = await request.json();

@@ -1,9 +1,17 @@
 import { jsonResponse, handleOptions, methodOr405 } from '../../shared/cors';
+import { rateLimitOr429 } from '../../shared/rate-limit';
 
 export default {
 	async fetch(request: Request): Promise<Response> {
 		const preflight = handleOptions(request);
 		if (preflight) return preflight;
+
+		const limited = rateLimitOr429(
+			request,
+			{ limit: 60, windowMs: 60_000, prefix: 'health' },
+			'health'
+		);
+		if (limited) return limited;
 
 		const url = new URL(request.url);
 

@@ -1,4 +1,5 @@
 import { jsonResponse, handleOptions } from '../../shared/cors';
+import { rateLimitOr429 } from '../../shared/rate-limit';
 
 const components = [
 	{ name: 'rust', contract: '/health', port: 4101 },
@@ -10,6 +11,13 @@ export default {
 	async fetch(request: Request): Promise<Response> {
 		const preflight = handleOptions(request);
 		if (preflight) return preflight;
+
+		const limited = rateLimitOr429(
+			request,
+			{ limit: 60, windowMs: 60_000, prefix: 'components' },
+			'components'
+		);
+		if (limited) return limited;
 
 		const url = new URL(request.url);
 

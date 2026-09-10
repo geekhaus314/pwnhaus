@@ -9,6 +9,7 @@
 
 	import { projects, projectFilters, type ProjectFilter } from '$lib/data/projects';
 	import { profile, capabilities, stack } from '$lib/data/profile';
+	import { assetUrl } from '$lib/config';
 	import type { Project } from '$lib/data/projects';
 
 	let activeProject = $state<Project | null>(null);
@@ -85,8 +86,8 @@
 		</div>
 		<div class="hero-photo-wrap">
 			<picture>
-				<source srcset="/geekhaus-self-1.avif" type="image/avif" />
-				<source srcset="/geekhaus-self-1.webp" type="image/webp" />
+				<source srcset={assetUrl('/geekhaus-self-1.avif')} type="image/avif" />
+				<source srcset={assetUrl('/geekhaus-self-1.webp')} type="image/webp" />
 				<img
 					src={profile.heroPhoto}
 					alt="Jake Viefhaus"
