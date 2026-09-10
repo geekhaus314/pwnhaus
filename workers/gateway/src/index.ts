@@ -32,7 +32,7 @@ export default {
 		if (pathname === '/') {
 			if (request.method !== 'GET') return jsonResponse({ error: 'method_not_allowed', route: 'root' }, 405);
 			return jsonResponse({
-				service: 'pwn4ge',
+				service: 'pwn4g3',
 				site: 'https://pwn4g3.pages.dev',
 				status: 'available',
 				architecture: 'gateway -> service bindings (health, components, viper, assets)',

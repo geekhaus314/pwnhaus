@@ -5,7 +5,7 @@
  * served from the `pwn4g3-assets` R2 bucket via the assets Worker, routed
  * through the gateway:
  *
- *   https://pwn4ge.geekhaus314.workers.dev/assets/*
+ *   https://pwn4g3.geekhaus314.workers.dev/assets/*
  *
  * Local `static/` files remain as dev fallbacks, but every `<img>`,
  * `<source>`, og:image, and resume link in production must go through
@@ -13,7 +13,7 @@
  * moves, change `ASSET_BASE` here only.
  */
 
-export const ASSET_BASE = 'https://pwn4ge.geekhaus314.workers.dev/assets';
+export const ASSET_BASE = 'https://pwn4g3.geekhaus314.workers.dev/assets';
 
 /** Prefix a root-relative media path (`/shots/x.png`) with the CDN origin. Absolute URLs pass through untouched. */
 export const assetUrl = (path: string): string => {

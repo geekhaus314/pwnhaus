@@ -23,15 +23,15 @@ export default {
 
 		if (url.pathname === '/api/components') {
 			if (request.method !== 'GET') return jsonResponse({ error: 'method_not_allowed', route: 'components' }, 405);
-			return jsonResponse({ service: 'pwn4ge-components', components });
+			return jsonResponse({ service: 'pwn4g3-components', components });
 		}
 
 		if (url.pathname === '/') {
 			if (request.method !== 'GET') return jsonResponse({ error: 'method_not_allowed', route: 'root' }, 405);
 			return jsonResponse({
-				service: 'pwn4ge-components',
+				service: 'pwn4g3-components',
 				endpoints: { components: 'GET /api/components' },
-				note: 'Internal service, reached via the pwn4ge gateway.'
+				note: 'Internal service, reached via the pwn4g3 gateway.'
 			});
 		}
 

@@ -253,7 +253,7 @@
 			<span class="section-kicker">Backend</span>
 			<div class="architecture-detail">
 				<span>Cloudflare Worker</span>
-				<strong>pwn4ge.geekhaus314.workers.dev</strong>
+				<strong>pwn4g3.geekhaus314.workers.dev</strong>
 				<p>TypeScript Worker exposing /health, /api/components, /api/viper-web3, and /api/viper-web3/analyze.</p>
 			</div>
 		</div>
