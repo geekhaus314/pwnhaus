@@ -1,0 +1,27 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "pwn4g3-scheduler",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-26",
+  "workers_dev": false,
+  "triggers": {
+    "crons": ["17 * * * *", "23 5 * * *", "41 6 * * 1"]
+  },
+  "vars": {
+    "GITHUB_REPO": "geekhaus314/pwnhaus"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pwn4g3-db",
+      "database_id": "797bd506-7e63-4786-b2e7-7b94884211c0",
+      "migrations_dir": "../migrations"
+    }
+  ],
+  "r2_buckets": [{ "binding": "ASSETS", "bucket_name": "pwn4g3-assets" }],
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.01 }
+  }
+}
