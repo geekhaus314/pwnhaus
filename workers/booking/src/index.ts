@@ -28,6 +28,7 @@ interface Env {
 	BOOKING_QUEUE: Queue<BookingMessage>;
 	TURNSTILE_SECRET_KEY?: string;
 	TURNSTILE_SITE_KEY?: string;
+	TURNSTILE_HOSTNAMES?: string;
 	RESEND_API_KEY?: string;
 	BOOKING_EMAIL: string;
 	BOOKING_FROM: string;
@@ -45,6 +46,9 @@ interface BookingMessage {
 
 interface TurnstileResult {
 	success: boolean;
+	hostname?: string;
+	action?: string;
+	challenge_ts?: string;
 	'error-codes'?: string[];
 }
 
@@ -85,6 +89,16 @@ const bounded = (value: unknown, max: number, fallback: string | null | undefine
 	if (typeof value !== 'string') return undefined;
 	return value.length > max ? undefined : value;
 };
+
+const EXPECTED_ACTION = 'booking';
+
+const turnstileHostnames = (env: Env): Set<string> =>
+	new Set(
+		(env.TURNSTILE_HOSTNAMES ?? '')
+			.split(',')
+			.map((h) => h.trim())
+			.filter(Boolean)
+	);
 
 const verifyTurnstile = async (secret: string, token: string, ip: string): Promise<TurnstileResult> => {
 	const form = new FormData();
@@ -141,7 +155,12 @@ export default {
 					envelope: '{ name: string, email: string, details: string, service?: string, timeline?: string, turnstileToken?: string }',
 					statusLookup: 'GET /api/booking?id=<uuid>',
 					limits: { postPer10MinPerIp: 5, maxBodyBytes: MAX_BODY_BYTES },
-					turnstile: { required: Boolean(env.TURNSTILE_SECRET_KEY), siteKey: env.TURNSTILE_SITE_KEY ?? null },
+					turnstile: {
+						required: Boolean(env.TURNSTILE_SECRET_KEY),
+						siteKey: env.TURNSTILE_SITE_KEY ?? null,
+						action: EXPECTED_ACTION,
+						hostnames: env.TURNSTILE_HOSTNAMES?.split(',').map((h) => h.trim()).filter(Boolean) ?? []
+					},
 					note: 'Internal service, reached via the pwn4g3 gateway.'
 				});
 			}
@@ -177,6 +196,7 @@ export default {
 			// Fail closed: without a server-side secret the pipeline must not accept
 			// mail submissions — otherwise the queue becomes a spam amplifier.
 			if (!env.TURNSTILE_SECRET_KEY) return fail('turnstile_not_configured', 503);
+			if (turnstileHostnames(env).size === 0) return fail('turnstile_not_configured', 503);
 			if (!turnstileToken) return fail('turnstile_token_required', 403);
 			let turnstile: TurnstileResult;
 			try {
@@ -184,7 +204,20 @@ export default {
 			} catch {
 				return fail('turnstile_unavailable', 502);
 			}
+			// invalid-input-secret = the deployed secret is wrong (config gap,
+			// page ops); everything else is a caller-side reject. Fail closed either way.
+			const codes = turnstile['error-codes'] ?? [];
+			if (!turnstile.success && codes.includes('invalid-input-secret')) {
+				return fail('turnstile_not_configured', 503);
+			}
 			if (!turnstile.success) return fail('turnstile_failed', 403);
+			// Canonical checks: expected action + the frontend hostname actually
+			// returned by siteverify must both match. Widget embeds must set
+			// data-action="booking" (see TASKS handoff for #31).
+			const hostnameOk = turnstile.hostname !== undefined && turnstileHostnames(env).has(turnstile.hostname);
+			if (turnstile.action !== EXPECTED_ACTION || !hostnameOk) {
+				return fail('turnstile_failed', 403);
+			}
 
 			const id = crypto.randomUUID();
 			const now = Date.now();

@@ -6,7 +6,9 @@
   "workers_dev": false,
   "vars": {
     "BOOKING_EMAIL": "geekhaus314@proton.me",
-    "BOOKING_FROM": "pwn4g3 <onboarding@resend.dev>"
+    "BOOKING_FROM": "pwn4g3 <onboarding@resend.dev>",
+    "TURNSTILE_SITE_KEY": "0x4AAAAAAEvVIYbOkrtAgamu",
+    "TURNSTILE_HOSTNAMES": "pwn4g3.pages.dev,pwn4g3.geekhaus314.workers.dev"
   },
   "d1_databases": [
     {
