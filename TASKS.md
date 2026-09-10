@@ -57,6 +57,34 @@ Two opencode agents are working on this repo in parallel. **Read this file first
 | 23 | Remove hero shot until new photo lands | `src/routes/+page.svelte` | jake | done |
 | 24 | Fix broken project screenshots (R2 404 on avif/webp) | `src/lib/components/ProjectCard.svelte`, `src/lib/components/ProjectModal.svelte` | jake | done |
 | 25 | Delete stale `pwnhaus-vercel/` local mirror dir (diverged, failing check, dead pwn4ge refs, contradicted Cloudflare-only #20) | `~/pwnhaus-vercel/` (untracked local dir, unpushed `feef9f7` discarded) | jake | done |
+
+## Round 2 pitch — "pwn4g3 Live Lab" (proposed by `jake`, 2026-09-10)
+
+**Vision:** stop showing screenshots *of* work and start showing work *itself*. Every client pitch in `docs/pitching.md` ("real deployments, not mockups", "live preview while I work") gets 10x stronger when the portfolio IS the demo: its own analytics, uptime monitoring, spam-proof booking pipeline, AI concierge, status page, and labs — all on Cloudflare's free tier. Nothing here costs a dollar; quotas verified against Cloudflare docs (Sep 2026) and designed to fit inside them.
+
+**Free-tier budget (verified, all reset daily unless noted):** Workers 100k req/day, 10ms CPU/req, 100 workers max, **5 cron triggers/account** · KV 100k reads + 1k writes/day, 1GB · D1 5M rows read + 100k rows written/day, 5GB · R2 10GB + 1M class-A + 10M class-B ops/mo, $0 egress · Queues 10k ops/day, 24h retention · Workers AI 10k neurons/day (**hard cap** on free — overage fails, so cache aggressively) · Pages 500 builds/mo, unlimited bandwidth · Vectorize is **paid-gated** per pricing page → RAG runs on D1 FTS5 instead (free, no doubt) until that changes.
+
+**Cron budget (3 of 5, reserve 2):** one `scheduler` worker with hourly (uptime probes) + daily (GitHub sync, rollups) + weekly (link scan, R2 integrity audit — the avif lesson, automated) triggers.
+
+**Contracts (Otis to ratify):** D1 schema owned by Otis (`telemetry_events`, `daily_rollups`, `uptime_checks`, `github_snapshot`, `bookings_log`, `guestbook`, `csp_reports`, `ask_cache`) · API envelope `{ok, data, error}` · `ASSET_BASE` untouched · per-endpoint rate budgets (ask: ≤5/day/IP + KV-cache-first to protect the neuron cap) · Turnstile keys in Pages + Worker env.
+
+| # | Proposal | Files | Owner | Status |
+|---|----------|-------|-------|--------|
+| 26 | D1 `pwn4g3-db` + telemetry v2 ingest (events, rollups) | `workers/migrations/*`, `workers/telemetry/*`, `workers/gateway/*` | Otis | pending |
+| 27 | `/stats` dashboard UI (hand-rolled SVG charts, no lib) | `src/routes/stats/*` | jake | pending |
+| 28 | `scheduler` worker: uptime probes (gateway + client sites), GitHub sync, link + R2 audits | `workers/scheduler/*` (new), backend workflow | Otis | pending |
+| 29 | `/status` page UI (uptime badges, incident history) | `src/routes/status/*` | jake | pending |
+| 30 | Booking via Queue + Turnstile verify + D1 log (retry semantics, Resend stays) | `workers/booking/*` (new), `workers/gateway/*` | Otis | pending |
+| 31 | Booking form Turnstile widget + queued-state UX | `src/lib/components/BookingForm.svelte` | jake | pending |
+| 32 | Ask-pwn4g3: D1 FTS5 retrieval + Workers AI answer + KV cache | `workers/ask/*` (new), `workers/gateway/*` | Otis | pending |
+| 33 | Ask-pwn4g3 chat UI (floating widget + dedicated route, cited sources) | `src/lib/components/AskWidget.svelte`, `src/routes/ask/*` | jake | pending |
+| 34 | Guestbook API + moderation queue | `workers/gateway/*`, D1 `guestbook` | Otis | pending |
+| 35 | Guestbook UI | `src/routes/guestbook/*` | jake | pending |
+| 36 | Labs microfrontend routing (`/labs/*` manifest + gateway map, shared tokens) | `workers/gateway/*`, `apps/*` | Otis | pending |
+| 37 | Labs index + shell pages | `src/routes/labs/*` | jake | pending |
+| 38 | CSP `report-uri` endpoint + weekly violation summary | `workers/gateway/*`, D1 `csp_reports`, scheduler | Otis | pending |
+
+**Suggested phase order (Otis picks the actual order — his turn to choose):** P1 observability (#28+#29: status page is the fastest sales win) → P2 data (#26+#27, #34+#35) → P3 money (#30+#31: booking is revenue-facing, Turnstile kills spam) → P4 wow (#32+#33 AI concierge, #36+#37 labs, #38). Nothing starts until both agents ack in the log; user gives the final go per phase.
 ## Notes / decisions
 
 - Booking emails go to `geekhaus314@proton.me` via Resend. Env vars needed on Cloudflare Pages: `RESEND_API_KEY`, `BOOKING_EMAIL`.
