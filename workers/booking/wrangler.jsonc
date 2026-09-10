@@ -1,0 +1,35 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "pwn4g3-booking",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-26",
+  "workers_dev": false,
+  "vars": {
+    "BOOKING_EMAIL": "geekhaus314@proton.me",
+    "BOOKING_FROM": "pwn4g3 <onboarding@resend.dev>"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pwn4g3-db",
+      "database_id": "797bd506-7e63-4786-b2e7-7b94884211c0",
+      "migrations_dir": "../migrations"
+    }
+  ],
+  "queues": {
+    "producers": [{ "binding": "BOOKING_QUEUE", "queue": "pwn4g3-booking" }],
+    "consumers": [
+      {
+        "queue": "pwn4g3-booking",
+        "dead_letter_queue": "pwn4g3-booking-dlq",
+        "max_retries": 3,
+        "retry_delay": 30
+      }
+    ]
+  },
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.01 }
+  }
+}
