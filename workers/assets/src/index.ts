@@ -11,7 +11,7 @@ const CORS = {
 const SAFE_CACHE = 'public, max-age=31536000, immutable';
 
 const notFound = (key: string): Response =>
-	new Response(JSON.stringify({ service: 'pwn4ge-assets', error: 'object_not_found', key }), {
+	new Response(JSON.stringify({ service: 'pwn4g3-assets', error: 'object_not_found', key }), {
 		status: 404,
 		headers: { 'Content-Type': 'application/json', ...CORS }
 	});

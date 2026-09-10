@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
-  "name": "pwn4ge-components",
+  "name": "pwn4g3-components",
   "main": "src/index.ts",
   "compatibility_date": "2026-08-26",
   "workers_dev": false

@@ -74,7 +74,7 @@ export default {
 				network: 'chain-agnostic',
 				endpoints: { analyze: 'POST /api/viper-web3/analyze', plan: 'POST /api/viper-web3/analyze?plan=1' },
 				disclaimer: 'Heuristic triage only; run Foundry, Slither, Mythril, and human review for an audit.',
-				note: 'Internal service, reached via the pwn4ge gateway.'
+				note: 'Internal service, reached via the pwn4g3 gateway.'
 			});
 		}
 

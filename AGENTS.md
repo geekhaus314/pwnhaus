@@ -4,7 +4,7 @@ Two opencode agents work on this repo in parallel. **Read `TASKS.md` first** and
 
 ## Project
 
-SvelteKit 5 + Svelte 5 portfolio (`pwn4g3`). Static+SSR frontend deployed to Cloudflare Pages (`pwn4g3.pages.dev`) via `@sveltejs/adapter-cloudflare`; backend is a Cloudflare Worker (`pwn4ge` at `pwn4ge.geekhaus314.workers.dev`).
+SvelteKit 5 + Svelte 5 portfolio (`pwn4g3`). Static+SSR frontend deployed to Cloudflare Pages (`pwn4g3.pages.dev`) via `@sveltejs/adapter-cloudflare`; backend is a Cloudflare Worker (`pwn4g3` at `pwn4g3.geekhaus314.workers.dev`).
 
 ## Development
 
@@ -36,7 +36,7 @@ npm run check      # svelte-kit sync + svelte-check (type + a11y + diagnostics)
 - `static/` — static assets served at root (`shots/`, hero photos, favicon, `sw.js`, `manifest.webmanifest`). Does NOT include `_headers` (that lives at the repo root — adapter-cloudflare fails the build if placed in `static/`)
 - `_headers` (repo root) — Cloudflare Pages security headers, merged into the build output
 - `src/app.html` — document shell (canonical/OG/JSON-LD metadata lives here)
-- `workers/` — Cloudflare Workers (gateway + services, TypeScript). `workers/gateway/` is the public service `pwn4ge`; `workers/{health,components,viper,assets}/` are internal services reached via Service Bindings; `workers/shared/` holds shared modules (`cors.ts`, `commands.ts`, `rate-limit.ts`). Each worker has its own `wrangler.jsonc`.
+- `workers/` — Cloudflare Workers (gateway + services, TypeScript). `workers/gateway/` is the public service `pwn4g3`; `workers/{health,components,viper,assets}/` are internal services reached via Service Bindings; `workers/shared/` holds shared modules (`cors.ts`, `commands.ts`, `rate-limit.ts`). Each worker has its own `wrangler.jsonc`.
 
 SSR gotcha: no `window`/`document` access during SSR. Guard browser-only code in `onMount` (see `src/lib/components/HeroCanvas.svelte`).
 

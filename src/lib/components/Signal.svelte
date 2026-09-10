@@ -3,7 +3,7 @@
 
 	type Status = 'checking' | 'online' | 'offline';
 
-	const WORKER_HEALTH = 'https://pwn4ge.geekhaus314.workers.dev/health';
+	const WORKER_HEALTH = 'https://pwn4g3.geekhaus314.workers.dev/health';
 	const BASE_INTERVAL_MS = 30_000;
 	const MAX_INTERVAL_MS = 5 * 60_000;
 	const RETRY_BACKOFF_MS = 2_000;

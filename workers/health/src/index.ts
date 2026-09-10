@@ -18,15 +18,15 @@ export default {
 		if (url.pathname === '/health') {
 			const denied = methodOr405(request, 'GET', 'health');
 			if (denied) return denied;
-			return jsonResponse({ service: 'pwn4ge-health', status: 'ok', storage: 'static' });
+			return jsonResponse({ service: 'pwn4g3-health', status: 'ok', storage: 'static' });
 		}
 
 		if (url.pathname === '/') {
 			if (request.method !== 'GET') return jsonResponse({ error: 'method_not_allowed', route: 'root' }, 405);
 			return jsonResponse({
-				service: 'pwn4ge-health',
+				service: 'pwn4g3-health',
 				endpoint: 'GET /health',
-				note: 'Internal service, reached via the pwn4ge gateway.'
+				note: 'Internal service, reached via the pwn4g3 gateway.'
 			});
 		}
 
