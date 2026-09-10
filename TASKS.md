@@ -51,6 +51,7 @@ Two opencode agents are working on this repo in parallel. **Read this file first
 | 17 | R2 media/CDN migration: bucket `pwn4g3-assets`, ASSET_BASE config, move shots/og to R2, CORS | `src/lib/config.ts` (new), `src/lib/data/projects.ts`, `src/lib/data/profile.ts`, `src/routes/+page.svelte`, `src/app.html` (og:image/twitter:image URL only), `static/shots/*`, `.github/workflows/*` | Otis | done |
 | 18 | Cleanup round 2: dead static dupes + bogus install_go.sh + stale build config | `install_go.sh` (delete), `static/projects/*` (delete 7), `static/shots/angie-site.*` (delete 3), `static/geekhaus-self-{2,3}.*` (delete 6), `static/icons.svg` (delete), `vite.config.ts` (drop overridden outDir), `.github/workflows/deploy-cloudflare-backend.yml` (drop dead path), `AGENTS.md` (site-backend refs) | Otis | done |
 | 19 | Fix CSP script-src blocking SvelteKit hydration bootstrap (dead themes/modals on live) | `_headers` | Otis | done |
+| 20 | Silence stale Vercel project auto-builds (Cloudflare-only repo) | `vercel.json` (new, `ignoreCommand: exit 0`) | Otis | in_progress |
 ## Notes / decisions
 
 - Booking emails go to `geekhaus314@proton.me` via Resend. Env vars needed on Cloudflare Pages: `RESEND_API_KEY`, `BOOKING_EMAIL`.
