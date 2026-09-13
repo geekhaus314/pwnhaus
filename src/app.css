@@ -854,3 +854,241 @@ html.js .reveal.revealed {
 	}
 	html.js .reveal { opacity: 1; transform: none; }
 }
+
+/* ============================================================
+   #44 BRUTALIST REBRAND — hire-instantly layer
+   Thick borders, hard offset shadows, boxed kickers, ticker,
+   proof bar, stickers. All color via theme vars so the theme
+   switcher keeps working on every theme.
+   ============================================================ */
+:root {
+	--hard-shadow: 6px 6px 0 var(--accent);
+	--hard-shadow-sm: 4px 4px 0 var(--accent);
+	--hard-shadow-ink: 4px 4px 0 var(--ink);
+}
+
+/* Boxed section kickers — instant scanability for recruiters */
+.section-kicker {
+	display: inline-block;
+	border: 1px solid var(--accent);
+	background: var(--accent-soft);
+	padding: 0.35rem 0.7rem;
+	color: var(--ink);
+}
+
+/* Sticker badge — rotated, loud, used for availability */
+.sticker {
+	display: inline-block;
+	background: var(--accent);
+	color: #fff;
+	border: 2px solid var(--ink);
+	box-shadow: var(--hard-shadow-ink);
+	padding: 0.5rem 1rem;
+	font: 700 0.72rem var(--font-mono);
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	transform: rotate(-2deg);
+}
+
+/* Brutalist buttons — hard shadow, press-down on click */
+.button.brutal {
+	border: 2px solid var(--ink);
+	box-shadow: var(--hard-shadow-sm);
+}
+.button.brutal:hover {
+	transform: translate(-2px, -2px);
+	box-shadow: var(--hard-shadow);
+}
+.button.brutal:active {
+	transform: translate(2px, 2px);
+	box-shadow: 0 0 0 var(--accent);
+}
+
+/* Nav CTA goes brutal — the single most-clicked element */
+.nav-cta {
+	border: 2px solid var(--ink);
+	background: var(--accent);
+	color: #fff !important;
+	padding: 0.55rem 1rem !important;
+	box-shadow: 3px 3px 0 var(--ink);
+	transition: 0.15s;
+}
+.nav-cta:hover {
+	transform: translate(-1px, -1px);
+	box-shadow: 4px 4px 0 var(--ink);
+}
+
+/* Giant hero subline with outlined word */
+.hero-giant {
+	margin: 0.5rem 0 0;
+	font-family: var(--font-sans);
+	font-weight: 800;
+	font-size: clamp(2rem, 5vw, 4.5rem);
+	line-height: 0.95;
+	letter-spacing: -0.04em;
+	text-transform: uppercase;
+}
+.outline-text { color: var(--ink); }
+@supports ((-webkit-text-stroke: 1px black)) {
+	.outline-text {
+		color: transparent;
+		-webkit-text-stroke: 2px var(--ink);
+	}
+}
+
+/* Hero proof chips — evidence above the fold */
+.hero-proof {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.6rem;
+	margin-top: 1.75rem;
+	list-style: none;
+	padding: 0;
+}
+.hero-proof li {
+	border: 1px solid rgba(236, 231, 224, 0.2);
+	background: rgba(8, 10, 13, 0.7);
+	padding: 0.5rem 0.8rem;
+	font: 600 0.65rem var(--font-mono);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--ink);
+}
+.hero-proof li b { color: var(--accent-bright); }
+
+/* Availability pulse in hero meta */
+.hero-meta .avail { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--ink); }
+.hero-meta .avail i {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #35d07f;
+	box-shadow: 0 0 12px #35d07f;
+	animation: avail-pulse 2s ease-in-out infinite;
+}
+@keyframes avail-pulse { 50% { opacity: 0.45; } }
+
+/* Ticker strip — marquee divider between hero and proof */
+.ticker {
+	border-top: 2px solid var(--ink);
+	border-bottom: 2px solid var(--ink);
+	background: var(--accent);
+	color: #fff;
+	overflow: hidden;
+	white-space: nowrap;
+	padding: 0.7rem 0;
+	position: relative;
+	z-index: 1;
+}
+.ticker-track {
+	display: inline-flex;
+	gap: 0;
+	width: max-content;
+	animation: ticker-scroll 26s linear infinite;
+}
+.ticker-track span {
+	font: 700 0.8rem var(--font-mono);
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	padding-right: 2.5rem;
+}
+@keyframes ticker-scroll { to { transform: translateX(-50%); } }
+
+/* Proof bar — the numbers that get interviews */
+.proof-bar {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	border: 2px solid var(--ink);
+	background: var(--surface);
+	box-shadow: var(--hard-shadow);
+}
+.proof-cell {
+	padding: 1.75rem 1.5rem;
+	border-right: 2px solid var(--ink);
+}
+.proof-cell:last-child { border-right: 0; }
+.proof-num {
+	display: block;
+	font: 500 clamp(2.4rem, 4vw, 3.8rem)/1 var(--font-serif);
+	color: var(--ink);
+}
+.proof-num em { font-style: normal; color: var(--accent); }
+.proof-label {
+	display: block;
+	margin-top: 0.6rem;
+	font: 600 0.62rem var(--font-mono);
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+/* Hire strip — three reasons, zero fluff */
+.hire-strip {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1rem;
+	margin-top: 3rem;
+}
+.hire-card {
+	border: 2px solid var(--ink);
+	background: var(--surface);
+	padding: 1.5rem;
+	position: relative;
+}
+.hire-card:nth-child(2) { transform: rotate(0.6deg); }
+.hire-card:nth-child(3) { transform: rotate(-0.6deg); }
+.hire-card > span {
+	font: 700 0.65rem var(--font-mono);
+	color: var(--accent-bright);
+	letter-spacing: 0.15em;
+}
+.hire-card h3 { font-size: 1.6rem; margin: 0.7rem 0 0.5rem; }
+.hire-card p { margin: 0; color: var(--muted); font-size: 0.85rem; line-height: 1.65; }
+
+/* Project cards go brutal — thick frame, slam shadow on hover */
+.project-card { border-width: 2px; }
+.project-card:hover {
+	border-color: var(--ink);
+	box-shadow: 8px 8px 0 var(--accent);
+	transform: translate(-2px, -2px);
+}
+.live-badge {
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	z-index: 2;
+	background: var(--accent);
+	color: #fff;
+	border: 1px solid rgba(255, 255, 255, 0.65);
+	padding: 0.3rem 0.6rem;
+	font: 700 0.6rem var(--font-mono);
+	letter-spacing: 0.12em;
+}
+.project-media { border-bottom: 2px solid var(--ink); }
+
+/* Freelance service chips in career section */
+.service-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin-top: 1rem;
+	list-style: none;
+	padding: 0;
+}
+.service-chips li {
+	border: 1px solid var(--accent);
+	padding: 0.45rem 0.75rem;
+	font: 600 0.62rem var(--font-mono);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--ink);
+}
+
+@media (max-width: 900px) {
+	.proof-bar { grid-template-columns: 1fr 1fr; }
+	.proof-cell:nth-child(2) { border-right: 0; }
+	.proof-cell:nth-child(1), .proof-cell:nth-child(2) { border-bottom: 2px solid var(--ink); }
+	.hire-strip { grid-template-columns: 1fr; }
+	.hire-card:nth-child(2), .hire-card:nth-child(3) { transform: none; }
+	.hero-giant { font-size: clamp(1.8rem, 9vw, 2.6rem); }
+}

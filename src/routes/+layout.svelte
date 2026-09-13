@@ -73,7 +73,7 @@
 </script>
 
 <svelte:head>
-	<title>pwn4g3 — Software + Security Engineering</title>
+	<title>Jake Viefhaus (pwn4g3) — Full-Stack Developer for Hire</title>
 	<link rel="canonical" href={data.canonical} />
 </svelte:head>
 
