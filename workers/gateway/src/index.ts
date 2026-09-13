@@ -7,6 +7,7 @@ interface Env {
 	VIPER_SERVICE: { fetch(request: Request): Promise<Response> };
 	ASSETS_SERVICE: { fetch(request: Request): Promise<Response> };
 	BOOKING_SERVICE: { fetch(request: Request): Promise<Response> };
+	NOTIFY_SERVICE: { fetch(request: Request): Promise<Response> };
 	TELEMETRY_SERVICE: { fetch(request: Request): Promise<Response> };
 	PWN4G3_ASSETS_URL?: string;
 }
@@ -31,6 +32,7 @@ export default {
 		if (route(pathname, '/api/viper-web3')) return env.VIPER_SERVICE.fetch(request);
 		if (route(pathname, '/api/telemetry')) return env.TELEMETRY_SERVICE.fetch(request);
 		if (route(pathname, '/api/booking')) return env.BOOKING_SERVICE.fetch(request);
+		if (route(pathname, '/api/notify')) return env.NOTIFY_SERVICE.fetch(request);
 		if (pathname.startsWith('/assets/')) return env.ASSETS_SERVICE.fetch(request);
 
 		if (pathname === '/') {
@@ -39,7 +41,7 @@ export default {
 				service: 'pwn4g3',
 				site: 'https://pwn4g3.pages.dev',
 				status: 'available',
-				architecture: 'gateway -> service bindings (health, components, viper, assets, booking, telemetry)',
+				architecture: 'gateway -> service bindings (health, components, viper, assets, booking, telemetry, notify)',
 				assets: env.PWN4G3_ASSETS_URL ?? null,
 				endpoints: {
 					health: 'GET /health',
@@ -49,6 +51,7 @@ export default {
 					plan: 'POST /api/viper-web3/analyze  { "source": "...", "plan": true }',
 					telemetry: 'POST /api/telemetry  { "service": "...", "event": "..." }',
 					booking: 'POST /api/booking  { name, email, details, service?, timeline?, turnstileToken? }',
+					notify: 'POST /api/notify  { message, url?, channels? } (admin bearer)',
 					assets: 'GET /assets/*  (R2 bucket pwn4g3-assets)'
 				}
 			});

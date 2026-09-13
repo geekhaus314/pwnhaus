@@ -13,6 +13,7 @@
     { "binding": "VIPER_SERVICE", "service": "pwn4g3-viper" },
     { "binding": "ASSETS_SERVICE", "service": "pwn4g3-assets" },
     { "binding": "BOOKING_SERVICE", "service": "pwn4g3-booking" },
+    { "binding": "NOTIFY_SERVICE", "service": "pwn4g3-notify" },
     { "binding": "TELEMETRY_SERVICE", "service": "pwn4g3-telemetry" }
   ]
 }
