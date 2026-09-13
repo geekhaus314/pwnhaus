@@ -22,8 +22,8 @@
 </script>
 
 <svelte:head>
-	<title>pwn4g3 — Software + Security Engineering</title>
-	<meta name="description" content="pwn4g3 — full-stack development and security engineering by Jake Viefhaus. Web applications, APIs, automation, AI systems, infrastructure." />
+	<title>Jake Viefhaus (pwn4g3) — Full-Stack Developer for Hire</title>
+	<meta name="description" content="Hire Jake Viefhaus (pwn4g3): full-stack developer in St. Louis shipping production web apps, frontends, APIs, and edge infrastructure. Live client work, 24h response, freelance bookings open." />
 </svelte:head>
 
 <!-- ═══════════════════════════════════════════════════════
@@ -37,8 +37,7 @@
 <section id="top" class="hero">
 	<div class="hero-copy">
 		<p class="eyebrow">
-			<i aria-hidden="true"></i>
-			Full-Stack Developer · St. Louis, MO
+			<span class="sticker">Open to work — replies in 24h</span>
 		</p>
 
 		<div class="mono-tag">
@@ -48,21 +47,26 @@
 		</div>
 
 		<h1>pwn<em>4g3</em></h1>
+		<p class="hero-giant">Ships full-stack <span class="outline-text">apps</span></p>
 
-		<p class="hero-lede">{profile.summary}</p>
+		<p class="hero-lede">I'm Jake Viefhaus, a full-stack developer in St. Louis. I build production web apps — frontend, APIs, edge infrastructure — for employers and freelance clients. Live sites below, not mockups.</p>
 
 		<div class="hero-actions">
-			<a href="#booking" class="button primary">Book a project <span>→</span></a>
-			<a href="#portfolio" class="button ghost">See my work <span>→</span></a>
-			<a href={profile.github} target="_blank" rel="noopener noreferrer" class="button ghost">
-				GitHub <span>↗</span>
-			</a>
+			<a href="mailto:{profile.email}?subject=Hiring%20inquiry%20—%20pwn4g3" class="button primary brutal">Hire me <span>→</span></a>
+			<a href="#portfolio" class="button ghost brutal">See live work <span>→</span></a>
+			<a href="#booking" class="button ghost brutal">Book a project <span>→</span></a>
 		</div>
 
+		<ul class="hero-proof" aria-label="Hiring highlights">
+			<li><b>3</b> production sites live</li>
+			<li><b>20</b> tech stack</li>
+			<li><b>3.9</b> GPA · CS / Cybersecurity</li>
+		</ul>
+
 		<div class="hero-meta">
-			<span>St. Louis, MO</span>
-			<span>Full-Stack · Security</span>
-			<span>Open to work</span>
+			<span class="avail"><i aria-hidden="true"></i>Open to work</span>
+			<span>Full-Stack · Frontend · Security</span>
+			<span>St. Louis, MO · Remote OK</span>
 		</div>
 	</div>
 
@@ -71,6 +75,58 @@
 		<span class="hero-code" aria-hidden="true">0x</span>
 		<div class="orbit orbit-a" aria-hidden="true"></div>
 		<div class="orbit orbit-b" aria-hidden="true"></div>
+	</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     TICKER
+════════════════════════════════════════════════════════ -->
+<div class="ticker" aria-hidden="true">
+	<div class="ticker-track">
+		<span>Full-stack ✦ Frontend ✦ APIs ✦ Edge infra ✦ Live sites ✦ Freelance ✦&nbsp;</span>
+		<span>Full-stack ✦ Frontend ✦ APIs ✦ Edge infra ✦ Live sites ✦ Freelance ✦&nbsp;</span>
+	</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PROOF BAR — the numbers that get interviews
+════════════════════════════════════════════════════════ -->
+<section class="section" aria-label="Proof" style="padding-top: 4rem; padding-bottom: 0;">
+	<div class="proof-bar reveal">
+		<div class="proof-cell">
+			<span class="proof-num">03<em>.</em></span>
+			<span class="proof-label">Production sites live</span>
+		</div>
+		<div class="proof-cell">
+			<span class="proof-num">03<em>.</em></span>
+			<span class="proof-label">Client sites shipped</span>
+		</div>
+		<div class="proof-cell">
+			<span class="proof-num">20<em>+</em></span>
+			<span class="proof-label">Technologies in stack</span>
+		</div>
+		<div class="proof-cell">
+			<span class="proof-num">24<em>h</em></span>
+			<span class="proof-label">Response time, guaranteed</span>
+		</div>
+	</div>
+
+	<div class="hire-strip">
+		<div class="hire-card reveal">
+			<span>01 / SHIPS</span>
+			<h3>Production, not tutorials</h3>
+			<p>Real domains, real traffic, real clients — e-commerce, clinic sites, portfolios. Every project below runs somewhere you can click.</p>
+		</div>
+		<div class="hire-card reveal">
+			<span>02 / OWNS</span>
+			<h3>Frontend to edge</h3>
+			<p>One hire covering UI, APIs, databases, CI/CD, and Cloudflare edge ops. No handoffs, no gaps, no "that's someone else's layer."</p>
+		</div>
+		<div class="hire-card reveal">
+			<span>03 / HARDENS</span>
+			<h3>Security-minded by default</h3>
+			<p>Cybersecurity engineering student (3.9 GPA) doing bug-bounty recon and audits. Your app ships hardened, not hopeful.</p>
+		</div>
 	</div>
 </section>
 
@@ -123,9 +179,9 @@
 	<div class="section-heading reveal">
 		<div>
 			<span class="section-kicker">002 / Portfolio</span>
-			<h2>Selected <em>work</em></h2>
+			<h2>Live work, <em>not mockups</em></h2>
 		</div>
-		<p>Click any card to see the full breakdown and screenshots.</p>
+		<p>Every card with a <strong>● LIVE</strong> badge is running in production right now. Click any card for the full breakdown and screenshots.</p>
 	</div>
 
 	<div class="filters reveal" role="group" aria-label="Filter projects">
@@ -271,9 +327,9 @@
 	<div class="section-heading reveal">
 		<div>
 			<span class="section-kicker">007 / Career</span>
-			<h2>For <em>recruiters</em></h2>
+			<h2>Hire <em>me</em></h2>
 		</div>
-		<p>My goal, my standing, and my resume — for hiring managers and talent teams.</p>
+		<p>Full-stack and frontend roles, part-time IT and security work, and freelance builds. One email starts it — I reply within 24 hours.</p>
 	</div>
 
 	<div class="career-grid">
@@ -288,12 +344,17 @@
 				href={profile.resumeUrl}
 				target="_blank"
 				rel="noopener noreferrer"
-				class="button primary"
+				class="button primary brutal"
 			>
 				Download resume (PDF) →
 			</a>
 		</div>
 	</div>
+	<ul class="service-chips reveal" aria-label="Freelance services">
+		{#each ['Full-stack builds', 'Frontend / redesigns', 'APIs', 'Automation', 'SEO / data', 'Security hardening'] as service}
+			<li>{service}</li>
+		{/each}
+	</ul>
 </section>
 
 <!-- ═══════════════════════════════════════════════════════
@@ -303,7 +364,7 @@
 	<div class="section-heading reveal" style="text-align: center; display: block;">
 		<span class="section-kicker">008 / Book</span>
 		<h2>Book a <em>project</em></h2>
-		<p>Tell me what you need — I'll get back to you within a day.</p>
+		<p>Freelance builds, redesigns, APIs, automation. Tell me what you need — fixed scope, clear timeline, reply within 24 hours.</p>
 	</div>
 	<div class="reveal">
 		<BookingForm />

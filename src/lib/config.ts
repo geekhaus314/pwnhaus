@@ -28,3 +28,12 @@ export const shotUrl = (filename: string): string =>
 
 export const OG_IMAGE_URL = assetUrl('/og.png');
 export const RESUME_URL = assetUrl('/resume.pdf');
+
+/**
+ * Public gateway origin (booking ingest, health, telemetry…).
+ * Booking posts here (#31) so the queue + Turnstile + D1 ledger
+ * pipeline handles mail — the SvelteKit /api/booking endpoint stays
+ * deployed as a fallback but the form no longer uses it.
+ */
+export const GATEWAY_BASE = 'https://pwn4g3.geekhaus314.workers.dev';
+export const BOOKING_API_URL = `${GATEWAY_BASE}/api/booking`;

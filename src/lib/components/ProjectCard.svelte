@@ -8,6 +8,10 @@
 
 	let { project, onopen }: Props = $props();
 
+	// #44: "live work, not mockups" — badge real deployments only
+	// (repo-only URLs on github.com don't count as shipped sites).
+	const isLive = $derived(!!project.url && !project.url.includes('github.com'));
+
 	// NOTE (#23): R2 currently serves only the PNG originals — the .avif/.webp
 	// variants were never mirrored (404). <picture> picks the first supported
 	// <source> and does NOT fall back to <img> when it 404s, so derive modern
@@ -24,6 +28,7 @@
 	aria-label="View details for {project.name}"
 >
 	<div class="project-media">
+		{#if isLive}<span class="live-badge">● LIVE</span>{/if}
 		{#if project.images[0]}
 			<picture>
 				<source srcset={avifSrc(project.images[0])} type="image/avif" />
