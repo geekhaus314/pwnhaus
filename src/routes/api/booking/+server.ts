@@ -71,7 +71,10 @@ export const POST: RequestHandler = async ({ request, platform, getClientAddress
 		return json({ error: 'input_too_long' }, { status: 422 });
 	}
 
-	const env = (platform?.env ?? {}) as {
+	const env = {
+		...((typeof process !== 'undefined' ? process.env : {}) as Record<string, string | undefined>),
+		...((platform?.env ?? {}) as Record<string, string | undefined>)
+	} as {
 		RESEND_API_KEY?: string;
 		BOOKING_EMAIL?: string;
 		BOOKING_FROM?: string;

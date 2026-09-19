@@ -17,8 +17,8 @@
 			: $page.error?.message ?? 'Something went wrong while rendering this page.'}
 	</p>
 	<div class="hero-actions">
-		<a href="/#top" class="button primary">Back to home <span>→</span></a>
-		<a href="/#booking" class="button ghost">Book a project <span>→</span></a>
+		<a href="/" class="button primary">Back to home <span>→</span></a>
+		<a href="/book" class="button ghost">Book a project <span>→</span></a>
 	</div>
 	<p class="meta">
 		<a href={profile.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>

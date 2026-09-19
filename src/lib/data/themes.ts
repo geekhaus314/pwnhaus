@@ -1,13 +1,16 @@
 export interface ThemeDefinition {
 	label: string;
 	description: string;
+	/** 'dark' | 'light' — applied to color-scheme + theme-color meta */
+	scheme: 'dark' | 'light';
 	variables: Record<string, string>;
 }
 
 export const themes: Record<string, ThemeDefinition> = {
 	nocturne: {
 		label: 'Nocturne',
-		description: 'deep graphite, signal crimson, and editorial contrast',
+		description: 'Editorial dark — serif display, crimson signal, soft pills',
+		scheme: 'dark',
 		variables: {
 			accent: '#a51d37',
 			'accent-bright': '#e33d5c',
@@ -25,12 +28,23 @@ export const themes: Record<string, ThemeDefinition> = {
 			warn: '#e5a63d',
 			crit: '#e5484d',
 			line: 'rgba(236,231,224,.09)',
-			card: '#0b0d10'
+			card: '#0b0d10',
+			// look — sans display + serif section heads, soft pills
+			'font-heading': "'Cormorant Garamond', Georgia, serif",
+			'font-body': 'Inter, system-ui, sans-serif',
+			'heading-case': 'none',
+			'heading-spacing': '-0.03em',
+			'heading-style': 'italic',
+			'font-display': 'Inter, system-ui, sans-serif',
+			'display-weight': '800',
+			radius: '14px',
+			'radius-sm': '9px'
 		}
 	},
 	matrix: {
 		label: 'Matrix',
-		description: 'phosphor green, black glass, and diagnostic scanlines',
+		description: 'Terminal mode — full mono, sharp corners, scanlines',
+		scheme: 'dark',
 		variables: {
 			accent: '#35d07f',
 			'accent-bright': '#8affb8',
@@ -48,12 +62,23 @@ export const themes: Record<string, ThemeDefinition> = {
 			warn: '#e5c53d',
 			crit: '#ff5f56',
 			line: 'rgba(225,247,233,.1)',
-			card: '#081009'
+			card: '#081009',
+			// look — everything monospace, uppercase, razor corners
+			'font-heading': "'IBM Plex Mono', ui-monospace, monospace",
+			'font-body': "'IBM Plex Mono', ui-monospace, monospace",
+			'heading-case': 'uppercase',
+			'heading-spacing': '0.04em',
+			'heading-style': 'normal',
+			'font-display': "'IBM Plex Mono', ui-monospace, monospace",
+			'display-weight': '700',
+			radius: '3px',
+			'radius-sm': '2px'
 		}
 	},
 	cyan: {
 		label: 'Cyan Field',
-		description: 'cold blue light, technical glass, and high-visibility edges',
+		description: 'Glass console — geometric sans, soft bubbles, glow',
+		scheme: 'dark',
 		variables: {
 			accent: '#16b7d8',
 			'accent-bright': '#73edff',
@@ -71,15 +96,26 @@ export const themes: Record<string, ThemeDefinition> = {
 			warn: '#f0b429',
 			crit: '#ff5f56',
 			line: 'rgba(229,249,252,.1)',
-			card: '#08121a'
+			card: '#08121a',
+			// look — geometric sans display, extra-soft glass bubbles
+			'font-heading': 'Inter, system-ui, sans-serif',
+			'font-body': 'Inter, system-ui, sans-serif',
+			'heading-case': 'none',
+			'heading-spacing': '-0.045em',
+			'heading-style': 'normal',
+			'font-display': 'Inter, system-ui, sans-serif',
+			'display-weight': '800',
+			radius: '22px',
+			'radius-sm': '14px'
 		}
 	},
 	paper: {
 		label: 'Paper',
-		description: 'warm off-white, ink black, and red annotation marks',
+		description: 'Composition notebook — ruled blue lines, red margin, torn tape, doodles',
+		scheme: 'light',
 		variables: {
 			accent: '#b52b35',
-			'accent-bright': '#e35b5f',
+			'accent-bright': '#8f1d27',
 			'accent-soft': 'rgba(181,43,53,.16)',
 			page: '#e8e3d8',
 			surface: '#f0ece3',
@@ -94,7 +130,17 @@ export const themes: Record<string, ThemeDefinition> = {
 			warn: '#a96a12',
 			crit: '#c22f36',
 			line: 'rgba(23,23,23,.12)',
-			card: '#f2eee5'
+			card: '#f2eee5',
+			// look — print serif, sharp ink corners
+			'font-heading': "'Cormorant Garamond', Georgia, serif",
+			'font-body': "'Cormorant Garamond', Georgia, serif",
+			'heading-case': 'none',
+			'heading-spacing': '-0.01em',
+			'heading-style': 'normal',
+			'font-display': "'Cormorant Garamond', Georgia, serif",
+			'display-weight': '600',
+			radius: '2px',
+			'radius-sm': '2px'
 		}
 	}
 };

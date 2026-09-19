@@ -12,8 +12,8 @@
 	<h1>Not <em>found</em></h1>
 	<p class="lede">The page you're looking for doesn't exist — or it moved.</p>
 	<div class="hero-actions">
-		<a href="/#top" class="button primary">Back to home <span>→</span></a>
-		<a href="/#booking" class="button ghost">Book a project <span>→</span></a>
+		<a href="/" class="button primary">Back to home <span>→</span></a>
+		<a href="/book" class="button ghost">Book a project <span>→</span></a>
 	</div>
 	<p class="meta">
 		<a href={profile.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>

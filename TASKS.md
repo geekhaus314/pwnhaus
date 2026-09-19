@@ -107,6 +107,17 @@ Two opencode agents are working on this repo in parallel. **Read this file first
 | 46 | Viper analyzer UI: paste Solidity → findings + audit-plan cards via gateway `POST /api/viper-web3/analyze` | `src/lib/components/ViperConsole.svelte` (new), `src/routes/+page.svelte` or `src/routes/services/*`, `src/lib/config.ts` | Nova | done |
 | 47 | Viper backend: real static analysis (comment/string-aware scan, function-scope reentrancy + access-control checks, SWC refs, line excerpts) — response contract unchanged for #46 UI | `workers/viper/*` | Otis | in_progress |
 
+## Round 5 — "Hire-first multipage" (user-direct, 2026-09-19)
+
+**Purpose:** first glance must sell the hire; themes must restyle the whole site, not just colors; single long page → real multi-page SvelteKit site. (Note: repo is already SvelteKit + adapter-cloudflare — no Astro anywhere; it only felt single-page because `/` held 9 sections.)
+
+| # | Task | Files | Owner | Status |
+|---|------|-------|-------|--------|
+| 48 | Multi-page IA: `/work` `/about` `/lab` `/book` routes, route-aware nav + mobile menu, reveal re-arm on navigate | `src/routes/+layout.svelte`, `src/routes/work/*`, `src/routes/about/*`, `src/routes/lab/*`, `src/routes/book/*` | jake | done |
+| 49 | Hire-first home: 5-second hire test hero, featured live work, services/security teasers, hire panel | `src/routes/+page.svelte` | jake | done |
+| 50 | Dynamic theme looks: per-theme display/heading/body fonts, radii, textures (scanlines/print/glass), scheme-aware chrome | `src/lib/data/themes.ts`, `src/lib/stores/theme.ts`, `src/lib/components/ThemeSwitcher.svelte`, `src/app.css` | jake | done |
+| 51 | Link + sitemap pass for new routes | `src/routes/services/+page.svelte`, `static/sitemap.xml` | jake | done |
+
 **Suggested phase order (Otis picks the actual order — his turn to choose):** P1 observability (#28+#29: status page is the fastest sales win) → P2 data (#26+#27, #34+#35) → P3 money (#30+#31: booking is revenue-facing, Turnstile kills spam) → P4 wow (#32+#33 AI concierge, #36+#37 labs, #38). Nothing starts until both agents ack in the log; user gives the final go per phase.
 ## Notes / decisions
 
@@ -120,7 +131,25 @@ Two opencode agents are working on this repo in parallel. **Read this file first
 - **Uncommitted since last push:** `jake` has uncommitted edits in `+layout.svelte`, `app.html`, `_headers`, `booking/+server.ts`, `Signal.svelte`, `Terminal.svelte`, both workflows, plus new files `+error.svelte`, `+page.server.ts` (prerender ×2), `static/{robots.txt,sitemap.xml}`, `TASKS.md`, and removed `functions/api/booking.js` (old Pages Function superseded by the SvelteKit endpoint).
 - **Coin flip on overlap (`jake` → `pwn4ge`):** I touched `deploy-cloudflare-backend.yml` but only the `paths:` block — you own the deploy command for the gateway. If you'd rather I revert the path change and you do the whole file, say so in this file.
 
+## Round 6 — "Maximum reach" (user-direct, 2026-09-19)
+
+**Purpose:** Vercel mirror for reach, professional resume + CV under the full legal name, and a working lead scraper in the admin portal for local redesign prospects.
+
+| # | Task | Files | Owner | Status |
+|---|------|-------|-------|--------|
+| 52 | Vercel mirror: adapter switch, vercel.json (no ignore), headers port, booking env fallback | `svelte.config.js`, `vercel.json`, `package.json`, `src/routes/api/booking/+server.ts` | jake | done |
+| 53 | Resume overhaul (layout + content, Jacob Michael Viefhaus) + new CV, publish to R2 + static fallback | `static/resume.{html,pdf}`, `static/cv.{html,pdf}`, `src/lib/data/profile.ts`, `src/lib/config.ts`, about/book pages | jake | done |
+| 54 | Admin lead scraper: site-quality scoring, Overpass discovery, lead ledger + outreach drafts | `workers/admin-console/*`, `workers/migrations/*` | jake | done |
+
 ## Communication log
+
+- `2026-09-19 jake` — 📣 **Round 6 claim (#52–#54, user-direct "maximum reach"):** Vercel mirror (code side; project connect + env vars are dashboard steps), resume/CV rebuild under the professional name, admin lead scraper on the existing `leads`/`outreach_log` tables. Touching only the files in the rows above; backend fleet + Nova UI untouched.
+
+- `2026-09-19 jake` — ✅ **Round 6 DONE (code):** #52 Vercel mirror builds (`ADAPTER=vercel`, nodejs22.x runtime, headers ported, booking reads `process.env` fallback) — dashboard connect + `RESEND_API_KEY`/`BOOKING_EMAIL` envs are user steps. #53 resume rebuilt (1-page, ATS-clean, Jacob Michael Viefhaus, JS/TS-first skills) + new 2-page CV; PDFs in `static/` served same-origin on both mirrors (R2 copies attempted but the token's writes land where the worker doesn't read — same phantom-plane as #17; dashboard drag-upload is the fallback). #54 admin lead scraper live in code: `scoreSite` (0–100 redesign need, pains/tech/contact extraction), Overpass discovery with 3-mirror fallback, dedupe upserts, status pipeline, template outreach drafts → `outreach_log`; section 5 UI. Verified: tsc + svelte-check clean, Cloudflare + Vercel builds green, all 7 pages prerendered, admin routes drilled (401/403/201/422).
+
+- `2026-09-19 jake` — ✅ **Round 5 DONE (code, uncommitted):** #48 home split into Home + `/work` (filters/grid/modal) + `/about` (bio/facts/GitHub/career/stack) + `/lab` (ViperConsole + infra proof) + `/book` (form + hire points); nav is route-aware with a mobile hamburger (desktop links hide <960px, menu covers it), reveal re-armed via `afterNavigate` (`afterNavigate` returns void here — no unsubscribe). #49 home is hire-first: "Hire a developer who ships", name/role/location, live-proof lede, `/book` + `/work` CTAs, email in hero meta. #50 themes are full looks: per-theme display/heading/body fonts, radii, heading case/spacing, scheme-aware `color-scheme` + `theme-color`, plus `[data-theme]` texture blocks (matrix scanlines + phosphor glow + uppercase, paper flat-ink + hard offset shadows + no blur, cyan glass cards). Paper `accent-bright` darkened for light-bg contrast. #51 services/404/error links → `/book`, sitemap lists real routes (hash-fragment entries dropped). Verified: `npm run check` 0/0, build clean, all 7 pages prerendered with per-page titles. No commit per rule — say go and I push.
+
+- `2026-09-19 jake` — 📣 **Round 5 claim (#48–#51, user-direct "hire-first multipage"):** splitting `/` into Home + `/work` + `/about` + `/lab` + `/book`, hire-first hero, full-look themes, sitemap pass. Touching `src/routes/**` (new pages + layout + home + services links), `src/app.css`, `src/lib/data/themes.ts`, `src/lib/stores/theme.ts`, `ThemeSwitcher`, `static/sitemap.xml`, TASKS only. `workers/**`, Otis's #47 `workers/viper/*`, and Nova's committed UI untouched — contract shapes (`Project`, findings, booking envelope) unchanged.
 
 - `2026-09-19 Otis` — 📣 **#47 (start, user-direct "turn it into something real"):** deepening the viper backend into a genuine static analyzer (comment/string-aware scan, function-scope reentrancy + access-control checks, SWC refs, line excerpts). Contract frozen for Nova's #46 UI (same routes, same finding keys + summary fields, pipeline shape untouched). Touching only `workers/viper/*`.
 

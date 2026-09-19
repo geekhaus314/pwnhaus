@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Jacob Michael Viefhaus — Curriculum Vitae</title>
+<style>
+  @page { size: Letter; margin: 0.6in 0.65in; }
+  * { box-sizing: border-box; }
+  body { font: 10.5pt/1.45 Helvetica, Arial, sans-serif; color: #111; margin: 0; }
+  header { text-align: center; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 12px; }
+  header h1 { font-size: 22pt; margin: 0; letter-spacing: 0.5px; }
+  header p.title { font-size: 11pt; margin: 4px 0; color: #333; }
+  header p.contact { font-size: 9.5pt; margin: 2px 0 0; color: #333; }
+  header a { color: #111; text-decoration: none; }
+  section { margin-bottom: 11px; }
+  h2 { font-size: 11pt; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #999; padding-bottom: 2px; margin: 0 0 6px; }
+  .job { margin-bottom: 8px; }
+  .job-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .job-head strong { font-size: 10.5pt; }
+  .job-head span { font-size: 9.5pt; color: #444; white-space: nowrap; }
+  ul { margin: 4px 0 0 18px; padding: 0; }
+  li { margin-bottom: 2px; }
+  .skills { display: grid; grid-template-columns: 150px 1fr; gap: 2px 10px; font-size: 10pt; }
+  .skills dt { font-weight: bold; }
+  .skills dd { margin: 0; }
+  p { margin: 0 0 6px; }
+  .proj { margin-bottom: 7px; }
+  .proj strong { font-size: 10.5pt; }
+  .proj .meta { font-size: 9.5pt; color: #444; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Jacob Michael Viefhaus</h1>
+  <p class="title">Full-Stack Developer · Cybersecurity Engineering Student — Curriculum Vitae</p>
+  <p class="contact">Florissant, MO &nbsp;|&nbsp; (636) 448-3574 &nbsp;|&nbsp; geekhaus314@proton.me<br>
+  <a href="https://github.com/geekhaus314">github.com/geekhaus314</a> &nbsp;|&nbsp; <a href="https://gitlab.com/geekhaus314">gitlab.com/geekhaus314</a> &nbsp;|&nbsp; <a href="https://pwn4g3.pages.dev">pwn4g3.pages.dev</a></p>
+</header>
+
+<section>
+  <h2>Profile</h2>
+  <p>Full-stack developer operating as pwn4g3, final-year B.S. Computer Science / Cybersecurity Engineering student (3.9 GPA, Dean's List every quarter). Practice spans production client websites, multi-tenant e-commerce, SaaS backends, edge infrastructure (Cloudflare Workers, Pages, D1, R2, Queues), and offensive-security tooling. Seeking part-time or entry-level IT, web development, or security roles, alongside freelance client engagements.</p>
+</section>
+
+<section>
+  <h2>Education</h2>
+  <div class="job">
+    <div class="job-head"><strong>Colorado Technical University — B.S. Computer Science / Cybersecurity Engineering</strong><span>Expected 2027</span></div>
+    <p>3.9 GPA — Dean's List every quarter; 50 credits earned with two semesters remaining. Coursework: network security, operating systems, programming, web technologies, databases, information assurance, artificial intelligence, college mathematics (algebra), communication, writing, ethics, and sociology.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Professional Experience</h2>
+  <div class="job">
+    <div class="job-head"><strong>Freelance Web Developer &amp; Webmaster — Brian Ivie Hair (myhairloss.com)</strong><span>2026 – Present</span></div>
+    <ul>
+      <li>Own a production Next.js healthcare marketing site end to end: Stripe shop, booking and contact APIs, admin panel, MDX blog with RSS, Cloudflare Pages deployment with custom domains.</li>
+      <li>Client communication, SEO content, domain/DNS management, and continuous maintenance; recovered a non-functional predecessor site into production same-day.</li>
+    </ul>
+  </div>
+  <div class="job">
+    <div class="job-head"><strong>E-commerce Infrastructure — United Distribution (Florissant, MO)</strong><span>2026</span></div>
+    <ul>
+      <li>Designed and built KananOS/kanan-e, multi-tenant wholesale e-commerce: branded storefronts, product catalogs (~100+ SKU categories), checkout flow, and CI/CD deployment.</li>
+      <li>Worked directly with the business owner from scoping through delivery and iteration.</li>
+    </ul>
+  </div>
+  <div class="job">
+    <div class="job-head"><strong>Wildlife Photography Portfolio — Angie Viefhaus (client)</strong><span>2026</span></div>
+    <ul>
+      <li>React + TypeScript + Tailwind portfolio (hero, manifesto, gallery, lightbox) with serif-forward editorial design, deployed to Cloudflare Pages.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>Selected Projects</h2>
+  <div class="proj"><strong>Viper-Web3 + edge analyzer</strong><div class="meta">Solidity, Python, Cloudflare Workers — github.com/geekhaus314/Viper-Web3</div>
+  Smart-contract auditing toolkit plus a live edge-hosted analyzer (heuristic triage + executable audit plans for solc/hevm/slither/mythril).</div>
+  <div class="proj"><strong>AgentOS — Vertical AI Revenue Infrastructure</strong><div class="meta">Java 21, Spring Boot 3, Gradle, Docker, AI agents</div>
+  Multi-tenant AI revenue workflow platform with industry vertical modules, white-label reseller deployment, and audited tool authorization.</div>
+  <div class="proj"><strong>ProofShelf — Full-Stack SaaS</strong><div class="meta">Next.js, PostgreSQL/pgvector, Redis, Clerk</div>
+  Semantic-search SaaS with Dockerized API + worker services in a pnpm monorepo.</div>
+  <div class="proj"><strong>NightAnvil — Freelancer Business Toolkit</strong><div class="meta">Python, Flask, Stripe, PostgreSQL</div>
+  AI gig generation, PDF invoices with payment tracking, Stripe checkout + webhooks, Fiverr sync.</div>
+  <div class="proj"><strong>Obsidian Platform / bb-suite — Bug Bounty Tooling</strong><div class="meta">Go, Python, ASM/recon</div>
+  Attack-surface management platform and modular CLI reconnaissance toolkit for authorized bounty programs.</div>
+  <div class="proj"><strong>pwn4g3 portfolio infrastructure</strong><div class="meta">SvelteKit, TypeScript, Cloudflare Pages/Workers/D1/R2/Queues</div>
+  This portfolio: multi-page frontend plus a gateway-routed worker fleet (booking pipeline with Turnstile + queues, telemetry, notifications, media CDN).</div>
+</section>
+
+<section>
+  <h2>Technical Skills</h2>
+  <dl class="skills">
+    <dt>Core Stack</dt><dd>JavaScript, TypeScript, React, Svelte / SvelteKit, Astro, Vue, Vite, Solid, Node.js, Next.js, Tailwind CSS, responsive/mobile-first design</dd>
+    <dt>Backend &amp; Data</dt><dd>Node.js, REST APIs, PostgreSQL/pgvector, Redis, Clerk auth, Stripe, Python, Flask, Java (Spring Boot 3)</dd>
+    <dt>Cloud &amp; DevOps</dt><dd>Cloudflare (Pages, Workers, D1, R2, Queues), Vercel, Docker, GitHub Actions, DNS, SEO/analytics configuration</dd>
+    <dt>Security</dt><dd>Burp Suite, Nmap, nuclei, OWASP Top 10, Kali Linux recon lab, authorized bug bounty (Dropbox, Azure DevOps), Solidity auditing, firewall hardening</dd>
+    <dt>Systems &amp; Other</dt><dd>Linux (Kali, WSL), Windows 10/11, macOS, hardware build/repair, Bash, Android/ADB, Go, Rust, Ruby (working knowledge)</dd>
+  </dl>
+</section>
+
+<section>
+  <h2>Service Offering (Freelance)</h2>
+  <ul>
+    <li><strong>Launch ($1,200, 1–2 weeks):</strong> up to 5 custom pages, booking/contact + email, SEO foundations, analytics, security headers.</li>
+    <li><strong>Build ($2,800, 3–5 weeks):</strong> custom web apps (auth, admin, payments), database + CI/CD + custom domain, end-to-end service flows.</li>
+    <li><strong>Scale ($5,000+, ongoing):</strong> multi-tenant platforms, AI/automation systems, security review + hardening, retainer.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Additional</h2>
+  <ul>
+    <li>Based in Florissant, MO (St. Louis metro); remote-friendly with flexible availability including mornings and weekends.</li>
+    <li>Direct client communication throughout — scoping, live preview builds, handover with full code ownership transfer.</li>
+  </ul>
+</section>
+</body>
+</html>

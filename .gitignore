@@ -1,6 +1,7 @@
 # SvelteKit
 .svelte-kit/
 build/
+.vercel/
 
 # Wrangler / Cloudflare
 .wrangler/
