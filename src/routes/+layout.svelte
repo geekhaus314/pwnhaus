@@ -31,7 +31,7 @@
 
 	// Scroll spy for nav active link
 	function setupScrollSpy() {
-		const ids = ['top', 'about', 'portfolio', 'career', 'booking'];
+		const ids = ['top', 'about', 'portfolio', 'lab', 'career', 'booking'];
 		const io = new IntersectionObserver(
 			(entries) => {
 				entries.forEach((entry) => {
@@ -87,6 +87,7 @@
 		<nav aria-label="Main navigation">
 			<a href="/#about"     class:current={activeSection === 'about'}>About</a>
 			<a href="/#portfolio" class:current={activeSection === 'portfolio'}>Portfolio</a>
+			<a href="/#lab" class:current={activeSection === 'lab'}>Live Lab</a>
 			<a href="/services"   class:current={$page.url.pathname === '/services'}>Services</a>
 			<a href="/#career"    class:current={activeSection === 'career'}>Career</a>
 			<a href="/#booking"   class:current={activeSection === 'booking'}>Book</a>
