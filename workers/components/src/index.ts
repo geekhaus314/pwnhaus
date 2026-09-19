@@ -1,10 +1,30 @@
 import { jsonResponse, handleOptions } from '../../shared/cors';
 import { rateLimitOr429 } from '../../shared/rate-limit';
 
+/**
+ * Fleet inventory (fix 4): this used to return a fictional
+ * rust/go/ruby + localhost-port stub. It now describes the real
+ * gateway-routed fleet so the portfolio's "runs on real infra" panel
+ * and any status consumer read truth, not placeholders.
+ *
+ * No service bindings here on purpose — liveness stays with each
+ * service's own `/health`-style probe (and the scheduler's uptime
+ * checks). This endpoint is the static contract map; keep `name` +
+ * `contract` keys stable for consumers.
+ */
 const components = [
-	{ name: 'rust', contract: '/health', port: 4101 },
-	{ name: 'go', contract: '/health', port: 4102 },
-	{ name: 'ruby', contract: '/health', port: 4103 }
+	{ name: 'pwn4g3', contract: 'GET /', route: '/', via: 'gateway' },
+	{ name: 'pwn4g3-health', contract: 'GET /health', route: '/health', via: 'gateway' },
+	{ name: 'pwn4g3-components', contract: 'GET /api/components', route: '/api/components', via: 'gateway' },
+	{ name: 'pwn4g3-viper', contract: 'GET /api/viper-web3', route: '/api/viper-web3', via: 'gateway' },
+	{ name: 'pwn4g3-assets', contract: 'GET /assets/*', route: '/assets/<key>', via: 'gateway' },
+	{ name: 'pwn4g3-booking', contract: 'GET /api/booking', route: '/api/booking', via: 'gateway' },
+	{ name: 'pwn4g3-telemetry', contract: 'GET /api/telemetry', route: '/api/telemetry', via: 'gateway' },
+	{ name: 'pwn4g3-notify', contract: 'GET /api/notify', route: '/api/notify', via: 'gateway' },
+	{ name: 'pwn4g3-discord', contract: 'POST /api/discord/interactions', route: '/api/discord', via: 'gateway' },
+	{ name: 'pwn4g3-reddit', contract: 'GET /api/reddit/modmail', route: '/api/reddit', via: 'gateway' },
+	{ name: 'pwn4g3-admin', contract: 'GET /admin', route: '/admin', via: 'gateway' },
+	{ name: 'pwn4g3-scheduler', contract: 'cron', route: 'internal', via: 'cron' }
 ];
 
 export default {

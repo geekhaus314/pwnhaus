@@ -40,10 +40,10 @@ const checks = [
 	},
 	{
 		id: 'reentrancy-surface',
-		severity: 'medium',
+		severity: 'info',
 		pattern: /\b(nonReentrant|ReentrancyGuard)\b/,
-		title: 'Reentrancy protection should be verified at external call sites',
-		recommendation: 'Confirm checks-effects-interactions ordering and guard every sensitive entry point.'
+		title: 'Reentrancy guard detected — verify coverage at external call sites',
+		recommendation: 'Presence of a guard is good hygiene, not a finding: confirm checks-effects-interactions ordering and that every sensitive entry point is guarded.'
 	}
 ];
 

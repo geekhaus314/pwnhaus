@@ -71,16 +71,16 @@ interface BookingFields {
 	turnstileToken: string | null;
 }
 
-const ok = (data: unknown, status = 200): Response =>
+const ok = (data: unknown, status = 200, request?: Request): Response =>
 	new Response(JSON.stringify({ ok: true, data }), {
 		status,
-		headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...corsHeaders(METHODS) }
+		headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...corsHeaders(METHODS, request) }
 	});
 
-const fail = (error: string, status = 400, extra: Record<string, string> = {}): Response =>
+const fail = (error: string, status = 400, extra: Record<string, string> = {}, request?: Request): Response =>
 	new Response(JSON.stringify({ ok: false, error }), {
 		status,
-		headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...corsHeaders(METHODS), ...extra }
+		headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...corsHeaders(METHODS, request), ...extra }
 	});
 
 const utf8ByteLen = (s: string): number => new TextEncoder().encode(s).length;
@@ -166,20 +166,20 @@ export default {
 				});
 			}
 
-			if (request.method !== 'POST') return fail('method_not_allowed', 405);
+			if (request.method !== 'POST') return fail('method_not_allowed', 405, {}, request);
 
 			// Money route: tightest bucket in the fleet (5 / 10 min / IP).
 			const limited = rateLimitOr429(request, { limit: 5, windowMs: 600_000, prefix: 'booking-ingest' }, 'booking-ingest');
 			if (limited) return limited;
 
 			const declared = request.headers.get('content-length');
-			if (declared && Number(declared) > MAX_BODY_BYTES) return fail('payload_too_large', 413);
+			if (declared && Number(declared) > MAX_BODY_BYTES) return fail('payload_too_large', 413, {}, request);
 
 			let body: Record<string, unknown>;
 			try {
 				body = (await request.json()) as Record<string, unknown>;
 			} catch {
-				return fail('invalid_json', 400);
+				return fail('invalid_json', 400, {}, request);
 			}
 
 			const name = typeof body.name === 'string' && body.name.length > 0 && body.name.length <= MAX_NAME_LEN ? body.name : undefined;
@@ -190,34 +190,34 @@ export default {
 			const turnstileToken = bounded(body.turnstileToken, 2_048, '') ?? null;
 
 			if (!name || !email || !details) {
-				return fail('name_email_details_required', 422);
+				return fail('name_email_details_required', 422, {}, request);
 			}
-			if (service === undefined || timeline === undefined) return fail('input_too_long', 422);
+			if (service === undefined || timeline === undefined) return fail('input_too_long', 422, {}, request);
 
 			// Fail closed: without a server-side secret the pipeline must not accept
 			// mail submissions — otherwise the queue becomes a spam amplifier.
-			if (!env.TURNSTILE_SECRET_KEY) return fail('turnstile_not_configured', 503);
-			if (turnstileHostnames(env).size === 0) return fail('turnstile_not_configured', 503);
-			if (!turnstileToken) return fail('turnstile_token_required', 403);
+			if (!env.TURNSTILE_SECRET_KEY) return fail('turnstile_not_configured', 503, {}, request);
+			if (turnstileHostnames(env).size === 0) return fail('turnstile_not_configured', 503, {}, request);
+			if (!turnstileToken) return fail('turnstile_token_required', 403, {}, request);
 			let turnstile: TurnstileResult;
 			try {
 				turnstile = await verifyTurnstile(env.TURNSTILE_SECRET_KEY, turnstileToken, getClientIp(request));
 			} catch {
-				return fail('turnstile_unavailable', 502);
+				return fail('turnstile_unavailable', 502, {}, request);
 			}
 			// invalid-input-secret = the deployed secret is wrong (config gap,
 			// page ops); everything else is a caller-side reject. Fail closed either way.
 			const codes = turnstile['error-codes'] ?? [];
 			if (!turnstile.success && codes.includes('invalid-input-secret')) {
-				return fail('turnstile_not_configured', 503);
+				return fail('turnstile_not_configured', 503, {}, request);
 			}
-			if (!turnstile.success) return fail('turnstile_failed', 403);
+			if (!turnstile.success) return fail('turnstile_failed', 403, {}, request);
 			// Canonical checks: expected action + the frontend hostname actually
 			// returned by siteverify must both match. Widget embeds must set
 			// data-action="booking" (see TASKS handoff for #31).
 			const hostnameOk = turnstile.hostname !== undefined && turnstileHostnames(env).has(turnstile.hostname);
 			if (turnstile.action !== EXPECTED_ACTION || !hostnameOk) {
-				return fail('turnstile_failed', 403);
+				return fail('turnstile_failed', 403, {}, request);
 			}
 
 			const id = crypto.randomUUID();
@@ -232,7 +232,7 @@ export default {
 					.run();
 			} catch (e) {
 				console.error(JSON.stringify({ msg: 'booking_store_failed', id }));
-				return fail('store_unavailable', 500);
+				return fail('store_unavailable', 500, {}, request);
 			}
 
 			try {
@@ -250,11 +250,11 @@ export default {
 				await env.DB.prepare("UPDATE bookings_log SET status = 'failed', error = 'enqueue_failed', updated_at = ? WHERE id = ?")
 					.bind(Date.now(), id)
 					.run();
-				return fail('enqueue_failed', 502);
+				return fail('enqueue_failed', 502, {}, request);
 			}
 
 			console.log(JSON.stringify({ msg: 'booking_accepted', id }));
-			return ok({ id, status: 'queued' }, 202);
+			return ok({ id, status: 'queued' }, 202, request);
 		}
 
 		if (url.pathname === '/') {

@@ -105,6 +105,11 @@ export const mythrilCheck = (bytecode: string, timeoutSeconds: number): Command 
 /**
  * The audit pipeline Viper can execute against a Solidity source.
  * Each stage is its own Command; no stage is baked into a string.
+ *
+ * NOTE: the `deep` (mythril) step needs compiled bytecode, not source.
+ * The runner must substitute `<bytecode-from-solc-output>` with the
+ * `bytecode` field from the `compile` step's standard-JSON output before
+ * executing — the planner never invents bytecode.
  */
 export const viperAuditPlan = (source: string, version: string): CommandPlan => ({
 	toolchain: 'viper-web3',
@@ -113,7 +118,7 @@ export const viperAuditPlan = (source: string, version: string): CommandPlan => 
 		{ stage: 'compile', command: solcCompile(version, source) },
 		{ stage: 'test', command: hevmTest(source, version) },
 		{ stage: 'static', command: slitherAnalyze('.') },
-		{ stage: 'deep', command: mythrilCheck('__VIOLIN__', 60) }
+		{ stage: 'deep', command: mythrilCheck('<bytecode-from-solc-output>', 60) }
 	]
 });
 

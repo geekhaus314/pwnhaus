@@ -1,0 +1,29 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "pwn4g3-reddit",
+  "main": "src/index.ts",
+  // Project convention is 2026-08-26 across all workers (binding-uniformity).
+  "compatibility_date": "2026-08-26",
+  "workers_dev": false,
+  // 4th of 5 account cron triggers (scheduler holds 3, 1 reserved).
+  "triggers": {
+    "crons": ["31 7 * * *"]
+  },
+  "vars": {
+    "SUBREDDIT": "pwn4g3",
+    "REDDIT_USER_AGENT": "pwn4g3-reddit-bot/1.0 by pwn4g3"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pwn4g3-db",
+      "database_id": "797bd506-7e63-4786-b2e7-7b94884211c0",
+      "migrations_dir": "../migrations"
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.01 }
+  }
+}

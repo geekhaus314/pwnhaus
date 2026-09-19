@@ -43,4 +43,7 @@ jobs:
           npx wrangler deploy --config workers/scheduler/wrangler.jsonc
           npx wrangler deploy --config workers/booking/wrangler.jsonc
           npx wrangler deploy --config workers/notify/wrangler.jsonc
+          npx wrangler deploy --config workers/discord-bot/wrangler.jsonc
+          npx wrangler deploy --config workers/reddit-bot/wrangler.jsonc
+          npx wrangler deploy --config workers/admin-console/wrangler.jsonc
           npx wrangler deploy --config workers/gateway/wrangler.jsonc

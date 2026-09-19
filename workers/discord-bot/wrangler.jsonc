@@ -1,0 +1,26 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "pwn4g3-discord",
+  "main": "src/index.ts",
+  // Project convention is 2026-08-26 across all workers (binding-uniformity).
+  "compatibility_date": "2026-08-26",
+  "workers_dev": false,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pwn4g3-db",
+      "database_id": "797bd506-7e63-4786-b2e7-7b94884211c0",
+      "migrations_dir": "../migrations"
+    }
+  ],
+  // /notify slash-command forwards to the notify worker with the operator's
+  // own admin token (verified per-command) — this worker never stores it.
+  // ADMIN_TOKEN must still be bound here (same value as notify) for the
+  // /register endpoint gate + per-command token check.
+  "services": [{ "binding": "NOTIFY_SERVICE", "service": "pwn4g3-notify" }],
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.01 }
+  }
+}

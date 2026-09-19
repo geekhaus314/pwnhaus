@@ -8,7 +8,7 @@
 
 	interface Finding {
 		id: string;
-		severity: 'high' | 'medium' | 'low' | string;
+		severity: 'high' | 'medium' | 'low' | 'info' | string;
 		title: string;
 		recommendation: string;
 	}
@@ -62,7 +62,7 @@ contract Vault {
 	let errorMsg = $state<string | null>(null);
 
 	const sevClass = (sev: string): string =>
-		sev === 'high' ? 'sev-high' : sev === 'low' ? 'sev-low' : 'sev-medium';
+		sev === 'high' ? 'sev-high' : sev === 'low' || sev === 'info' ? 'sev-low' : 'sev-medium';
 
 	onMount(() => {
 		let cancelled = false;
