@@ -41,8 +41,8 @@
 				<a href={profile.resumeUrl} target="_blank" rel="noopener noreferrer" class="button ghost">
 					Resume (PDF) <span aria-hidden="true">→</span>
 				</a>
-				<a href={profile.cvUrl} target="_blank" rel="noopener noreferrer" class="button ghost">
-					CV (PDF) <span aria-hidden="true">→</span>
+				<a href={profile.coverLetterUrl} target="_blank" rel="noopener noreferrer" class="button ghost">
+					Cover letter (PDF) <span aria-hidden="true">→</span>
 				</a>
 				<a class="contact-link" href="mailto:{profile.email}">or email {profile.email} directly</a>
 			</div>

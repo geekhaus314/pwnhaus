@@ -11,7 +11,7 @@ export const profile = {
 	gitlab: 'https://gitlab.com/geekhaus314',
 	instagram: 'https://www.instagram.com/pwn4g3.io/',
 	resumeUrl: '/resume.pdf',
-	cvUrl: '/cv.pdf',
+	coverLetterUrl: '/cover-letter.pdf',
 	heroPhoto: assetUrl('/geekhaus-self-1.jpg'),
 	summary:
 		'I build full-stack web applications, APIs, automation, and secure infrastructure — from e-commerce platforms to bug bounty tooling.',
