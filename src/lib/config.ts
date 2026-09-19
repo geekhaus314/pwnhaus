@@ -37,3 +37,10 @@ export const RESUME_URL = assetUrl('/resume.pdf');
  */
 export const GATEWAY_BASE = 'https://pwn4g3.geekhaus314.workers.dev';
 export const BOOKING_API_URL = `${GATEWAY_BASE}/api/booking`;
+
+/**
+ * Viper-Web3 analyzer (#46). POST { source, plan? } for heuristic
+ * findings + optional typed audit pipeline. Rate budget: 10/min/IP.
+ */
+export const VIPER_API_URL = `${GATEWAY_BASE}/api/viper-web3/analyze`;
+export const VIPER_INFO_URL = `${GATEWAY_BASE}/api/viper-web3`;

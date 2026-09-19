@@ -6,6 +6,7 @@
 	import ProjectModal from '$lib/components/ProjectModal.svelte';
 	import GitHubStats from '$lib/components/GitHubStats.svelte';
 	import BookingForm from '$lib/components/BookingForm.svelte';
+	import ViperConsole from '$lib/components/ViperConsole.svelte';
 
 	import { projects, projectFilters, type ProjectFilter } from '$lib/data/projects';
 	import { profile, capabilities, stack } from '$lib/data/profile';
@@ -19,169 +20,120 @@
 			? projects
 			: projects.filter((p) => p.type === activeFilter)
 	);
+
+	const capTags = ['Frontend', 'Backend', 'AI', 'Security', 'Cloud', 'Redesign'];
 </script>
 
 <svelte:head>
 	<title>Jake Viefhaus (pwn4g3) — Full-Stack Developer for Hire</title>
-	<meta name="description" content="Hire Jake Viefhaus (pwn4g3): full-stack developer in St. Louis shipping production web apps, frontends, APIs, and edge infrastructure. Live client work, 24h response, freelance bookings open." />
+	<meta name="description" content="Hire Jake Viefhaus (pwn4g3): full-stack developer in St. Louis shipping production websites, online stores, APIs, and edge infrastructure. Live client work, free quotes, 24h response." />
 </svelte:head>
 
-<!-- ═══════════════════════════════════════════════════════
-     HERO CANVAS BANNER
-════════════════════════════════════════════════════════ -->
 <HeroCanvas />
 
-<!-- ═══════════════════════════════════════════════════════
-     HERO
-════════════════════════════════════════════════════════ -->
+<!-- ══════════ HERO — the 5-second hire test ══════════ -->
 <section id="top" class="hero">
 	<div class="hero-copy">
-		<p class="eyebrow">
-			<span class="sticker">Open to work — replies in 24h</span>
+		<p class="status-line"><i aria-hidden="true"></i> Available now — replies in 24h</p>
+
+		<h1>I build websites that <em>win business.</em></h1>
+
+		<p class="hero-who">
+			<span class="accent">[whoami]$</span> Jake Viefhaus (pwn4g3) — full-stack developer,
+			<a href={profile.github} target="_blank" rel="noopener noreferrer">@geekhaus314</a> on GitHub
 		</p>
 
-		<div class="mono-tag">
-			<span class="accent">[whoami]$</span> Jake Viefhaus (aka
-			<a href={profile.github} target="_blank" rel="noopener noreferrer">@geekhaus314</a>
-			on GitHub)
-		</div>
-
-		<h1>pwn<em>4g3</em></h1>
-		<p class="hero-giant">Ships full-stack <span class="outline-text">apps</span></p>
-
-		<p class="hero-lede">I'm Jake Viefhaus, a full-stack developer in St. Louis. I build production web apps — frontend, APIs, edge infrastructure — for employers and freelance clients. Live sites below, not mockups.</p>
+		<p class="lede">
+			Production sites, online stores, and booking systems for local businesses —
+			plus the APIs and infrastructure behind them. <strong>Live proof below:</strong>
+			everything with a green badge runs somewhere you can click right now.
+		</p>
 
 		<div class="hero-actions">
-			<a href="mailto:{profile.email}?subject=Hiring%20inquiry%20—%20pwn4g3" class="button primary brutal">Hire me <span>→</span></a>
-			<a href="#portfolio" class="button ghost brutal">See live work <span>→</span></a>
-			<a href="#booking" class="button ghost brutal">Book a project <span>→</span></a>
+			<a href="#booking" class="button primary big">Get a free quote <span aria-hidden="true">→</span></a>
+			<a href="#portfolio" class="button ghost">See live work <span aria-hidden="true">→</span></a>
 		</div>
 
-		<ul class="hero-proof" aria-label="Hiring highlights">
+		<ul class="hero-proof" aria-label="Highlights">
 			<li><b>3</b> production sites live</li>
-			<li><b>20</b> tech stack</li>
+			<li><b>20+</b> tech in stack</li>
 			<li><b>3.9</b> GPA · CS / Cybersecurity</li>
 		</ul>
 
 		<div class="hero-meta">
-			<span class="avail"><i aria-hidden="true"></i>Open to work</span>
-			<span>Full-Stack · Frontend · Security</span>
 			<span>St. Louis, MO · Remote OK</span>
+			<span>Full-stack · Frontend · Security</span>
 		</div>
 	</div>
 
 	<div class="hero-visual">
 		<Terminal />
-		<span class="hero-code" aria-hidden="true">0x</span>
-		<div class="orbit orbit-a" aria-hidden="true"></div>
-		<div class="orbit orbit-b" aria-hidden="true"></div>
 	</div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     TICKER
-════════════════════════════════════════════════════════ -->
+<!-- ══════════ TICKER ══════════ -->
 <div class="ticker" aria-hidden="true">
 	<div class="ticker-track">
-		<span>Full-stack ✦ Frontend ✦ APIs ✦ Edge infra ✦ Live sites ✦ Freelance ✦&nbsp;</span>
-		<span>Full-stack ✦ Frontend ✦ APIs ✦ Edge infra ✦ Live sites ✦ Freelance ✦&nbsp;</span>
+		<span>Websites ✦ Online stores ✦ Booking systems ✦ APIs ✦ Automation ✦ Security ✦&nbsp;</span>
+		<span>Websites ✦ Online stores ✦ Booking systems ✦ APIs ✦ Automation ✦ Security ✦&nbsp;</span>
 	</div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════
-     PROOF BAR — the numbers that get interviews
-════════════════════════════════════════════════════════ -->
-<section class="section" aria-label="Proof" style="padding-top: 4rem; padding-bottom: 0;">
-	<div class="proof-bar reveal">
-		<div class="proof-cell">
-			<span class="proof-num">03<em>.</em></span>
-			<span class="proof-label">Production sites live</span>
+<!-- ══════════ TRUST STRIP ══════════ -->
+<div class="trust-strip">
+	<div class="trust-grid reveal" role="list" aria-label="Track record">
+		<div class="trust-cell" role="listitem">
+			<span class="trust-num">03<em>.</em></span>
+			<span class="trust-label">Production sites live</span>
 		</div>
-		<div class="proof-cell">
-			<span class="proof-num">03<em>.</em></span>
-			<span class="proof-label">Client sites shipped</span>
+		<div class="trust-cell" role="listitem">
+			<span class="trust-num">03<em>.</em></span>
+			<span class="trust-label">Client sites shipped</span>
 		</div>
-		<div class="proof-cell">
-			<span class="proof-num">20<em>+</em></span>
-			<span class="proof-label">Technologies in stack</span>
+		<div class="trust-cell" role="listitem">
+			<span class="trust-num">20<em>+</em></span>
+			<span class="trust-label">Technologies in stack</span>
 		</div>
-		<div class="proof-cell">
-			<span class="proof-num">24<em>h</em></span>
-			<span class="proof-label">Response time, guaranteed</span>
+		<div class="trust-cell" role="listitem">
+			<span class="trust-num">24<em>h</em></span>
+			<span class="trust-label">Quote turnaround</span>
 		</div>
 	</div>
+</div>
 
-	<div class="hire-strip">
-		<div class="hire-card reveal">
-			<span>01 / SHIPS</span>
-			<h3>Production, not tutorials</h3>
-			<p>Real domains, real traffic, real clients — e-commerce, clinic sites, portfolios. Every project below runs somewhere you can click.</p>
-		</div>
-		<div class="hire-card reveal">
-			<span>02 / OWNS</span>
-			<h3>Frontend to edge</h3>
-			<p>One hire covering UI, APIs, databases, CI/CD, and Cloudflare edge ops. No handoffs, no gaps, no "that's someone else's layer."</p>
-		</div>
-		<div class="hire-card reveal">
-			<span>03 / HARDENS</span>
-			<h3>Security-minded by default</h3>
-			<p>Cybersecurity engineering student (3.9 GPA) doing bug-bounty recon and audits. Your app ships hardened, not hopeful.</p>
-		</div>
-	</div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════
-     ABOUT
-════════════════════════════════════════════════════════ -->
+<!-- ══════════ 01 / ABOUT ══════════ -->
 <section id="about" class="section" aria-label="About">
-	<div class="section-heading">
-		<div>
-			<span class="section-kicker">001 / About</span>
-			<h2>Who I <em>am</em></h2>
-		</div>
+	<div class="rail reveal">
+		<span class="rail-num">01</span>
+		<h2>The dev behind <em>the work</em></h2>
+		<p class="rail-desc">One hire covering design, code, deployment, and hardening — no handoffs, no gaps.</p>
 	</div>
 
-	<div class="about-body">
+	<div class="about-grid">
 		<div class="about-copy reveal">
-			{#each profile.about as para, i}
-				<p class:italic={i === 2}>{para}</p>
-			{/each}
-
-			<ul class="about-facts">
+			<p>{profile.about[0]}</p>
+			<p>{profile.about[1]}</p>
+			<ul class="fact-list">
 				{#each profile.facts as fact}
-					<li><strong>{fact.label}:</strong> {fact.value}</li>
+					<li><strong>{fact.label}</strong> {fact.value}</li>
 				{/each}
 			</ul>
 		</div>
-
-		<aside class="about-aside reveal">
+		<aside class="reveal" aria-label="GitHub activity">
 			<GitHubStats />
-
-			<!-- Instagram embed -->
-			<div class="instagram-wrap" aria-label="Instagram profile">
-				<blockquote
-					class="instagram-media"
-					data-instgrm-permalink="https://www.instagram.com/pwn4g3.io/?utm_source=ig_embed&utm_campaign=loading"
-					data-instgrm-version="14"
-					style="background:#FFF;border:0;border-radius:3px;box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15);max-width:540px;width:99.375%"
-				></blockquote>
-				<!-- Load embed script only on client -->
-				<svelte:element this={'script'} async src="//www.instagram.com/embed.js"></svelte:element>
-			</div>
 		</aside>
 	</div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     PORTFOLIO
-════════════════════════════════════════════════════════ -->
+<!-- ══════════ 02 / PORTFOLIO ══════════ -->
 <section id="portfolio" class="section" aria-label="Portfolio">
-	<div class="section-heading reveal">
-		<div>
-			<span class="section-kicker">002 / Portfolio</span>
-			<h2>Live work, <em>not mockups</em></h2>
-		</div>
-		<p>Every card with a <strong>● LIVE</strong> badge is running in production right now. Click any card for the full breakdown and screenshots.</p>
+	<div class="rail reveal">
+		<span class="rail-num">02</span>
+		<h2>Live work, <em>not mockups</em></h2>
+		<p class="rail-desc">
+			Green badge = running in production today. Click any card for the full
+			breakdown, screenshots, and links.
+		</p>
 	</div>
 
 	<div class="filters reveal" role="group" aria-label="Filter projects">
@@ -203,37 +155,31 @@
 	</div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     CAPABILITIES
-════════════════════════════════════════════════════════ -->
-<section class="section capabilities" aria-label="Capabilities">
-	<div class="section-heading reveal">
-		<div>
-			<span class="section-kicker">003 / Capabilities</span>
-			<h2>What I <em>build</em></h2>
-		</div>
+<!-- ══════════ 03 / CAPABILITIES ══════════ -->
+<section class="section" aria-label="Capabilities">
+	<div class="rail reveal">
+		<span class="rail-num">03</span>
+		<h2>What you <em>get</em></h2>
+		<p class="rail-desc">Fixed scope, clear timeline, direct line to the engineer doing the work.</p>
 	</div>
 
-	<div class="cap-grid">
-		{#each capabilities as cap}
-			<div class="cap reveal">
+	<div class="cap-list reveal">
+		{#each capabilities as cap, i}
+			<div class="cap-row">
 				<span>{cap.index}</span>
 				<h3>{cap.title}</h3>
 				<p>{cap.description}</p>
+				<span class="cap-tag">{capTags[i] ?? 'Full-stack'}</span>
 			</div>
 		{/each}
 	</div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     STACK
-════════════════════════════════════════════════════════ -->
+<!-- ══════════ 04 / STACK ══════════ -->
 <section class="section" aria-label="Tech stack">
-	<div class="section-heading reveal">
-		<div>
-			<span class="section-kicker">004 / Stack</span>
-			<h2>Tools &amp; <em>languages</em></h2>
-		</div>
+	<div class="rail reveal">
+		<span class="rail-num">04</span>
+		<h2>Tools I <em>ship with</em></h2>
 	</div>
 
 	<div class="stack-cloud reveal">
@@ -243,63 +189,76 @@
 	</div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     SECURITY PANEL
-════════════════════════════════════════════════════════ -->
-<section class="section security" aria-label="Security engineering">
-	<div class="security-panel">
+<!-- ══════════ 05 / SECURITY ══════════ -->
+<section class="section" aria-label="Security engineering">
+	<div class="rail reveal">
+		<span class="rail-num">05</span>
+		<h2>Hardened, <em>not hopeful</em></h2>
+		<p class="rail-desc">
+			Cybersecurity engineering student (3.9 GPA) doing bug-bounty recon and audits.
+			Your app ships with the attack surface already mapped.
+		</p>
+	</div>
+
+	<div class="security-panel reveal">
 		<div class="security-copy">
-			<span class="section-kicker">005 / Security</span>
-			<h2>Breaking <em>things</em> to build better ones</h2>
-			<p>Bug bounty programs, smart contract auditing, offensive-security tooling, and application hardening — I work across the full attack surface.</p>
+			<span class="section-kicker">Offensive background</span>
+			<h2>Breaking things to build <em>better ones</em></h2>
+			<p>Bug bounty programs, smart contract auditing, and application hardening — try the live analyzer below.</p>
 			<ul class="security-list">
-				<li>→ Bug bounty reconnaissance &amp; ASM</li>
-				<li>→ Smart contract auditing (Viper-Web3)</li>
-				<li>→ Web application security testing</li>
-				<li>→ Firewall &amp; infrastructure hardening</li>
-				<li>→ Automated exploit development tooling</li>
+				<li>Bug bounty reconnaissance &amp; ASM</li>
+				<li>Smart contract auditing (Viper-Web3)</li>
+				<li>Web application security testing</li>
+				<li>Firewall &amp; infrastructure hardening</li>
 			</ul>
 		</div>
 
 		<div class="security-visual" aria-hidden="true">
 			<div class="radar">
 				<i></i><i></i><i></i><i></i>
-				<b>ATTACK<br/>SURFACE<br/>ACTIVE</b>
+				<b>ATTACK<br />SURFACE<br />ACTIVE</b>
 			</div>
 			<div class="scanline"></div>
 		</div>
 	</div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     ARCHITECTURE STATUS
-════════════════════════════════════════════════════════ -->
-<section class="section architecture" aria-label="System architecture">
-	<div class="section-heading reveal">
-		<div>
-			<span class="section-kicker">006 / Architecture</span>
-			<h2>Live <em>infrastructure</em></h2>
-		</div>
+<!-- ══════════ 06 / LIVE LAB ══════════ -->
+<section id="lab" class="section" aria-label="Live lab">
+	<div class="rail reveal">
+		<span class="rail-num">06</span>
+		<h2>Don't take my word — <em>test it</em></h2>
+		<p class="rail-desc">
+			This analyzer runs on my own edge infrastructure, live. Paste a Solidity
+			contract and watch a real worker audit it.
+		</p>
 	</div>
 
-	<div class="architecture-grid">
-		<div class="arch-card reveal">
+	<div class="reveal">
+		<ViperConsole />
+	</div>
+</section>
+
+<!-- ══════════ 07 / INFRASTRUCTURE ══════════ -->
+<section class="section" aria-label="System architecture">
+	<div class="rail reveal">
+		<span class="rail-num">07</span>
+		<h2>Runs on <em>real infra</em></h2>
+		<p class="rail-desc">This portfolio is its own demo — frontend on Pages, services on Workers, data in D1.</p>
+	</div>
+
+	<div class="infra-grid">
+		<div class="infra-card reveal">
 			<span class="section-kicker">Frontend</span>
-			<div class="architecture-detail">
-				<span>SvelteKit</span>
-				<strong>pwn4g3.pages.dev</strong>
-				<p>SvelteKit + adapter-cloudflare deployed to Cloudflare Pages. Full SSR/SSG, edge-ready, zero cold starts.</p>
-			</div>
+			<strong>pwn4g3.pages.dev</strong>
+			<p>SvelteKit on Cloudflare Pages. SSR/SSG at the edge — the page you're reading was served this way.</p>
 		</div>
-		<div class="arch-card reveal">
+		<div class="infra-card reveal">
 			<span class="section-kicker">Backend</span>
-			<div class="architecture-detail">
-				<span>Cloudflare Worker</span>
-				<strong>pwn4g3.geekhaus314.workers.dev</strong>
-				<p>TypeScript Worker exposing /health, /api/components, /api/viper-web3, and /api/viper-web3/analyze.</p>
-			</div>
+			<strong>pwn4g3.geekhaus314.workers.dev</strong>
+			<p>Typed workers behind one gateway: health, booking pipeline, telemetry, security analysis, media CDN.</p>
 		</div>
-		<div class="arch-card reveal architecture-status">
+		<div class="infra-card infra-live reveal">
 			<Signal />
 			<div class="live-status">
 				<i class="online" aria-hidden="true"></i>
@@ -309,178 +268,71 @@
 	</div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     MANIFESTO
-════════════════════════════════════════════════════════ -->
+<!-- ══════════ MANIFESTO ══════════ -->
 <section class="manifesto" aria-label="Manifesto">
 	<p class="manifesto-mark" aria-hidden="true">—</p>
 	<blockquote>
-		I build things that work — in the <em>messy middle</em> where product decisions meet infrastructure and security.
+		I build things that work — where product meets <em>infrastructure and security.</em>
 	</blockquote>
 	<p>pwn4g3 · Jake Viefhaus · St. Louis, MO</p>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     CAREER
-════════════════════════════════════════════════════════ -->
-<section id="career" class="section" aria-label="Career">
-	<div class="section-heading reveal">
-		<div>
-			<span class="section-kicker">007 / Career</span>
-			<h2>Hire <em>me</em></h2>
-		</div>
-		<p>Full-stack and frontend roles, part-time IT and security work, and freelance builds. One email starts it — I reply within 24 hours.</p>
+<!-- ══════════ 08 / HIRE ══════════ -->
+<section id="career" class="section" aria-label="Hire me">
+	<div class="rail reveal">
+		<span class="rail-num">08</span>
+		<h2>Hire <em>me</em></h2>
+		<p class="rail-desc">Full-time roles, part-time IT and security work, freelance builds. One email starts it.</p>
 	</div>
 
-	<div class="career-grid">
-		<div class="career-card reveal">
-			<h3>Career Goal</h3>
+	<div class="hire-panel reveal">
+		<div>
+			<h3>Engineer + security mind, <em>one inbox away.</em></h3>
 			<p>{profile.careerGoal}</p>
+			<ul class="hire-points">
+				<li>Reply within 24 hours, quote with fixed scope</li>
+				<li>You own the code — transferred on final payment</li>
+				<li>Direct line to the engineer, no middlemen</li>
+			</ul>
+			<ul class="service-chips" aria-label="Freelance services">
+				{#each ['Full-stack builds', 'Frontend / redesigns', 'APIs', 'Automation', 'SEO / data', 'Security hardening'] as service}
+					<li>{service}</li>
+				{/each}
+			</ul>
 		</div>
-		<div class="career-card reveal">
-			<h3>Resume</h3>
-			<p>One page, current, with live links to every project on this site.</p>
+		<div class="hire-cta">
 			<a
 				href={profile.resumeUrl}
 				target="_blank"
 				rel="noopener noreferrer"
-				class="button primary brutal"
-			>
-				Download resume (PDF) →
-			</a>
+				class="button primary"
+			>Download resume (PDF) <span aria-hidden="true">→</span></a>
+			<a href="#booking" class="button ghost">Book a project <span aria-hidden="true">→</span></a>
+			<a class="contact-link" href="mailto:{profile.email}">or email {profile.email} directly</a>
 		</div>
 	</div>
-	<ul class="service-chips reveal" aria-label="Freelance services">
-		{#each ['Full-stack builds', 'Frontend / redesigns', 'APIs', 'Automation', 'SEO / data', 'Security hardening'] as service}
-			<li>{service}</li>
-		{/each}
-	</ul>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     BOOKING
-════════════════════════════════════════════════════════ -->
+<!-- ══════════ 09 / BOOKING ══════════ -->
 <section id="booking" class="section booking-section" aria-label="Book a project">
-	<div class="section-heading reveal" style="text-align: center; display: block;">
-		<span class="section-kicker">008 / Book</span>
-		<h2>Book a <em>project</em></h2>
-		<p>Freelance builds, redesigns, APIs, automation. Tell me what you need — fixed scope, clear timeline, reply within 24 hours.</p>
+	<div class="rail reveal" style="display: block; text-align: center;">
+		<span class="rail-num">09</span>
+		<h2>Start a <em>project</em></h2>
+		<p class="rail-desc" style="margin-left: auto; margin-right: auto;">
+			Freelance builds, redesigns, APIs, automation. Fixed scope, clear timeline, reply within 24 hours.
+		</p>
 	</div>
-	<div class="reveal">
+	<div class="booking-narrow reveal">
 		<BookingForm />
 	</div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     PROJECT MODAL
-════════════════════════════════════════════════════════ -->
+<a href="#booking" class="mobile-cta">Get a free quote →</a>
+
+<!-- ══════════ PROJECT MODAL ══════════ -->
 {#if activeProject}
 	<ProjectModal
 		project={activeProject}
 		onclose={() => (activeProject = null)}
 	/>
 {/if}
-
-<style>
-	.mono-tag {
-		font: 0.8rem var(--font-mono, monospace);
-		color: rgba(236, 231, 224, 0.5);
-		margin-bottom: 1rem;
-	}
-	.mono-tag .accent { color: var(--accent, #a51d37); }
-	.mono-tag a { text-decoration: underline; text-decoration-color: rgba(236, 231, 224, 0.3); }
-	.mono-tag a:hover { color: var(--accent, #a51d37); }
-
-	/* About layout */
-	.about-body {
-		display: grid;
-		grid-template-columns: 1.2fr 0.8fr;
-		gap: 4rem;
-		margin-top: 2rem;
-	}
-	.about-copy p {
-		color: rgba(236, 231, 224, 0.7);
-		line-height: 1.8;
-		margin: 0 0 1rem;
-	}
-	.about-copy p.italic { font-style: italic; color: rgba(236, 231, 224, 0.45); }
-	.about-facts {
-		list-style: none;
-		padding: 0;
-		margin: 1.5rem 0 0;
-		display: grid;
-		gap: 0.5rem;
-	}
-	.about-facts li { font-size: 0.85rem; color: rgba(236, 231, 224, 0.6); }
-	.about-facts strong { color: rgba(236, 231, 224, 0.8); }
-
-	.instagram-wrap {
-		margin-top: 2rem;
-		max-width: 540px;
-		overflow: hidden;
-		border: 1px solid rgba(236, 231, 224, 0.1);
-	}
-
-	/* Architecture cards */
-	.arch-card {
-		min-height: 220px;
-		border: 1px solid rgba(236, 231, 224, 0.1);
-		background: var(--surface, #080a0d);
-		padding: 1.25rem;
-	}
-	.arch-card:nth-child(2) { transform: translateY(1.5rem) rotate(0.6deg); }
-	.arch-card:nth-child(3) { transform: rotate(-1.2deg); }
-
-	/* Career grid */
-	.career-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 1.5rem;
-		margin-top: 2rem;
-	}
-	.career-card {
-		border: 1px solid rgba(236, 231, 224, 0.1);
-		background: var(--surface, #080a0d);
-		padding: 2rem;
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-	.career-card h3 {
-		font-family: var(--font-serif, Georgia, serif);
-		font-size: 1.5rem;
-		margin: 0;
-		color: var(--ink, #ece7e0);
-	}
-	.career-card p {
-		font-size: 0.875rem;
-		color: rgba(236, 231, 224, 0.65);
-		line-height: 1.7;
-		margin: 0;
-		flex: 1;
-	}
-	.career-card .button {
-		align-self: flex-start;
-		text-decoration: none;
-		padding: 0.7rem 1.25rem;
-		font: 600 0.72rem var(--font-mono, monospace);
-		text-transform: uppercase;
-	}
-	.career-card .button.primary {
-		background: var(--accent, #a51d37);
-		border: 1px solid var(--accent, #a51d37);
-		color: #fff;
-	}
-	.career-card .button.primary:hover { opacity: 0.9; }
-
-	.booking-section {
-		text-align: center;
-	}
-	.booking-section .section-heading { margin-bottom: 2.5rem; }
-	.booking-section .section-heading p { margin: 0.5rem auto 0; max-width: 480px; }
-
-	@media (max-width: 900px) {
-		.about-body { grid-template-columns: 1fr; }
-		.career-grid { grid-template-columns: 1fr; }
-	}
-</style>

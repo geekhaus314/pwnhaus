@@ -20,7 +20,12 @@ export const themes: Record<string, ThemeDefinition> = {
 			grid: 'rgba(165,29,55,.18)',
 			laser: 'rgba(227,61,92,.9)',
 			shadow: 'rgba(0,0,0,.7)',
-			selection: '#a51d37'
+			selection: '#a51d37',
+			ok: '#35d07f',
+			warn: '#e5a63d',
+			crit: '#e5484d',
+			line: 'rgba(236,231,224,.09)',
+			card: '#0b0d10'
 		}
 	},
 	matrix: {
@@ -38,7 +43,12 @@ export const themes: Record<string, ThemeDefinition> = {
 			grid: 'rgba(53,208,127,.2)',
 			laser: 'rgba(138,255,184,.9)',
 			shadow: 'rgba(0,20,10,.75)',
-			selection: '#16834a'
+			selection: '#16834a',
+			ok: '#35d07f',
+			warn: '#e5c53d',
+			crit: '#ff5f56',
+			line: 'rgba(225,247,233,.1)',
+			card: '#081009'
 		}
 	},
 	cyan: {
@@ -56,7 +66,12 @@ export const themes: Record<string, ThemeDefinition> = {
 			grid: 'rgba(22,183,216,.2)',
 			laser: 'rgba(115,237,255,.9)',
 			shadow: 'rgba(0,15,25,.75)',
-			selection: '#087f9a'
+			selection: '#087f9a',
+			ok: '#3ddc84',
+			warn: '#f0b429',
+			crit: '#ff5f56',
+			line: 'rgba(229,249,252,.1)',
+			card: '#08121a'
 		}
 	},
 	paper: {
@@ -74,7 +89,12 @@ export const themes: Record<string, ThemeDefinition> = {
 			grid: 'rgba(23,23,23,.14)',
 			laser: 'rgba(181,43,53,.85)',
 			shadow: 'rgba(30,25,15,.2)',
-			selection: '#b52b35'
+			selection: '#b52b35',
+			ok: '#1d7a3d',
+			warn: '#a96a12',
+			crit: '#c22f36',
+			line: 'rgba(23,23,23,.12)',
+			card: '#f2eee5'
 		}
 	}
 };
