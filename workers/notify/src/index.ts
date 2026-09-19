@@ -9,9 +9,11 @@ import { rateLimitOr429 } from '../../shared/rate-limit';
  * flips the parent row to delivered | partial | failed.
  *
  * Channels:
- *   discord — live via DISCORD_WEBHOOK_URL secret (channel webhook).
- *   reddit  — stub for #41 (bot owns OAuth + submit); recorded as skipped.
- *   signal  — stub for #42 (bridge owns signal-cli send); recorded as skipped.
+ *   discord — live via DISCORD_WEBHOOK_URL secret (channel webhook);
+ *     slash-commands live in the discord bot (#40).
+ *   reddit  — recorded as queued; the reddit bot (#41) cron picks it up.
+ *   signal  — live via SIGNAL_BRIDGE_URL/TOKEN to the Barnaby bridge (#42);
+ *     skipped until the tunnel + secrets land.
  *
  * Auth is fail-closed: no ADMIN_TOKEN secret => 503 on every POST (same
  * posture as booking's Turnstile gate). Secrets never leave the worker —
@@ -24,6 +26,8 @@ interface Env {
 	DB: D1Database;
 	ADMIN_TOKEN?: string;
 	DISCORD_WEBHOOK_URL?: string;
+	SIGNAL_BRIDGE_URL?: string;
+	SIGNAL_BRIDGE_TOKEN?: string;
 	TELEMETRY_SERVICE?: { fetch(request: Request): Promise<Response> };
 }
 
@@ -111,6 +115,31 @@ const sendDiscord = async (webhookUrl: string | undefined, message: string, url:
 	return { channel: 'discord', status: 'failed', error: `discord_rejected_${res.status}` };
 };
 
+const sendSignal = async (
+	bridgeUrl: string | undefined,
+	bridgeToken: string | undefined,
+	message: string,
+	url: string | null
+): Promise<DeliveryOutcome> => {
+	if (!bridgeUrl || !bridgeToken) return { channel: 'signal', status: 'skipped', error: 'signal_bridge_not_configured' };
+	const endpoint = bridgeUrl.replace(/\/+$/, '') + '/api/signal/send';
+	let res: Response;
+	try {
+		res = await fetch(endpoint, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${bridgeToken}` },
+			body: JSON.stringify(url ? { message, url } : { message }),
+			signal: AbortSignal.timeout(10_000)
+		});
+	} catch {
+		return { channel: 'signal', status: 'failed', error: 'signal_bridge_unreachable' };
+	}
+	if (res.ok) return { channel: 'signal', status: 'sent', error: null };
+	if (res.status === 429 || res.status >= 500) return { channel: 'signal', status: 'failed', error: `signal_http_${res.status}` };
+	if (res.status === 503) return { channel: 'signal', status: 'skipped', error: 'signal_bridge_not_configured' };
+	return { channel: 'signal', status: 'failed', error: `signal_rejected_${res.status}` };
+};
+
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		const preflight = handleOptions(request, METHODS);
@@ -161,8 +190,8 @@ export default {
 					limits: { postPerMinPerIp: 10, maxBodyBytes: MAX_BODY_BYTES },
 					channels: {
 						discord: env.DISCORD_WEBHOOK_URL ? 'live' : 'not_configured',
-						reddit: 'stub_for_41',
-						signal: 'stub_for_42'
+						reddit: 'cron_pending_41',
+						signal: env.SIGNAL_BRIDGE_URL && env.SIGNAL_BRIDGE_TOKEN ? 'live' : 'not_configured'
 					},
 					note: 'Internal service, reached via the pwn4g3 gateway.'
 				});
@@ -231,9 +260,9 @@ export default {
 				if (channel === 'discord') {
 					outcomes.push(await sendDiscord(env.DISCORD_WEBHOOK_URL, message, link));
 				} else if (channel === 'reddit') {
-					outcomes.push({ channel, status: 'skipped', error: 'reddit_bot_not_implemented_41' });
+					outcomes.push({ channel, status: 'skipped', error: 'reddit_queued_for_41_cron' });
 				} else {
-					outcomes.push({ channel, status: 'skipped', error: 'signal_bridge_not_implemented_42' });
+					outcomes.push(await sendSignal(env.SIGNAL_BRIDGE_URL, env.SIGNAL_BRIDGE_TOKEN, message, link));
 				}
 			}
 

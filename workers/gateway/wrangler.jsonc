@@ -14,6 +14,9 @@
     { "binding": "ASSETS_SERVICE", "service": "pwn4g3-assets" },
     { "binding": "BOOKING_SERVICE", "service": "pwn4g3-booking" },
     { "binding": "NOTIFY_SERVICE", "service": "pwn4g3-notify" },
+    { "binding": "DISCORD_SERVICE", "service": "pwn4g3-discord" },
+    { "binding": "REDDIT_SERVICE", "service": "pwn4g3-reddit" },
+    { "binding": "ADMIN_SERVICE", "service": "pwn4g3-admin" },
     { "binding": "TELEMETRY_SERVICE", "service": "pwn4g3-telemetry" }
   ]
 }

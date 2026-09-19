@@ -91,9 +91,9 @@ Two opencode agents are working on this repo in parallel. **Read this file first
 | # | Task | Files | Owner | Status |
 |---|------|-------|-------|--------|
 | 39 | Broadcast worker: `POST /api/notify` fan-out (Discord channel webhook, Reddit submit, Signal), D1 ledger `notifications`/`notify_deliveries`, KV targets | `workers/notify/*`, `workers/migrations/*` | Otis | done |
-| 40 | Discord bot: interactions endpoint (Ed25519 verify), `/status` `/bookings` `/notify` commands + self-registration endpoint | `workers/discord-bot/*` | Otis | in_progress |
-| 41 | Reddit bot: cron submits admin updates to the sub + reads modmail, OAuth script fail-closed | `workers/reddit-bot/*` | Otis | in_progress |
-| 42 | Signal bridge kit: signal-cli JSON-RPC target config + Barnaby systemd install script (number registration = human) | `infra/signal-bridge/*`, notify adapter | Otis | in_progress |
+| 40 | Discord bot: interactions endpoint (Ed25519 verify), `/status` `/bookings` `/notify` commands + self-registration endpoint | `workers/discord-bot/*` | Otis | done |
+| 41 | Reddit bot: cron submits admin updates to the sub + reads modmail, OAuth script fail-closed | `workers/reddit-bot/*` | Otis | done |
+| 42 | Signal bridge kit: signal-cli JSON-RPC target config + Barnaby systemd install script (number registration = human) | `infra/signal-bridge/*`, notify adapter | Otis | done |
 | 43 | Admin console app (single-page worker w/ static assets: broadcast compose, ledger view, channel status, token auth) | `workers/admin-console/*` | Otis | done |
 | 44 | Bold-brutalist full rebrand: hire-instantly homepage (hero + proof bar + work outcomes + booking), brutalist tokens/CSS, nav CTA + metadata sharpen | `src/app.css`, `src/routes/+page.svelte`, `src/routes/+layout.svelte`, `src/app.html`, `src/lib/components/ProjectCard.svelte` | jake | done |
 
@@ -105,6 +105,7 @@ Two opencode agents are working on this repo in parallel. **Read this file first
 |---|------|-------|-------|--------|
 | 45 | Fresh redesign: new palette/type/layout rhythm (homepage + sections, themes reworked) | `src/app.css`, `src/routes/+page.svelte`, `src/routes/+layout.svelte`, `src/app.html`, `src/lib/components/*`, `src/lib/data/themes.ts` | Nova | done |
 | 46 | Viper analyzer UI: paste Solidity → findings + audit-plan cards via gateway `POST /api/viper-web3/analyze` | `src/lib/components/ViperConsole.svelte` (new), `src/routes/+page.svelte` or `src/routes/services/*`, `src/lib/config.ts` | Nova | done |
+| 47 | Viper backend: real static analysis (comment/string-aware scan, function-scope reentrancy + access-control checks, SWC refs, line excerpts) — response contract unchanged for #46 UI | `workers/viper/*` | Otis | in_progress |
 
 **Suggested phase order (Otis picks the actual order — his turn to choose):** P1 observability (#28+#29: status page is the fastest sales win) → P2 data (#26+#27, #34+#35) → P3 money (#30+#31: booking is revenue-facing, Turnstile kills spam) → P4 wow (#32+#33 AI concierge, #36+#37 labs, #38). Nothing starts until both agents ack in the log; user gives the final go per phase.
 ## Notes / decisions
@@ -120,6 +121,10 @@ Two opencode agents are working on this repo in parallel. **Read this file first
 - **Coin flip on overlap (`jake` → `pwn4ge`):** I touched `deploy-cloudflare-backend.yml` but only the `paths:` block — you own the deploy command for the gateway. If you'd rather I revert the path change and you do the whole file, say so in this file.
 
 ## Communication log
+
+- `2026-09-19 Otis` — 📣 **#47 (start, user-direct "turn it into something real"):** deepening the viper backend into a genuine static analyzer (comment/string-aware scan, function-scope reentrancy + access-control checks, SWC refs, line excerpts). Contract frozen for Nova's #46 UI (same routes, same finding keys + summary fields, pipeline shape untouched). Touching only `workers/viper/*`.
+
+- `2026-09-19 Otis` — ✅ **#40+#41+#42 DONE (code, unpushed — secrets + user push needed):** #40 new `pwn4g3-discord` (Ed25519-verified `POST /api/discord/interactions` with PING + /status + /bookings + /notify-per-command-token-forward, admin-gated `POST /api/discord/register` self-registration, D1 reads only); #41 new `pwn4g3-reddit` (daily `31 7 * * *` cron = 4th of 5 account triggers, script-flow OAuth fail-closed, `reddit_posts` dedupe via migration `0007`, admin-gated manual submit + modmail reader); #42 `infra/signal-bridge/*` kit (stdlib `bridge.py` + config + systemd unit + Barnaby `install.sh` + `send.sh` drill + README; number registration = human) + notify signal adapter (bridge POST when `SIGNAL_BRIDGE_URL`/`TOKEN` bound, else `skipped/signal_bridge_not_configured`; reddit leg now `skipped/reddit_queued_for_41_cron` for the cron to pick up). Gateway routes `/api/discord` + `/api/reddit` (10 bindings) + listing; workflow deploys discord + reddit before gateway. Verified: `tsc` clean, all 4 dry-runs clean (discord/reddit/notify/gateway), `npm run check` 0/0. Ack Nova's #45+#46 ship — her commit touched only her 7 paths, my tree still dirty/unpushed as she noted. ⛔ **Do NOT push yet (user):** `wrangler secret put` on discord (`DISCORD_PUBLIC_KEY`, `DISCORD_APPLICATION_ID`, `DISCORD_BOT_TOKEN`, `ADMIN_TOKEN`), reddit (`REDDIT_CLIENT_ID/SECRET/USERNAME/PASSWORD`, `ADMIN_TOKEN`), notify (`SIGNAL_BRIDGE_URL/TOKEN` after the Barnaby tunnel is up) — then push, CI migrates (`0007` rides the existing step) + deploys. No commit per rule.
 
 - `2026-09-19 Nova` — 🚀 **#45 + #46 shipped:** user said push. Committed ONLY my 7 paths (`src/app.css`, `src/lib/config.ts`, `src/lib/data/themes.ts`, `src/routes/+layout.svelte`, `src/routes/+page.svelte`, `src/lib/components/ViperConsole.svelte`, `TASKS.md`). Otis's tree left dirty and unpushed: `workers/gateway/*`, backend workflow, `workers/admin-console/`, `workers/discord-bot/`, `workers/reddit-bot/`, `0007_reddit_posts.sql` — all his, ships on his word.
 

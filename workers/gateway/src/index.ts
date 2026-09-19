@@ -8,6 +8,9 @@ interface Env {
 	ASSETS_SERVICE: { fetch(request: Request): Promise<Response> };
 	BOOKING_SERVICE: { fetch(request: Request): Promise<Response> };
 	NOTIFY_SERVICE: { fetch(request: Request): Promise<Response> };
+	ADMIN_SERVICE: { fetch(request: Request): Promise<Response> };
+	DISCORD_SERVICE: { fetch(request: Request): Promise<Response> };
+	REDDIT_SERVICE: { fetch(request: Request): Promise<Response> };
 	TELEMETRY_SERVICE: { fetch(request: Request): Promise<Response> };
 	PWN4G3_ASSETS_URL?: string;
 }
@@ -33,7 +36,10 @@ export default {
 		if (route(pathname, '/api/telemetry')) return env.TELEMETRY_SERVICE.fetch(request);
 		if (route(pathname, '/api/booking')) return env.BOOKING_SERVICE.fetch(request);
 		if (route(pathname, '/api/notify')) return env.NOTIFY_SERVICE.fetch(request);
-		if (pathname.startsWith('/assets/')) return env.ASSETS_SERVICE.fetch(request);
+		if (route(pathname, '/api/discord')) return env.DISCORD_SERVICE.fetch(request);
+		if (route(pathname, '/api/reddit')) return env.REDDIT_SERVICE.fetch(request);
+		if (route(pathname, '/admin')) return env.ADMIN_SERVICE.fetch(request);
+		if (pathname === '/assets' || pathname.startsWith('/assets/')) return env.ASSETS_SERVICE.fetch(request);
 
 		if (pathname === '/') {
 			if (request.method !== 'GET') return jsonResponse({ error: 'method_not_allowed', route: 'root' }, 405);
@@ -41,8 +47,8 @@ export default {
 				service: 'pwn4g3',
 				site: 'https://pwn4g3.pages.dev',
 				status: 'available',
-				architecture: 'gateway -> service bindings (health, components, viper, assets, booking, telemetry, notify)',
-				assets: env.PWN4G3_ASSETS_URL ?? null,
+				architecture: 'gateway -> service bindings (health, components, viper, assets, booking, telemetry, notify, discord, reddit, admin)',
+				assets: env.PWN4G3_ASSETS_URL ?? 'https://pwn4g3.geekhaus314.workers.dev/assets',
 				endpoints: {
 					health: 'GET /health',
 					components: 'GET /api/components',
@@ -52,7 +58,10 @@ export default {
 					telemetry: 'POST /api/telemetry  { "service": "...", "event": "..." }',
 					booking: 'POST /api/booking  { name, email, details, service?, timeline?, turnstileToken? }',
 					notify: 'POST /api/notify  { message, url?, channels? } (admin bearer)',
-					assets: 'GET /assets/*  (R2 bucket pwn4g3-assets)'
+					discord: 'POST /api/discord/interactions (Discord Ed25519) + POST /api/discord/register (admin bearer)',
+					reddit: 'POST /api/reddit/submit { id? } + GET /api/reddit/modmail (admin bearer)',
+					admin: 'GET /admin  (admin console, token-gated API)',
+					assets: 'GET /assets/<key>  e.g. /assets/resume.pdf  (R2 bucket pwn4g3-assets)'
 				}
 			});
 		}

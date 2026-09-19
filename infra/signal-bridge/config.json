@@ -1,0 +1,19 @@
+{
+  "$comment": "pwn4g3 signal bridge target config (#42). No secrets in this file — number, recipients, and tokens are set by install.sh / env. The notify worker (#39) talks to the bridge over HTTPS (cloudflared tunnel URL in SIGNAL_BRIDGE_URL) with SIGNAL_BRIDGE_TOKEN as bearer.",
+  "bridge": {
+    "listen": "127.0.0.1:8765",
+    "public_url_env": "SIGNAL_BRIDGE_URL",
+    "auth_token_env": "SIGNAL_BRIDGE_TOKEN"
+  },
+  "signal_cli": {
+    "mode": "cli-send",
+    "json_rpc_endpoint": "127.0.0.1:7583",
+    "note": "CLI send is the default (stable across signal-cli versions). Flip to json-rpc-tcp once the daemon dialect is pinned on Barnaby."
+  },
+  "sender": "+10000000000",
+  "recipients": ["+10000000000"],
+  "rate": {
+    "per_min": 5,
+    "max_len": 1500
+  }
+}
