@@ -8,9 +8,13 @@
  *   https://pwn4g3.geekhaus314.workers.dev/assets/*
  *
  * Local `static/` files remain as dev fallbacks, but every `<img>`,
- * `<source>`, og:image, and resume link in production must go through
+ * `<source>`, and og:image in production must go through
  * `assetUrl()` so the R2 origin + CSP stay in sync. If the origin ever
  * moves, change `ASSET_BASE` here only.
+ *
+ * Résumé/CV PDFs are the exception: they version with the site, so
+ * `profile.resumeUrl`/`cvUrl` point at same-origin `/resume.pdf` +
+ * `/cv.pdf` (fresh on every deploy, both mirrors) instead of R2.
  */
 
 export const ASSET_BASE = 'https://pwn4g3.geekhaus314.workers.dev/assets';

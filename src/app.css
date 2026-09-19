@@ -29,6 +29,17 @@
 	--font-sans: Inter, system-ui, sans-serif;
 	--font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
 
+	/* look — swapped wholesale by the theme switcher (themes.ts) */
+	--font-heading: 'Cormorant Garamond', Georgia, serif;
+	--font-display: Inter, system-ui, sans-serif;
+	--display-weight: 800;
+	--font-body: Inter, system-ui, sans-serif;
+	--heading-case: none;
+	--heading-spacing: -0.03em;
+	--heading-style: italic;
+
+	color-scheme: dark;
+
 	--pointer-x: 50vw;
 	--pointer-y: 35vh;
 
@@ -73,7 +84,7 @@ body {
 		radial-gradient(50rem 26rem at -10% 30%, var(--accent-soft), transparent 65%),
 		var(--page);
 	color: var(--ink);
-	font-family: var(--font-sans);
+	font-family: var(--font-body, var(--font-sans));
 	-webkit-font-smoothing: antialiased;
 }
 
@@ -244,19 +255,20 @@ section[id] { scroll-margin-top: 4.5rem; }
 
 .hero h1 {
 	margin: 1.4rem 0 0;
-	font-family: var(--font-sans);
-	font-weight: 800;
+	font-family: var(--font-display);
+	font-weight: var(--display-weight);
 	font-size: clamp(2.9rem, 7.2vw, 5.9rem);
 	line-height: 0.98;
-	letter-spacing: -0.045em;
+	letter-spacing: var(--heading-spacing);
+	text-transform: var(--heading-case);
 	text-wrap: balance;
 }
 .hero h1 em {
-	font-family: var(--font-serif);
-	font-style: italic;
+	font-family: var(--font-heading);
+	font-style: var(--heading-style);
 	font-weight: 500;
 	color: var(--accent-bright);
-	letter-spacing: -0.02em;
+	letter-spacing: inherit;
 }
 
 .hero-who {
@@ -422,14 +434,15 @@ section[id] { scroll-margin-top: 4.5rem; }
 }
 .rail h2 {
 	margin: 0;
-	font-family: var(--font-serif);
+	font-family: var(--font-heading);
 	font-weight: 500;
 	font-size: clamp(2.4rem, 5.4vw, 4.6rem);
 	line-height: 0.95;
-	letter-spacing: -0.03em;
+	letter-spacing: var(--heading-spacing);
+	text-transform: var(--heading-case);
 	text-wrap: balance;
 }
-.rail h2 em { color: var(--accent-bright); font-style: italic; }
+.rail h2 em { color: var(--accent-bright); font-style: var(--heading-style); }
 .rail-desc {
 	grid-column: 2;
 	max-width: 36em;
@@ -442,7 +455,7 @@ section[id] { scroll-margin-top: 4.5rem; }
 /* Legacy hooks reused by services page */
 .section-heading { margin-bottom: 2.5rem; }
 .section-heading h2 {
-	font-family: var(--font-serif);
+	font-family: var(--font-heading);
 	font-weight: 500;
 	font-size: clamp(2.4rem, 5vw, 4rem);
 	margin: 0.8rem 0 0;
@@ -610,7 +623,7 @@ section[id] { scroll-margin-top: 4.5rem; }
 }
 .project-info h3 {
 	margin: 0.35rem 0 0.3rem;
-	font-family: var(--font-serif);
+	font-family: var(--font-heading);
 	font-weight: 500;
 	font-size: 1.5rem;
 	line-height: 1;
@@ -669,7 +682,7 @@ section[id] { scroll-margin-top: 4.5rem; }
 }
 .cap-row:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
 .cap-row > span { color: var(--accent-bright); font: 600 0.72rem var(--font-mono); }
-.cap-row h3 { margin: 0; font-family: var(--font-serif); font-weight: 500; font-size: clamp(1.5rem, 2.6vw, 2.1rem); }
+.cap-row h3 { margin: 0; font-family: var(--font-heading); font-weight: 500; font-size: clamp(1.5rem, 2.6vw, 2.1rem); }
 .cap-row p { margin: 0; color: var(--muted); font-size: 0.88rem; line-height: 1.7; }
 .cap-row .cap-tag {
 	font: 600 0.62rem var(--font-mono);
@@ -712,7 +725,7 @@ section[id] { scroll-margin-top: 4.5rem; }
 }
 .security-copy { padding: clamp(2rem, 4vw, 3.5rem); }
 .security-copy h2 {
-	font-family: var(--font-serif);
+	font-family: var(--font-heading);
 	font-weight: 500;
 	font-size: clamp(2.2rem, 4vw, 3.6rem);
 	line-height: 0.95;
@@ -879,7 +892,7 @@ section[id] { scroll-margin-top: 4.5rem; }
 .finding.sev-high > span { color: var(--crit); }
 .finding.sev-medium > span { color: var(--warn); }
 .finding.sev-low > span { color: var(--ok); }
-.finding strong { display: block; margin: 0.35rem 0; font-family: var(--font-serif); font-weight: 500; font-size: 1.3rem; }
+.finding strong { display: block; margin: 0.35rem 0; font-family: var(--font-heading); font-weight: 500; font-size: 1.3rem; }
 .finding p { margin: 0; color: var(--muted); font-size: 0.8rem; line-height: 1.65; }
 .finding p + p { margin-top: 0.4rem; color: var(--ink); opacity: 0.85; }
 .lab-error {
@@ -967,7 +980,7 @@ section[id] { scroll-margin-top: 4.5rem; }
 .manifesto blockquote {
 	max-width: 1000px;
 	margin: 1.5rem auto;
-	font-family: var(--font-serif);
+	font-family: var(--font-heading);
 	font-weight: 500;
 	font-size: clamp(2rem, 5vw, 4.6rem);
 	line-height: 1.02;
@@ -993,7 +1006,7 @@ section[id] { scroll-margin-top: 4.5rem; }
 }
 .hire-panel h3 {
 	margin: 0;
-	font-family: var(--font-serif);
+	font-family: var(--font-heading);
 	font-weight: 500;
 	font-size: clamp(2rem, 3.6vw, 3rem);
 	line-height: 1;
@@ -1175,6 +1188,189 @@ html.js .reveal {
 html.js .reveal.revealed {
 	opacity: 1;
 	transform: none;
+}
+
+/* ----------------------------------------------------------
+   Page heroes (subpages) + content links
+   ---------------------------------------------------------- */
+.page-hero {
+	max-width: 1180px;
+	margin: 0 auto;
+	padding: clamp(3rem, 6vw, 5rem) 5vw 0;
+	position: relative;
+}
+.page-hero--center { text-align: center; }
+.page-hero--center .lede { margin-left: auto; margin-right: auto; }
+.page-hero h1 {
+	margin: 1rem 0 0;
+	font-family: var(--font-display);
+	font-weight: var(--display-weight);
+	font-size: clamp(2.8rem, 6.5vw, 5.2rem);
+	line-height: 0.98;
+	letter-spacing: var(--heading-spacing);
+	text-transform: var(--heading-case);
+	text-wrap: balance;
+}
+.page-hero h1 em {
+	font-family: var(--font-heading);
+	font-style: var(--heading-style);
+	font-weight: 500;
+	color: var(--accent-bright);
+}
+.page-hero .lede { margin-top: 1.25rem; }
+.lede a, .rail-desc a {
+	color: var(--accent-bright);
+	text-decoration: underline;
+	text-decoration-color: var(--line);
+	text-underline-offset: 3px;
+}
+.lede a:hover, .rail-desc a:hover { text-decoration-color: var(--accent-bright); }
+
+/* ----------------------------------------------------------
+   Theme looks — each theme restyles the whole site, not just
+   the palette. Vars (fonts, radii) come from themes.ts; the
+   texture/shape overrides below are scoped per data-theme.
+   ---------------------------------------------------------- */
+
+/* MATRIX — terminal: scanlines, phosphor glow, straight edges */
+[data-theme='matrix'] .site-shell::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	background: repeating-linear-gradient(transparent 0 2px, rgba(0, 0, 0, 0.22) 3px 4px);
+	opacity: 0.5;
+	z-index: 60;
+}
+[data-theme='matrix'] .hero h1,
+[data-theme='matrix'] .page-hero h1 {
+	text-shadow: 0 0 18px var(--accent-soft), 0 0 46px var(--accent-soft);
+}
+[data-theme='matrix'] .terminal { transform: none; }
+[data-theme='matrix'] .ticker {
+	background: #020403;
+	color: var(--accent-bright);
+	border-top: 1px solid var(--accent);
+	border-bottom: 1px solid var(--accent);
+}
+[data-theme='matrix'] .project-card:hover,
+[data-theme='matrix'] .button.primary:hover {
+	box-shadow: 0 0 24px var(--accent-soft);
+}
+[data-theme='matrix'] .cap-row h3,
+[data-theme='matrix'] .project-info h3,
+[data-theme='matrix'] .hire-panel h3,
+[data-theme='matrix'] .security-copy h2 {
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+/* PAPER extras — composition notebook: ruled lines, red margin,
+   torn tape, animated doodles. The base .site-shell::before grid is
+   replaced wholesale below. */
+[data-theme='paper'] .site-shell::before {
+	display: block;
+	background-image:
+		linear-gradient(90deg, transparent 0 3.25rem, rgba(181, 43, 53, 0.5) 3.25rem 3.35rem, transparent 3.35rem),
+		repeating-linear-gradient(to bottom, transparent 0 1.9rem, rgba(74, 124, 178, 0.38) 1.9rem 2rem);
+	background-size: auto auto;
+	mask-image: none;
+	-webkit-mask-image: none;
+	opacity: 1;
+}
+
+/* Torn masking-tape divider (RipTape.svelte) — paper only */
+.rip-wrap { display: none; }
+[data-theme='paper'] .rip-wrap {
+	display: flex;
+	justify-content: center;
+	padding: 0.5rem 5vw;
+	overflow: clip;
+}
+[data-theme='paper'] .rip-tape {
+	background: #fbf8f1;
+	color: #b52b35;
+	font-family: var(--font-heading);
+	font-style: italic;
+	font-size: clamp(1.2rem, 2.6vw, 1.7rem);
+	padding: 0.7rem 3rem;
+	transform: rotate(-1.5deg);
+	box-shadow: 3px 4px 0 var(--shadow);
+	clip-path: polygon(0 18%, 3% 8%, 7% 15%, 11% 5%, 15% 12%, 20% 4%, 25% 13%, 30% 6%, 35% 14%, 40% 5%, 45% 12%, 50% 6%, 55% 14%, 60% 5%, 65% 12%, 70% 4%, 75% 13%, 80% 6%, 85% 14%, 90% 5%, 95% 12%, 100% 7%, 100% 88%, 96% 95%, 91% 87%, 86% 96%, 81% 88%, 76% 95%, 71% 86%, 66% 94%, 61% 87%, 56% 96%, 51% 88%, 46% 95%, 41% 87%, 36% 94%, 31% 88%, 26% 96%, 21% 87%, 16% 95%, 11% 88%, 6% 94%, 0 89%);
+}
+html.js [data-theme='paper'] .rip-tape { transform: rotate(-4deg) scaleX(0); opacity: 0; }
+html.js [data-theme='paper'] .rip-wrap.revealed .rip-tape {
+	animation: rip-in 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards;
+}
+@keyframes rip-in {
+	to { transform: rotate(-1.5deg) scaleX(1); opacity: 1; }
+}
+
+/* Doodle draw-in (PaperDoodles.svelte) — paper only */
+[data-theme='paper'] .doodles .doodle { display: block; }
+[data-theme='paper'] .doodles .doodle path {
+	stroke-dasharray: 420;
+	stroke-dashoffset: 420;
+	animation: doodle-draw 1.8s ease forwards;
+}
+[data-theme='paper'] .doodles .doodle-star path { animation-delay: 0.9s; }
+[data-theme='paper'] .doodles .doodle-squiggle path { animation-delay: 1.4s; }
+[data-theme='paper'] .doodles .doodle-check path { animation-delay: 1.9s; }
+[data-theme='paper'] .doodles .doodle-text { opacity: 0; animation: doodle-fade 0.8s ease forwards; }
+[data-theme='paper'] .doodles .doodle-arrow .doodle-text { animation-delay: 1.2s; }
+[data-theme='paper'] .doodles .doodle-check .doodle-text { animation-delay: 2.6s; }
+@keyframes doodle-draw { to { stroke-dashoffset: 0; } }
+@keyframes doodle-fade { to { opacity: 1; } }
+[data-theme='paper'] body {
+	background: var(--page);
+}
+[data-theme='paper'] .button.primary,
+[data-theme='paper'] .nav-cta,
+[data-theme='paper'] .mobile-cta {
+	box-shadow: 3px 3px 0 var(--ink);
+}
+[data-theme='paper'] .button.primary:hover,
+[data-theme='paper'] .nav-cta:hover {
+	transform: translate(-1px, -1px);
+	box-shadow: 4px 4px 0 var(--ink);
+}
+[data-theme='paper'] .project-card,
+[data-theme='paper'] .infra-card,
+[data-theme='paper'] .lab-panel,
+[data-theme='paper'] .hire-panel {
+	box-shadow: 5px 5px 0 var(--shadow);
+}
+[data-theme='paper'] .terminal {
+	transform: none;
+	box-shadow: 6px 6px 0 var(--shadow);
+}
+[data-theme='paper'] .ticker {
+	background: var(--ink);
+	color: var(--page);
+}
+[data-theme='paper'] .hero-visual::before,
+[data-theme='paper'] .manifesto {
+	background: transparent;
+}
+[data-theme='paper'] .nav { backdrop-filter: none; }
+
+/* CYAN — glass console: translucent blurred cards, gradient edges */
+[data-theme='cyan'] .project-card,
+[data-theme='cyan'] .infra-card,
+[data-theme='cyan'] .lab-panel,
+[data-theme='cyan'] .trust-grid,
+[data-theme='cyan'] .hire-panel {
+	background: color-mix(in srgb, var(--card) 72%, transparent);
+	backdrop-filter: blur(14px);
+}
+[data-theme='cyan'] .infra-card::after {
+	background: linear-gradient(90deg, var(--accent-bright), transparent);
+}
+[data-theme='cyan'] .button.primary {
+	box-shadow: 0 8px 32px var(--accent-soft);
+}
+[data-theme='cyan'] .ticker {
+	background: linear-gradient(90deg, var(--accent), var(--accent-bright));
 }
 
 /* ----------------------------------------------------------

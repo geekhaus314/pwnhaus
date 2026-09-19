@@ -87,7 +87,7 @@
 						<li>→ {f}</li>
 					{/each}
 				</ul>
-				<a class="button primary" class:ghost={pkg.featured} href="/#booking">
+				<a class="button primary" class:ghost={pkg.featured} href="/book">
 					Book {pkg.name.toLowerCase()} <span>→</span>
 				</a>
 			</div>
@@ -141,7 +141,7 @@
 	<p class="eyebrow"><i aria-hidden="true"></i> Let's talk</p>
 	<h2>Have a project in <em>mind?</em></h2>
 	<p>Tell me what you're building — I'll reply within a day with an estimate.</p>
-	<a class="button primary" href="/#booking">Book a project <span>→</span></a>
+	<a class="button primary" href="/book">Book a project <span>→</span></a>
 	<a class="button ghost" href="mailto:{profile.email}">or email directly <span>↗</span></a>
 </section>
 

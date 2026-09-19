@@ -6,15 +6,16 @@
 	themeStore.subscribe((v) => (current = v));
 </script>
 
-<div class="theme-switcher" role="group" aria-label="Visual theme">
+<div class="theme-switcher" role="group" aria-label="Visual theme — each one restyles the whole site">
 	{#each Object.entries(themes) as [name, def]}
 		<button
 			type="button"
 			class:active={current === name}
 			onclick={() => themeStore.apply(name)}
-			title={def.description}
+			title={`${def.label} — ${def.description}`}
 			aria-pressed={current === name}
 		>
+			<i aria-hidden="true" style="background: {def.variables.accent}"></i>
 			{def.label}
 		</button>
 	{/each}
@@ -27,6 +28,9 @@
 		flex-wrap: wrap;
 	}
 	button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
 		border: 1px solid rgba(236, 231, 224, 0.15);
 		background: transparent;
 		color: #77736e;
@@ -36,6 +40,12 @@
 		letter-spacing: 0.08em;
 		cursor: pointer;
 		transition: 0.2s;
+	}
+	button i {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		flex-shrink: 0;
 	}
 	button:hover,
 	button.active {

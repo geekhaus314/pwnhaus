@@ -2,12 +2,25 @@
 	import '../app.css';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { afterNavigate } from '$app/navigation';
 	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
 	import { profile } from '$lib/data/profile';
 
 	let { children, data }: { children: import('svelte').Snippet; data: { canonical: string } } = $props();
 
-	let activeSection = $state('top');
+	let menuOpen = $state(false);
+
+	const links = [
+		{ href: '/', label: 'Home' },
+		{ href: '/work', label: 'Work' },
+		{ href: '/services', label: 'Services' },
+		{ href: '/lab', label: 'Live Lab' },
+		{ href: '/about', label: 'About' },
+		{ href: '/book', label: 'Book' }
+	];
+
+	const isCurrent = (href: string): boolean =>
+		href === '/' ? $page.url.pathname === '/' : $page.url.pathname.startsWith(href);
 
 	// Mouse-tracking pointer for CSS radial gradient effects
 	function trackPointer(e: MouseEvent) {
@@ -15,7 +28,9 @@
 		document.documentElement.style.setProperty('--pointer-y', `${e.clientY}px`);
 	}
 
-	// Intersection observer for scroll-reveal animations
+	// Intersection observer for scroll-reveal animations.
+	// Re-runs after every client-side navigation so newly rendered
+	// `.reveal` elements animate (multi-page: layout onMount fires once).
 	function setupReveal() {
 		const io = new IntersectionObserver(
 			(entries) => {
@@ -25,25 +40,7 @@
 			},
 			{ threshold: 0.12 }
 		);
-		document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
-		return () => io.disconnect();
-	}
-
-	// Scroll spy for nav active link
-	function setupScrollSpy() {
-		const ids = ['top', 'about', 'portfolio', 'lab', 'career', 'booking'];
-		const io = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) activeSection = entry.target.id;
-				});
-			},
-			{ rootMargin: '-40% 0px -55% 0px' }
-		);
-		ids.forEach((id) => {
-			const el = document.getElementById(id);
-			if (el) io.observe(el);
-		});
+		document.querySelectorAll('.reveal:not(.revealed)').forEach((el) => io.observe(el));
 		return () => io.disconnect();
 	}
 
@@ -58,15 +55,18 @@
 		// manage visibility. Before this class is set, `.reveal` content stays
 		// visible so a failed/blocked hydration never leaves the page blank.
 		document.documentElement.classList.add('js');
-		const cleanReveal = setupReveal();
-		const cleanSpy = setupScrollSpy();
+		let cleanReveal = setupReveal();
+		afterNavigate(() => {
+			menuOpen = false;
+			cleanReveal();
+			cleanReveal = setupReveal();
+		});
 		window.addEventListener('mousemove', trackPointer, { passive: true });
 		if ('serviceWorker' in navigator) {
 			navigator.serviceWorker.register('/sw.js').catch(() => {});
 		}
 		return () => {
 			cleanReveal();
-			cleanSpy();
 			window.removeEventListener('mousemove', trackPointer);
 		};
 	});
@@ -82,22 +82,36 @@
 
 	<!-- ── Navigation ── -->
 	<header class="nav">
-		<a href="/#top" class="brand">pwn<span>4g3</span></a>
+		<a href="/" class="brand">pwn<span>4g3</span></a>
 
 		<nav aria-label="Main navigation">
-			<a href="/#about"     class:current={activeSection === 'about'}>About</a>
-			<a href="/#portfolio" class:current={activeSection === 'portfolio'}>Portfolio</a>
-			<a href="/#lab" class:current={activeSection === 'lab'}>Live Lab</a>
-			<a href="/services"   class:current={$page.url.pathname === '/services'}>Services</a>
-			<a href="/#career"    class:current={activeSection === 'career'}>Career</a>
-			<a href="/#booking"   class:current={activeSection === 'booking'}>Book</a>
+			{#each links as link}
+				<a href={link.href} class:current={isCurrent(link.href)}>{link.label}</a>
+			{/each}
 		</nav>
 
 		<div class="nav-right">
 			<ThemeSwitcher />
-			<a href="mailto:{profile.email}" class="nav-cta">Hire me</a>
+			<a href="/book" class="nav-cta">Hire me</a>
+			<button
+				type="button"
+				class="menu-toggle"
+				aria-expanded={menuOpen}
+				aria-controls="mobile-menu"
+				aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+				onclick={() => (menuOpen = !menuOpen)}
+			><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></button>
 		</div>
 	</header>
+
+	{#if menuOpen}
+		<nav id="mobile-menu" class="mobile-menu" aria-label="Mobile navigation">
+			{#each links as link}
+				<a href={link.href} class:current={isCurrent(link.href)} onclick={() => (menuOpen = false)}>{link.label}</a>
+			{/each}
+			<a href="/book" class="button primary" onclick={() => (menuOpen = false)}>Hire me →</a>
+		</nav>
+	{/if}
 
 	<!-- ── Page content ── -->
 	<main id="main" tabindex="-1">
@@ -154,6 +168,51 @@
 		gap: 1.25rem;
 	}
 
+	.menu-toggle {
+		display: none;
+		flex-direction: column;
+		justify-content: center;
+		gap: 5px;
+		background: transparent;
+		border: 1px solid var(--line);
+		border-radius: var(--radius-sm);
+		padding: 0.6rem 0.55rem;
+		cursor: pointer;
+	}
+	.menu-toggle span {
+		display: block;
+		width: 20px;
+		height: 2px;
+		background: var(--ink);
+		transition: transform 0.2s, opacity 0.2s;
+	}
+	.menu-toggle[aria-expanded='true'] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+	.menu-toggle[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+	.menu-toggle[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+	.mobile-menu {
+		display: none;
+		position: sticky;
+		top: 64px;
+		z-index: 29;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: 1rem 5vw 1.25rem;
+		background: color-mix(in srgb, var(--page) 94%, transparent);
+		backdrop-filter: blur(18px);
+		border-bottom: 1px solid var(--line);
+	}
+	.mobile-menu a:not(.button) {
+		padding: 0.7rem 0.25rem;
+		font: 600 0.85rem var(--font-mono);
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--muted);
+		border-bottom: 1px solid var(--line);
+	}
+	.mobile-menu a.current:not(.button) { color: var(--accent-bright); }
+	.mobile-menu .button { margin-top: 0.75rem; }
+
 	.co-conspirator {
 		font-size: 0.58rem;
 		text-align: center;
@@ -177,4 +236,9 @@
 		text-decoration-color: rgba(236, 231, 224, 0.45);
 	}
 	.build-info a:hover { color: rgba(236, 231, 224, 0.85); }
+
+	@media (max-width: 960px) {
+		.menu-toggle { display: inline-flex; }
+		.mobile-menu { display: flex; }
+	}
 </style>

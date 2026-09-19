@@ -1,5 +1,14 @@
 import { corsHeaders, handleOptions } from '../../shared/cors';
-import { rateLimitOr429 } from '../../shared/rate-limit';
+import { rateLimitOr429, getClientIp } from '../../shared/rate-limit';
+import {
+	scoreSite,
+	normalizeWebsite,
+	discoverBusinesses,
+	buildDraft,
+	SCAN_CATEGORIES,
+	STL_BBOX
+} from './score';
+import { createLeadId, parseSignals } from '../../shared/leads';
 
 /**
  * Admin console (#43).
@@ -55,7 +64,39 @@ const bearerToken = (request: Request): string | null => {
 	return match?.[1]?.trim() ? match[1].trim() : null;
 };
 
-/** Fail-closed gate: 503 when unconfigured, 401/403 on bad credentials. */
+const LEAD_STATUSES = ['new', 'enriched', 'drafted', 'contacted', 'replied', 'won', 'lost'] as const;
+
+interface LeadRow {
+	id: string;
+	name: string;
+	website: string | null;
+	email: string | null;
+	phone: string | null;
+	city: string;
+	niche: string | null;
+	source: string;
+	signals: string | null;
+	status: string;
+	notes: string | null;
+	created_at: number;
+	updated_at: number;
+}
+
+const withLeadSignals = (row: LeadRow) => ({ ...row, signals: parseSignals(row.signals) });
+
+async function insertLead(
+	env: Env,
+	lead: { name: string; website: string; email: string | null; phone: string | null; niche: string; source: string; signals: Record<string, unknown>; status?: string }
+): Promise<string> {
+	const id = createLeadId();
+	const now = Math.floor(Date.now() / 1000);
+	await env.DB.prepare(
+		'INSERT INTO leads (id, name, website, email, phone, city, niche, source, signals, status, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)'
+	)
+		.bind(id, lead.name, lead.website, lead.email, lead.phone, 'St. Louis', lead.niche, lead.source, JSON.stringify(lead.signals), lead.status ?? 'new', now, now)
+		.run();
+	return id;
+}
 const gate = async (request: Request, env: Env): Promise<Response | null> => {
 	if (!env.ADMIN_TOKEN) return fail('admin_not_configured', 503);
 	const token = bearerToken(request);
@@ -122,6 +163,29 @@ const PAGE = '<!DOCTYPE html>\n' +
 '<p><button id="ledger">refresh ledger</button></p>\n' +
 '<div id="ledgerout">—</div>\n' +
 '</section>\n' +
+'<section>\n' +
+'<h2>5 · lead scraper</h2>\n' +
+'<p>Score any site, or sweep a St. Louis vertical via OpenStreetMap. Higher score = worse site = better prospect.</p>\n' +
+'<input id="leadname" type="text" placeholder="business name (for manual add)">\n' +
+'<input id="leadurl" type="text" placeholder="https://example.com (score + save)">\n' +
+'<p><button id="addlead">score + save lead</button></p>\n' +
+'<div>\n' +
+'<select id="scancat">\n' +
+'<option value="restaurant">Restaurants</option>\n' +
+'<option value="cafe">Cafés</option>\n' +
+'<option value="salon">Hair / beauty salons</option>\n' +
+'<option value="auto">Auto repair</option>\n' +
+'<option value="dentist">Dental clinics</option>\n' +
+'<option value="retail">Local retail</option>\n' +
+'</select>\n' +
+'<input id="scanlimit" type="text" placeholder="sites to score (max 8)" style="width: 200px">\n' +
+'</div>\n' +
+'<p><button id="runscan">scan vertical</button></p>\n' +
+'<pre id="scanout">—</pre>\n' +
+'<p><button id="leads">refresh leads</button></p>\n' +
+'<div id="leadsout">—</div>\n' +
+'<pre id="draftout">—</pre>\n' +
+'</section>\n' +
 '</main>\n' +
 '<script>\n' +
 'var tok = sessionStorage.getItem("pwn4g3_admin") || "";' +
@@ -154,6 +218,47 @@ const PAGE = '<!DOCTYPE html>\n' +
 '  }).catch(function (e) { show("ledgerout", String(e)); });' +
 '}' +
 '$("ledger").onclick = refreshLedger;' +
+'function refreshLeads() {' +
+'  fetch("./api/leads?limit=50", { headers: auth() }).then(function (r) { return r.json(); }).then(function (j) {' +
+'    if (!j.ok) { show("leadsout", j); return; }' +
+'    var h = "<table><tr><th>score</th><th>business</th><th>pains</th><th>contact</th><th>status</th><th>act</th></tr>";' +
+'    j.data.leads.forEach(function (l) {' +
+'      var s = l.signals || {};' +
+'      var pains = (s.painPoints || []).slice(0, 3).map(esc).join("<br>");' +
+'      var contact = [l.email, l.phone].filter(Boolean).map(esc).join("<br>");' +
+'      h += "<tr><td><b>" + (s.score != null ? esc(s.score) : "–") + "</b></td><td>" + esc(l.name) + "<br><a href=\\"" + esc(l.website || "") + "\\">" + esc(l.website || "") + "</a></td><td>" + pains + "</td><td>" + contact + "</td><td><span class=pill>" + esc(l.status) + "</span></td>";' +
+'      h += "<td><button onclick=\\"draftLead(\\"" + l.id + "\\")\\">draft</button> " +' +
+'        "<button onclick=\\"setStatus(\\"" + l.id + "\\",\\"contacted\\")\\">contacted</button> " +' +
+'        "<button onclick=\\"setStatus(\\"" + l.id + "\\",\\"won\\")\\">won</button> " +' +
+'        "<button onclick=\\"setStatus(\\"" + l.id + "\\",\\"lost\\")\\">lost</button></td></tr>";' +
+'    });' +
+'    $("leadsout").innerHTML = h + "</table>";' +
+'  }).catch(function (e) { show("leadsout", String(e)); });' +
+'}' +
+'function setStatus(id, status) {' +
+'  fetch("./api/leads", { method: "PATCH", headers: Object.assign({ "Content-Type": "application/json" }, auth()), body: JSON.stringify({ id: id, status: status }) })' +
+'    .then(function (r) { return r.json(); }).then(function (j) { show("draftout", j); refreshLeads(); })' +
+'    .catch(function (e) { show("draftout", String(e)); });' +
+'}' +
+'function draftLead(id) {' +
+'  fetch("./api/leads/draft", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, auth()), body: JSON.stringify({ id: id }) })' +
+'    .then(function (r) { return r.json(); }).then(function (j) { show("draftout", j.ok ? j.data.draft : j); refreshLeads(); })' +
+'    .catch(function (e) { show("draftout", String(e)); });' +
+'}' +
+'$("leads").onclick = refreshLeads;' +
+'$("addlead").onclick = function () {' +
+'  fetch("./api/leads", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, auth()),' +
+'    body: JSON.stringify({ name: $("leadname").value, website: $("leadurl").value }) })' +
+'    .then(function (r) { return r.json(); }).then(function (j) { show("scanout", j); refreshLeads(); })' +
+'    .catch(function (e) { show("scanout", String(e)); });' +
+'};' +
+'$("runscan").onclick = function () {' +
+'  show("scanout", "scanning… (fetches live sites, ~10s each)");' +
+'  fetch("./api/scan", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, auth()),' +
+'    body: JSON.stringify({ category: $("scancat").value, limit: Number($("scanlimit").value) || 5 }) })' +
+'    .then(function (r) { return r.json(); }).then(function (j) { show("scanout", j); refreshLeads(); })' +
+'    .catch(function (e) { show("scanout", String(e)); });' +
+'};' +
 'syncTok();' +
 '</script>\n' +
 '</body>\n' +
@@ -282,6 +387,189 @@ export default {
 				status: upstream.status,
 				headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...corsHeaders(METHODS) }
 			});
+		}
+
+		if (path === '/admin/api/leads') {
+			const denied = await gate(request, env);
+			if (denied) return denied;
+
+			if (request.method === 'GET') {
+				const limited = rateLimitOr429(request, { limit: 60, windowMs: 60_000, prefix: 'admin-leads' }, 'admin-leads');
+				if (limited) return limited;
+				const status = url.searchParams.get('status');
+				const rawLimit = Number(url.searchParams.get('limit') ?? '50');
+				const limit = Number.isFinite(rawLimit) ? Math.min(100, Math.max(1, Math.floor(rawLimit))) : 50;
+				try {
+					const q = status && (LEAD_STATUSES as readonly string[]).includes(status)
+						? env.DB.prepare('SELECT * FROM leads WHERE status = ? ORDER BY updated_at DESC LIMIT ?').bind(status, limit)
+						: env.DB.prepare('SELECT * FROM leads ORDER BY updated_at DESC LIMIT ?').bind(limit);
+					const r = await q.all<LeadRow>();
+					return ok({ leads: (r.results ?? []).map(withLeadSignals) });
+				} catch {
+					console.error(JSON.stringify({ msg: 'admin_leads_read_failed' }));
+					return fail('store_unavailable', 500);
+				}
+			}
+
+			if (request.method === 'POST') {
+				const limited = rateLimitOr429(request, { limit: 30, windowMs: 60_000, prefix: 'admin-lead-add' }, 'admin-lead-add');
+				if (limited) return limited;
+				let body: Record<string, unknown>;
+				try {
+					body = (await request.json()) as Record<string, unknown>;
+				} catch {
+					return fail('invalid_json', 400);
+				}
+				const website = typeof body.website === 'string' ? normalizeWebsite(body.website) : null;
+				if (!website) return fail('website_required', 422);
+				const name = typeof body.name === 'string' && body.name.trim() ? body.name.trim().slice(0, 200) : website.replace(/^https?:\/\//, '').split('/')[0];
+				try {
+					const dupe = await env.DB.prepare('SELECT id FROM leads WHERE website = ?').bind(website).first<{ id: string }>();
+					if (dupe) return fail('lead_exists', 409);
+					const s = await scoreSite(website);
+					const id = await insertLead(env, {
+						name,
+						website: s.finalUrl,
+						email: s.email,
+						phone: s.phone,
+						niche: 'local-service',
+						source: 'manual',
+						signals: { score: s.score, painPoints: s.pains, tech: s.tech, title: s.title, ttfbMs: s.ttfbMs, bytes: s.bytes, https: s.https }
+					});
+					console.log(JSON.stringify({ msg: 'admin_lead_added', id, score: s.score, ip: getClientIp(request) }));
+					return ok({ id, name, website: s.finalUrl, score: s.score, pains: s.pains }, 201);
+				} catch (e) {
+					const msg = e instanceof Error ? e.message : 'score_failed';
+					console.error(JSON.stringify({ msg: 'admin_lead_add_failed', error: msg.slice(0, 80) }));
+					return fail(/^fetch_|not_html/.test(msg) ? 'site_unreachable' : 'store_unavailable', /^fetch_|not_html/.test(msg) ? 502 : 500);
+				}
+			}
+
+			if (request.method === 'PATCH') {
+				const limited = rateLimitOr429(request, { limit: 60, windowMs: 60_000, prefix: 'admin-lead-patch' }, 'admin-lead-patch');
+				if (limited) return limited;
+				let body: Record<string, unknown>;
+				try {
+					body = (await request.json()) as Record<string, unknown>;
+				} catch {
+					return fail('invalid_json', 400);
+				}
+				const id = typeof body.id === 'string' ? body.id : null;
+				const status = typeof body.status === 'string' ? body.status : null;
+				if (!id || !status || !(LEAD_STATUSES as readonly string[]).includes(status)) {
+					return fail('id_and_valid_status_required', 422);
+				}
+				try {
+					const r = await env.DB.prepare('UPDATE leads SET status = ?, updated_at = ? WHERE id = ?')
+						.bind(status, Math.floor(Date.now() / 1000), id)
+						.run();
+					if ((r.meta.changes ?? 0) === 0) return fail('unknown_lead', 404);
+					return ok({ id, status });
+				} catch {
+					return fail('store_unavailable', 500);
+				}
+			}
+
+			return fail('method_not_allowed', 405);
+		}
+
+		if (path === '/admin/api/scan') {
+			if (request.method !== 'POST') return fail('method_not_allowed', 405);
+			const denied = await gate(request, env);
+			if (denied) return denied;
+			// Expensive: live Overpass query + up to 8 site fetches.
+			const limited = rateLimitOr429(request, { limit: 5, windowMs: 600_000, prefix: 'admin-scan' }, 'admin-scan');
+			if (limited) return limited;
+			let body: Record<string, unknown>;
+			try {
+				body = (await request.json()) as Record<string, unknown>;
+			} catch {
+				return fail('invalid_json', 400);
+			}
+			const category = typeof body.category === 'string' ? body.category : null;
+			if (!category || !SCAN_CATEGORIES[category]) {
+				return fail('unknown_category', 422);
+			}
+			const bbox = typeof body.bbox === 'string' && /^-?\d+(\.\d+)?,-?\d+(\.\d+)?,-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(body.bbox)
+				? body.bbox
+				: STL_BBOX;
+			const maxScore = Math.min(8, Math.max(1, Math.floor(Number(body.limit) || 5)));
+			let found: Awaited<ReturnType<typeof discoverBusinesses>>;
+			try {
+				found = await discoverBusinesses(category, bbox, 40);
+			} catch (e) {
+				console.error(JSON.stringify({ msg: 'admin_scan_discover_failed' }));
+				return fail('discovery_unavailable', 502);
+			}
+			const withSites = found.filter((b) => b.website);
+			const summary = { category, discovered: found.length, withWebsite: withSites.length, scored: 0, inserted: 0, skipped: 0, leads: [] as { id: string; name: string; website: string; score: number }[] };
+			for (const biz of withSites) {
+				if (summary.scored >= maxScore) {
+					summary.skipped += withSites.length - withSites.indexOf(biz);
+					break;
+				}
+				const website = normalizeWebsite(biz.website as string);
+				if (!website) {
+					summary.skipped++;
+					continue;
+				}
+				try {
+					const dupe = await env.DB.prepare('SELECT id FROM leads WHERE website = ?').bind(website).first<{ id: string }>();
+					if (dupe) {
+						summary.skipped++;
+						continue;
+					}
+					const s = await scoreSite(website);
+					summary.scored++;
+					const id = await insertLead(env, {
+						name: biz.name,
+						website: s.finalUrl,
+						email: s.email ?? null,
+						phone: biz.phone,
+						niche: SCAN_CATEGORIES[category].niche,
+						source: 'research',
+						signals: { score: s.score, painPoints: s.pains, tech: s.tech, title: s.title, ttfbMs: s.ttfbMs, bytes: s.bytes, https: s.https }
+					});
+					summary.inserted++;
+					summary.leads.push({ id, name: biz.name, website: s.finalUrl, score: s.score });
+				} catch {
+					summary.skipped++;
+				}
+			}
+			console.log(JSON.stringify({ msg: 'admin_scan', ...summary, leads: summary.leads.length }));
+			return ok(summary);
+		}
+
+		if (path === '/admin/api/leads/draft') {
+			if (request.method !== 'POST') return fail('method_not_allowed', 405);
+			const denied = await gate(request, env);
+			if (denied) return denied;
+			const limited = rateLimitOr429(request, { limit: 30, windowMs: 60_000, prefix: 'admin-draft' }, 'admin-draft');
+			if (limited) return limited;
+			let body: Record<string, unknown>;
+			try {
+				body = (await request.json()) as Record<string, unknown>;
+			} catch {
+				return fail('invalid_json', 400);
+			}
+			const id = typeof body.id === 'string' ? body.id : null;
+			if (!id) return fail('id_required', 422);
+			try {
+				const row = await env.DB.prepare('SELECT * FROM leads WHERE id = ?').bind(id).first<LeadRow>();
+				if (!row) return fail('unknown_lead', 404);
+				const signals = parseSignals(row.signals);
+				const draft = buildDraft(row.name, row.website ?? '', signals?.painPoints ?? []);
+				const now = Math.floor(Date.now() / 1000);
+				await env.DB.prepare(
+					"INSERT INTO outreach_log (id, lead_id, draft, final_message, channel, status, sent_at, created_at) VALUES (?, ?, ?, NULL, 'email', 'drafted', NULL, ?)"
+				)
+					.bind(createLeadId(), id, draft, now)
+					.run();
+				await env.DB.prepare("UPDATE leads SET status = 'drafted', updated_at = ? WHERE id = ?").bind(now, id).run();
+				return ok({ id, draft }, 201);
+			} catch {
+				return fail('store_unavailable', 500);
+			}
 		}
 
 		return fail('not_found', 404);
