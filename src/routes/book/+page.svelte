@@ -14,7 +14,8 @@
 	<h1>Start a <em>project</em></h1>
 	<p class="lede">
 		Freelance builds, redesigns, APIs, automation. Fixed scope, clear timeline,
-		reply within 24 hours. Prefer email? <a href="mailto:{profile.email}">{profile.email}</a>
+		reply within 24 hours — email or text anytime, free Zoom consultation on request.
+		<a href="mailto:{profile.email}">{profile.email}</a> · <a href={profile.phoneHref}>{profile.phone}</a>
 	</p>
 	<PaperDoodles />
 </section>

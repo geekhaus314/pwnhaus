@@ -218,7 +218,9 @@ export function buildDraft(businessName: string, website: string, pains: string[
 		`I'm Jake, a St. Louis web developer — I rebuild sites like ${website} into fast, ` +
 		`mobile-first pages with online booking/contact built in. Fixed price quoted up front ` +
 		`(recent launches from $1,200), and you own the code outright.\n\n` +
-		`Worth a free 20-minute look? I can record a 2-minute video audit of your current site, no strings attached.\n\n` +
+		`No pitch, no call needed: I recorded a free 2-minute video audit of your current site — ` +
+		`watch it whenever suits you, and reply here if you want the fixes. ` +
+		`[attach video link before sending]\n\n` +
 		`— Jake Viefhaus (pwn4g3)\ngeekhaus314@proton.me · https://pwn4g3.pages.dev`
 	);
 }

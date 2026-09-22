@@ -25,7 +25,15 @@
 				{/each}
 			</ul>
 		</div>
-		<aside class="reveal" aria-label="GitHub activity">
+		<aside class="reveal" aria-label="Photo and GitHub activity">
+			<figure class="about-photo">
+				<picture>
+					<source srcset="/jake-2026.avif" type="image/avif" />
+					<source srcset="/jake-2026.webp" type="image/webp" />
+					<img src={profile.heroPhoto} alt="Jake Viefhaus" width="560" height="675" loading="eager" />
+				</picture>
+				<figcaption>Jake Viefhaus — St. Louis, MO</figcaption>
+			</figure>
 			<GitHubStats />
 		</aside>
 	</div>

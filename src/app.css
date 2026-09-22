@@ -666,6 +666,21 @@ section[id] { scroll-margin-top: 4.5rem; }
 	color: var(--muted);
 }
 .fact-list strong { display: block; font: 600 0.6rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink); margin-bottom: 0.25rem; }
+.about-photo { margin: 0 0 1.5rem; }
+.about-photo img {
+	width: 100%;
+	height: auto;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	display: block;
+}
+.about-photo figcaption {
+	margin-top: 0.6rem;
+	color: var(--muted);
+	font: 500 0.65rem var(--font-mono);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
 
 /* ----------------------------------------------------------
    Capabilities — editorial index rows
