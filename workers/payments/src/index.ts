@@ -22,6 +22,7 @@ interface Env {
 	DB: D1Database;
 	STRIPE_SECRET_KEY?: string;
 	STRIPE_WEBHOOK_SECRET?: string;
+	STRIPE_PUBLISHABLE_KEY?: string;
 	SITE_URL?: string;
 }
 
@@ -29,9 +30,13 @@ const METHODS = 'GET, OPTIONS, POST';
 const MAX_BODY_BYTES = 16 * 1024;
 
 const PACKAGES: Record<string, { amount: number; label: string }> = {
-	launch: { amount: 120_000, label: 'Launch package deposit' },
-	build: { amount: 280_000, label: 'Build package deposit' },
-	scale: { amount: 500_000, label: 'Scale package deposit' }
+	audit: { amount: 35_000, label: 'Website audit' },
+	redesign: { amount: 90_000, label: 'Site redesign' },
+	launch: { amount: 120_000, label: 'Launch package' },
+	booking: { amount: 180_000, label: 'Booking system' },
+	storefront: { amount: 240_000, label: 'Online store' },
+	build: { amount: 280_000, label: 'Build package' },
+	scale: { amount: 500_000, label: 'Scale package' }
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -97,9 +102,10 @@ export default {
 				return ok(
 					{
 						service: 'pwn4g3-payments',
-						checkout: 'POST /api/payments/checkout { package: launch|build|scale, email, name?, bookingId? }',
+						checkout: 'POST /api/payments/checkout { package: audit|redesign|launch|booking|storefront|build|scale, email, name?, bookingId?, embedded? }',
 						statusLookup: 'GET /api/payments?id=<uuid>',
 						webhook: 'POST /api/payments/webhook (Stripe-signed)',
+						publishableKey: env.STRIPE_PUBLISHABLE_KEY ?? null,
 						packages: Object.fromEntries(Object.entries(PACKAGES).map(([k, v]) => [k, { amount: v.amount, currency: 'usd' }])),
 						note: 'Internal service, reached via the pwn4g3 gateway.'
 					},
@@ -129,6 +135,9 @@ export default {
 			const email = typeof body.email === 'string' && body.email.length <= 254 && EMAIL_RE.test(body.email) ? body.email : undefined;
 			const name = typeof body.name === 'string' && body.name.length <= 120 ? body.name : null;
 			const bookingId = typeof body.bookingId === 'string' && body.bookingId.length <= 64 ? body.bookingId : null;
+			// Embedded checkout keeps the buyer on-site (Stripe renders inline);
+			// default stays a hosted redirect URL.
+			const embedded = body.embedded === true;
 			if (!pkg || !email) return fail('package_and_valid_email_required', 422, request);
 
 			const site = (env.SITE_URL ?? 'https://pwn4g3.pages.dev').replace(/\/+$/, '');
@@ -163,22 +172,39 @@ export default {
 					'line_items[0][price_data][unit_amount]': String(pkg.amount),
 					'line_items[0][price_data][product_data][name]': pkg.label,
 					'line_items[0][quantity]': '1',
-					'success_url': `${site}/book?paid=1&order=${orderId}`,
-					'cancel_url': `${site}/book?cancelled=1&order=${orderId}`,
+					...(embedded
+						? {
+								'ui_mode': 'embedded',
+								'return_url': `${site}/shop?paid=1&order=${orderId}`
+							}
+						: {
+								'success_url': `${site}/book?paid=1&order=${orderId}`,
+								'cancel_url': `${site}/book?cancelled=1&order=${orderId}`
+							}),
 					'client_reference_id': orderId,
 					'customer_email': email
 				});
-				if (cs.status >= 400 || !(cs.body as { url?: string })?.url) {
+				if (cs.status >= 400) {
 					await env.DB.prepare("UPDATE orders SET status = 'failed', updated_at = ? WHERE id = ?").bind(nowSec(), orderId).run();
 					console.error(JSON.stringify({ msg: 'pay_session_failed', status: cs.status }));
 					return fail('payment_provider_error', 502, request);
 				}
-				const session = cs.body as { id: string; url: string; payment_intent?: string };
+				const session = cs.body as { id: string; url?: string; client_secret?: string; payment_intent?: string };
+				if (embedded && !session.client_secret) {
+					await env.DB.prepare("UPDATE orders SET status = 'failed', updated_at = ? WHERE id = ?").bind(nowSec(), orderId).run();
+					console.error(JSON.stringify({ msg: 'pay_session_failed', status: cs.status, reason: 'no_client_secret' }));
+					return fail('payment_provider_error', 502, request);
+				}
+				if (!embedded && !session.url) {
+					await env.DB.prepare("UPDATE orders SET status = 'failed', updated_at = ? WHERE id = ?").bind(nowSec(), orderId).run();
+					console.error(JSON.stringify({ msg: 'pay_session_failed', status: cs.status, reason: 'no_url' }));
+					return fail('payment_provider_error', 502, request);
+				}
 				await env.DB.prepare("INSERT INTO payment_transactions (id, order_id, stripe_checkout_session_id, stripe_payment_intent_id, amount, currency, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'usd', 'pending', ?, ?)")
 					.bind(crypto.randomUUID(), orderId, session.id, session.payment_intent ?? null, pkg.amount, now, now)
 					.run();
-				console.log(JSON.stringify({ msg: 'pay_checkout', order: orderId }));
-				return ok({ id: orderId, url: session.url }, 201, request);
+				console.log(JSON.stringify({ msg: 'pay_checkout', order: orderId, embedded }));
+				return ok(embedded ? { id: orderId, clientSecret: session.client_secret } : { id: orderId, url: session.url }, 201, request);
 			} catch (e) {
 				console.error(JSON.stringify({ msg: 'pay_checkout_failed' }));
 				return fail('store_unavailable', 500, request);
