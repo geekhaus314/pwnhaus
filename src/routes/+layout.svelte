@@ -15,6 +15,7 @@
 		{ href: '/', label: 'Home' },
 		{ href: '/work', label: 'Work' },
 		{ href: '/services', label: 'Services' },
+		{ href: '/shop', label: 'Shop' },
 		{ href: '/lab', label: 'Live Lab' },
 		{ href: '/about', label: 'About' },
 		{ href: '/book', label: 'Book' }

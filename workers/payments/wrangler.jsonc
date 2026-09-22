@@ -6,7 +6,8 @@
   "compatibility_date": "2026-08-26",
   "workers_dev": false,
   "vars": {
-    "SITE_URL": "https://pwn4g3.pages.dev"
+    "SITE_URL": "https://pwn4g3.pages.dev",
+    "STRIPE_PUBLISHABLE_KEY": "pk_test_REPLACE_ME"
   },
   "d1_databases": [
     {

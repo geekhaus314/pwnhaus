@@ -152,6 +152,7 @@ Two opencode agents are working on this repo in parallel. **Read this file first
 | 57 | Boot overlay component + layout mount | `src/lib/components/BootSequence.svelte`, `src/routes/+layout.svelte` | jake | done |
 | 58 | Payments service on isolated pwn4g3-secure DB (checkout + signed webhooks, server-side prices) | `workers/payments/*`, `workers/migrations-payments/*`, gateway, backend workflow | jake | done |
 | 59 | Hivemind escape room phase 1 (fixed ciphers + slim entry, /hive route) | `workers/hivemind/*`, gateway, components, backend workflow | jake | done |
+| 60 | Shop page with embedded Stripe checkout (7 products, on-site pay, redirect fallback) | `src/routes/shop/*`, `workers/payments/*`, `_headers`, `vercel.json`, nav, sitemap | jake | done |
 
 ## Communication log
 
