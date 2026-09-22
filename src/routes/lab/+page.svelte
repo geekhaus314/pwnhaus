@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ViperConsole from '$lib/components/ViperConsole.svelte';
 	import Signal from '$lib/components/Signal.svelte';
+	import SystemMap from '$lib/components/SystemMap.svelte';
 </script>
 
 <svelte:head>
@@ -49,6 +50,17 @@
 				<span>WORKER ONLINE</span>
 			</div>
 		</div>
+	</div>
+</section>
+
+<section class="section" aria-label="Live service map">
+	<div class="rail reveal">
+		<span class="rail-num">◈</span>
+		<h2>Every wire, <em>live</em></h2>
+		<p class="rail-desc">The gateway describes itself — this map draws it and probes what it can from your browser.</p>
+	</div>
+	<div class="reveal">
+		<SystemMap />
 	</div>
 </section>
 
