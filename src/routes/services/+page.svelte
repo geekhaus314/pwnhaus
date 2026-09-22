@@ -117,7 +117,7 @@
 		<h2>How it <em>works</em></h2>
 	</div>
 	<div class="process-grid">
-		<div class="step reveal"><b>01</b><h3>Scope</h3><p>Free 20-minute call. I map what you need to this page's packages or quote custom work.</p></div>
+		<div class="step reveal"><b>01</b><h3>Scope</h3><p>Send the details over email, text, or the booking form. I reply within 24 hours with scope and a fixed price — plus a free Zoom consultation if you'd like one.</p></div>
 		<div class="step reveal"><b>02</b><h3>Contract</h3><p>50% deposit, fixed price, written timeline. What we agree on is what you pay — no creep.</p></div>
 		<div class="step reveal"><b>03</b><h3>Build</h3><p>You get a live preview link as I build. Checkpoint reviews, weekly progress, no black box.</p></div>
 		<div class="step reveal"><b>04</b><h3>Ship</h3><p>You approve, I deploy to your domain, hand over the code and credentials, and stay on for post-launch fixes.</p></div>

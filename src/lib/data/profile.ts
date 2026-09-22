@@ -6,13 +6,15 @@ export const profile = {
 	role: 'Full-Stack Developer · St. Louis, MO',
 	location: 'St. Louis, MO',
 	email: 'geekhaus314@proton.me',
+	phone: '(636) 448-3574',
+	phoneHref: 'sms:+16364483574',
 	github: 'https://github.com/geekhaus314',
 	github2: 'https://github.com/3m0h4ck3r',
 	gitlab: 'https://gitlab.com/geekhaus314',
 	instagram: 'https://www.instagram.com/pwn4g3.io/',
 	resumeUrl: '/resume.pdf',
 	coverLetterUrl: '/cover-letter.pdf',
-	heroPhoto: assetUrl('/geekhaus-self-1.jpg'),
+	heroPhoto: '/jake-2026.jpg',
 	summary:
 		'I build full-stack web applications, APIs, automation, and secure infrastructure — from e-commerce platforms to bug bounty tooling.',
 	about: [
