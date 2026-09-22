@@ -24,6 +24,8 @@ const components = [
 	{ name: 'pwn4g3-discord', contract: 'POST /api/discord/interactions', route: '/api/discord', via: 'gateway' },
 	{ name: 'pwn4g3-reddit', contract: 'GET /api/reddit/modmail', route: '/api/reddit', via: 'gateway' },
 	{ name: 'pwn4g3-admin', contract: 'GET /admin', route: '/admin', via: 'gateway' },
+	{ name: 'pwn4g3-payments', contract: 'POST /api/payments/checkout', route: '/api/payments', via: 'gateway' },
+	{ name: 'pwn4g3-hivemind', contract: 'GET /hive/status', route: '/hive', via: 'gateway' },
 	{ name: 'pwn4g3-scheduler', contract: 'cron', route: 'internal', via: 'cron' }
 ];
 

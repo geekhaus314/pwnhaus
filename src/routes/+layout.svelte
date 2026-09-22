@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import { afterNavigate } from '$app/navigation';
 	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
+	import BootSequence from '$lib/components/BootSequence.svelte';
 	import { profile } from '$lib/data/profile';
 
 	let { children, data }: { children: import('svelte').Snippet; data: { canonical: string } } = $props();
@@ -78,6 +79,7 @@
 </svelte:head>
 
 <div class="site-shell">
+	<BootSequence />
 	<a href="#main" class="skip-link">Skip to content</a>
 
 	<!-- ── Navigation ── -->
