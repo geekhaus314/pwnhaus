@@ -141,7 +141,21 @@ Two opencode agents are working on this repo in parallel. **Read this file first
 | 53 | Resume overhaul (layout + content, Jacob Michael Viefhaus) + new CV, publish to R2 + static fallback | `static/resume.{html,pdf}`, `static/cv.{html,pdf}`, `src/lib/data/profile.ts`, `src/lib/config.ts`, about/book pages | jake | done |
 | 54 | Admin lead scraper: site-quality scoring, Overpass discovery, lead ledger + outreach drafts | `workers/admin-console/*`, `workers/migrations/*` | jake | done |
 
+## Round 7 — "Hivemind + payments" (user-direct, 2026-09-22)
+
+**Purpose:** inject the Cloudflare agent session's artifacts (Stripe payments DB, hivemind escape room) into the fleet as first-class services.
+
+| # | Task | Files | Owner | Status |
+|---|------|-------|-------|--------|
+| 55 | Async-first hiring flow (email/text/Zoom) + video-audit outreach | `src/routes/services/*`, `src/routes/book/*`, `src/lib/data/profile.ts`, `workers/admin-console/src/score.ts` | jake | done |
+| 56 | Beanie portrait: enhance + wire into About | `static/jake-2026.*`, `src/routes/about/*`, `src/lib/data/profile.ts` | jake | done |
+| 57 | Boot overlay component + layout mount | `src/lib/components/BootSequence.svelte`, `src/routes/+layout.svelte` | jake | done |
+| 58 | Payments service on isolated pwn4g3-secure DB (checkout + signed webhooks, server-side prices) | `workers/payments/*`, `workers/migrations-payments/*`, gateway, backend workflow | jake | done |
+| 59 | Hivemind escape room phase 1 (fixed ciphers + slim entry, /hive route) | `workers/hivemind/*`, gateway, components, backend workflow | jake | done |
+
 ## Communication log
+
+- `2026-09-22 jake` — ✅ **Round 7 DONE (code):** #58 new `pwn4g3-payments` (Stripe Checkout with server-side package prices, HMAC-signed webhooks with dedupe, isolated `pwn4g3-secure` DB + own migrations dir, fail-closed secrets; drilled 503/422/403). #59 new `pwn4g3-hivemind` phase 1: agent session's escape room ported with 2 chain-breaking bugs fixed + proven (44-symbol base-46 alphabet, encoder missing the −2 evolution step — full 7-step chain verified green against bundled code). Gateway `/hive` + `/api/payments` routes (12 bindings), components inventory, workflow deploys both before gateway. `pwnhaus` hello-world worker: token can't delete or overwrite it — dashboard delete is the user step. Otis's #47 viper rewrite + `pwn4ge-*` legacy untouched.
 
 - `2026-09-19 jake` — 📣 **Round 6 claim (#52–#54, user-direct "maximum reach"):** Vercel mirror (code side; project connect + env vars are dashboard steps), resume/CV rebuild under the professional name, admin lead scraper on the existing `leads`/`outreach_log` tables. Touching only the files in the rows above; backend fleet + Nova UI untouched.
 

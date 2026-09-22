@@ -1,0 +1,25 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "pwn4g3-payments",
+  "main": "src/index.ts",
+  // Project convention is 2026-08-26 across all workers (binding-uniformity).
+  "compatibility_date": "2026-08-26",
+  "workers_dev": false,
+  "vars": {
+    "SITE_URL": "https://pwn4g3.pages.dev"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pwn4g3-secure",
+      "database_id": "8e739b12-378e-4c91-bb29-e385e7d041f8",
+      "migrations_dir": "../migrations-payments"
+    }
+  ],
+  // STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET via `wrangler secret put`.
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.01 }
+  }
+}
