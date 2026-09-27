@@ -5,6 +5,7 @@
 	import { afterNavigate } from '$app/navigation';
 	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
 	import BootSequence from '$lib/components/BootSequence.svelte';
+	import AskWidget from '$lib/components/AskWidget.svelte';
 	import { profile } from '$lib/data/profile';
 
 	let { children, data }: { children: import('svelte').Snippet; data: { canonical: string } } = $props();
@@ -16,6 +17,10 @@
 		{ href: '/work', label: 'Work' },
 		{ href: '/services', label: 'Services' },
 		{ href: '/shop', label: 'Shop' },
+		{ href: '/ask', label: 'Ask' },
+		{ href: '/guestbook', label: 'Guestbook' },
+		{ href: '/status', label: 'Status' },
+		{ href: '/stats', label: 'Stats' },
 		{ href: '/lab', label: 'Live Lab' },
 		{ href: '/about', label: 'About' },
 		{ href: '/book', label: 'Book' }

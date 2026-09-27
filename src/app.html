@@ -31,9 +31,37 @@
 		<meta name="msapplication-TileColor" content="#050608" />
 		<meta name="color-scheme" content="dark" />
 		<link rel="canonical" href="https://pwn4g3.pages.dev" />
-		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
 		<link rel="sitemap" href="/sitemap.xml" />
 		<link rel="alternate" hreflang="en" href="https://pwn4g3.pages.dev" />
+
+		<!-- Theme restore. Must run before first paint, otherwise a returning
+		     visitor sees the default palette flash before hydration swaps it.
+		     The allowlist and the colour map are duplicated in app.css and
+		     src/lib/data/themes.ts; tools/test/themes.test.mjs asserts all three
+		     stay in sync, so editing one without the others fails the suite. -->
+		<script>
+			(function () {
+				var THEMES = {
+					nocturne: '#050608',
+					matrix: '#030705',
+					cyan: '#04080b',
+					paper: '#e8e3d8',
+					blueprint: '#061a2e'
+				};
+				try {
+					var saved = localStorage.getItem('pwn4g3.theme');
+					if (saved && Object.prototype.hasOwnProperty.call(THEMES, saved)) {
+						document.documentElement.setAttribute('data-theme', saved);
+						document
+							.querySelector('meta[name="theme-color"]')
+							.setAttribute('content', THEMES[saved]);
+					}
+				} catch (e) {
+					/* storage unavailable — the default theme is the right answer */
+				}
+			})();
+		</script>
+
 		<link rel="me" href="https://github.com/geekhaus314" />
 		<link rel="me" href="https://www.instagram.com/pwn4g3.io/" />
 		<link rel="me" href="mailto:geekhaus314@proton.me" />

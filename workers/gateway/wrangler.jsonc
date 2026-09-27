@@ -18,7 +18,10 @@
     { "binding": "REDDIT_SERVICE", "service": "pwn4g3-reddit" },
     { "binding": "ADMIN_SERVICE", "service": "pwn4g3-admin" },
     { "binding": "PAYMENTS_SERVICE", "service": "pwn4g3-payments" },
+    { "binding": "ASK_SERVICE", "service": "pwn4g3-ask" },
+    { "binding": "GUESTBOOK_SERVICE", "service": "pwn4g3-guestbook" },
     { "binding": "HIVEMIND_SERVICE", "service": "pwn4g3-hivemind" },
-    { "binding": "TELEMETRY_SERVICE", "service": "pwn4g3-telemetry" }
+    { "binding": "TELEMETRY_SERVICE", "service": "pwn4g3-telemetry" },
+    { "binding": "AUDIT_SERVICE", "service": "pwn4g3-audit" }
   ]
 }

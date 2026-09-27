@@ -7,7 +7,7 @@
 </script>
 
 <div class="theme-switcher" role="group" aria-label="Visual theme — each one restyles the whole site">
-	{#each Object.entries(themes) as [name, def]}
+	{#each Object.entries(themes) as [name, def] (name)}
 		<button
 			type="button"
 			class:active={current === name}
@@ -15,7 +15,7 @@
 			title={`${def.label} — ${def.description}`}
 			aria-pressed={current === name}
 		>
-			<i aria-hidden="true" style="background: {def.variables.accent}"></i>
+			<i aria-hidden="true" style="background: {def.accent}; box-shadow: 0 0 0 1px {def.page}"></i>
 			{def.label}
 		</button>
 	{/each}
@@ -31,28 +31,29 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.45rem;
-		border: 1px solid rgba(236, 231, 224, 0.15);
+		border: var(--border-w) solid var(--line);
 		background: transparent;
-		color: #77736e;
+		color: var(--muted);
 		padding: 0.35rem 0.6rem;
-		font: 0.6rem var(--font-mono, monospace);
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
+		font: 600 0.6rem var(--font-mono);
+		text-transform: var(--label-transform);
+		letter-spacing: var(--label-tracking);
+		border-radius: var(--radius-sm);
 		cursor: pointer;
 		transition: 0.2s;
 	}
 	button i {
-		width: 8px;
-		height: 8px;
-		border-radius: 50%;
+		width: 9px;
+		height: 9px;
+		border-radius: var(--radius-sm);
 		flex-shrink: 0;
 	}
 	button:hover,
 	button.active {
-		color: var(--ink, #ece7e0);
-		border-color: var(--accent, #a51d37);
+		color: var(--ink);
+		border-color: var(--accent);
 	}
 	button.active {
-		background: color-mix(in srgb, var(--accent, #a51d37) 12%, transparent);
+		background: color-mix(in srgb, var(--accent) 12%, transparent);
 	}
 </style>

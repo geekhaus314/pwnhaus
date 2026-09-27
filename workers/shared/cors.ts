@@ -54,7 +54,14 @@ export const jsonResponse = (
 		headers: {
 			'Content-Type': 'application/json; charset=utf-8',
 			'Cache-Control': 'no-store',
-			...corsHeaders(additionalMethods, request)
+			...corsHeaders(additionalMethods, request),
+			// Workers responses don't pass through `_headers` (that's a Pages
+			// feature), so the baseline hardening has to be applied here or the
+			// whole API surface ships with none of it.
+			'X-Content-Type-Options': 'nosniff',
+			'X-Frame-Options': 'DENY',
+			'Referrer-Policy': 'no-referrer',
+			'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
 		}
 	});
 

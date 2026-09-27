@@ -48,3 +48,9 @@ export const BOOKING_API_URL = `${GATEWAY_BASE}/api/booking`;
  */
 export const VIPER_API_URL = `${GATEWAY_BASE}/api/viper-web3/analyze`;
 export const VIPER_INFO_URL = `${GATEWAY_BASE}/api/viper-web3`;
+
+/**
+ * Ask-pwn4g3 concierge (#32/#33). POST { question } for a cached,
+ * source-cited answer. Rate budget: 5/day/IP.
+ */
+export const ASK_API_URL = `${GATEWAY_BASE}/api/ask`;

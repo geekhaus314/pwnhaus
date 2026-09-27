@@ -15,7 +15,7 @@
 	<p class="lede">
 		This analyzer runs on my own edge infrastructure, live. Paste a Solidity
 		contract and watch a real worker audit it — the same infrastructure
-		your project would run on.
+		your project would run on. Part of the <a href="/labs">labs index</a>.
 	</p>
 </section>
 

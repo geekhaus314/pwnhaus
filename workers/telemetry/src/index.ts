@@ -191,6 +191,50 @@ export default {
 			return ok({ id, service, event, level }, 202, request);
 		}
 
+		if (url.pathname === '/api/csp-report') {
+			if (request.method !== 'POST') return fail('method_not_allowed', 405, request);
+
+			// Browsers burst on breakage: generous bucket, tiny body cap.
+			const limited = rateLimitOr429(
+				request,
+				{ limit: 30, windowMs: 60_000, prefix: 'csp-report' },
+				'csp-report'
+			);
+			if (limited) return limited;
+
+			let body: Record<string, unknown>;
+			try {
+				body = (await request.json()) as Record<string, unknown>;
+			} catch {
+				return fail('invalid_json', 400, request);
+			}
+			// Accept both {csp-report: {...}} and flat report bodies.
+			const report =
+				body && typeof body === 'object' && 'csp-report' in body && typeof body['csp-report'] === 'object'
+					? (body['csp-report'] as Record<string, unknown>)
+					: body;
+			const str = (v: unknown, max = 512): string =>
+				typeof v === 'string' ? v.slice(0, max) : '';
+			try {
+				await env.DB.prepare(
+					'INSERT INTO csp_reports (id, document_uri, violated_directive, blocked_uri, original_policy, user_agent, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+				)
+					.bind(
+						crypto.randomUUID(),
+						str(report['document-uri']),
+						str(report['violated-directive'] ?? report['effective-directive']),
+						str(report['blocked-uri']),
+						str(report['original-policy'], 2048),
+						str(request.headers.get('user-agent'), 256),
+						Date.now()
+					)
+					.run();
+			} catch {
+				return fail('store_unavailable', 500, request);
+			}
+			return ok({ received: true }, 202, request);
+		}
+
 		if (url.pathname === '/') {
 			if (request.method !== 'GET') return fail('method_not_allowed', 405);
 			return ok({

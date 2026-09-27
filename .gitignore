@@ -41,3 +41,6 @@ goroot/
 # Agent skills (local tooling, `npx skills add` side effects)
 .agents/
 skills-lock.json
+
+# Nested git repo, unrelated to pwnhaus. Committing it would create a gitlink.
+obsidian-platform/

@@ -43,6 +43,52 @@ const json = (data: unknown, status = 200): Response =>
 const ok = (data: unknown, status = 200): Response => json({ ok: true, data }, status);
 const fail = (error: string, status = 400): Response => json({ ok: false, error }, status);
 
+/**
+ * Headers for the console shell (recon 2026-09-27).
+ *
+ * The Pages site gets its CSP from `_headers`, which does not apply to
+ * Workers — so before this, the one page on the whole estate that renders
+ * an operator's admin UI shipped with no CSP, no X-Frame-Options, no
+ * nosniff and no HSTS. It was frameable by any origin, which is a
+ * clickjacking target: an attacker who has the operator's token in the
+ * clipboard, or who talks them into pasting one, can overlay a fake
+ * "session expired, re-enter token" form.
+ *
+ * The CSP has to allow `'unsafe-inline'` for both script and style: the
+ * console is deliberately a single self-contained page with one inline
+ * `<script>` (verified — no external script or style origins) and an inline
+ * `onclick`. The protections that actually matter here are therefore
+ * `frame-ancestors 'none'`, `form-action 'none'`, `object-src 'none'` and
+ * `base-uri 'none'` — none of which are weakened by allowing inline
+ * script, and the first of which kills the framing outright.
+ */
+const CSP = [
+	"default-src 'none'",
+	"script-src 'unsafe-inline'",
+	"style-src 'unsafe-inline'",
+	"img-src 'self' data:",
+	"font-src 'self'",
+	"connect-src 'self'",
+	"form-action 'none'",
+	"base-uri 'none'",
+	"object-src 'none'",
+	"frame-ancestors 'none'"
+].join('; ');
+
+const adminPageHeaders = (): Record<string, string> => ({
+	'Content-Type': 'text/html; charset=utf-8',
+	'Cache-Control': 'no-store',
+	'X-Robots-Tag': 'noindex, nofollow',
+	'Content-Security-Policy': CSP,
+	'X-Frame-Options': 'DENY',
+	'X-Content-Type-Options': 'nosniff',
+	'Referrer-Policy': 'no-referrer',
+	'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+	'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+	'Cross-Origin-Opener-Policy': 'same-origin',
+	'Cross-Origin-Resource-Policy': 'same-origin'
+});
+
 const verifyAdminToken = async (provided: string, expected: string): Promise<boolean> => {
 	const encoder = new TextEncoder();
 	const [a, b] = await Promise.all([
@@ -274,13 +320,7 @@ export default {
 
 		if (path === '/admin' || path === '/admin/') {
 			if (request.method !== 'GET') return fail('method_not_allowed', 405);
-			return new Response(PAGE, {
-				headers: {
-					'Content-Type': 'text/html; charset=utf-8',
-					'Cache-Control': 'no-store',
-					'X-Robots-Tag': 'noindex, nofollow'
-				}
-			});
+			return new Response(PAGE, { headers: adminPageHeaders() });
 		}
 
 		if (path === '/admin/api/status') {
