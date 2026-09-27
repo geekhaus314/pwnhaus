@@ -71,18 +71,18 @@ Two opencode agents are working on this repo in parallel. **Read this file first
 | # | Proposal | Files | Owner | Status |
 |---|----------|-------|-------|--------|
 | 26 | D1 `pwn4g3-db` + telemetry v2 ingest (events, rollups) | `workers/migrations/*`, `workers/telemetry/*`, `workers/gateway/*` | Otis | done |
-| 27 | `/stats` dashboard UI (hand-rolled SVG charts, no lib) | `src/routes/stats/*` | jake | in_progress |
+| 27 | `/stats` dashboard UI (hand-rolled SVG charts, no lib) | `src/routes/stats/*` | jake | done |
 | 28 | `scheduler` worker: uptime probes (gateway + client sites), GitHub sync, link + R2 audits | `workers/scheduler/*` (new), backend workflow | Otis | done |
-| 29 | `/status` page UI (uptime badges, incident history) | `src/routes/status/*` | jake | in_progress |
+| 29 | `/status` page UI (uptime badges, incident history) | `src/routes/status/*` | jake | done |
 | 30 | Booking via Queue + Turnstile verify + D1 log (retry semantics, Resend stays) | `workers/booking/*` (new), `workers/gateway/*` | Otis | done |
 | 31 | Booking form Turnstile widget + queued-state UX | `src/lib/components/BookingForm.svelte` | jake | done |
-| 32 | Ask-pwn4g3: D1 FTS5 retrieval + Workers AI answer + KV cache | `workers/ask/*` (new), `workers/gateway/*` | jake (Otis-cover) | pending |
-| 33 | Ask-pwn4g3 chat UI (floating widget + dedicated route, cited sources) | `src/lib/components/AskWidget.svelte`, `src/routes/ask/*` | jake | pending |
-| 34 | Guestbook API + moderation queue | `workers/gateway/*`, D1 `guestbook` | jake (Otis-cover) | pending |
-| 35 | Guestbook UI | `src/routes/guestbook/*` | jake | pending |
-| 36 | Labs microfrontend routing (`/labs/*` manifest + gateway map, shared tokens) | `workers/gateway/*`, `apps/*` | jake (Otis-cover) | pending |
-| 37 | Labs index + shell pages | `src/routes/labs/*` | jake | pending |
-| 38 | CSP `report-uri` endpoint + weekly violation summary | `workers/gateway/*`, D1 `csp_reports`, scheduler | jake (Otis-cover) | pending |
+| 32 | Ask-pwn4g3: D1 FTS5 retrieval + Workers AI answer + KV cache | `workers/ask/*` (new), `workers/gateway/*` | jake (Otis-cover) | done |
+| 33 | Ask-pwn4g3 chat UI (floating widget + dedicated route, cited sources) | `src/lib/components/AskWidget.svelte`, `src/routes/ask/*` | jake | done |
+| 34 | Guestbook API + moderation queue | `workers/gateway/*`, D1 `guestbook` | jake (Otis-cover) | done |
+| 35 | Guestbook UI | `src/routes/guestbook/*` | jake | done |
+| 36 | Labs microfrontend routing (`/labs/*` manifest + gateway map, shared tokens) | `workers/gateway/*`, `apps/*` | jake (Otis-cover) | done |
+| 37 | Labs index + shell pages | `src/routes/labs/*` | jake | done |
+| 38 | CSP `report-uri` endpoint + weekly violation summary | `workers/gateway/*`, D1 `csp_reports`, scheduler | jake (Otis-cover) | done |
 
 ## Round 3 — "pwn4g3 Loud" (user-direct, 2026-09-10)
 
@@ -154,7 +154,57 @@ Two opencode agents are working on this repo in parallel. **Read this file first
 | 59 | Hivemind escape room phase 1 (fixed ciphers + slim entry, /hive route) | `workers/hivemind/*`, gateway, components, backend workflow | jake | done |
 | 60 | Shop page with embedded Stripe checkout (7 products, on-site pay, redirect fallback) | `src/routes/shop/*`, `workers/payments/*`, `_headers`, `vercel.json`, nav, sitemap | jake | done |
 
+## Round 8 — "Salvage sprint" (user-direct, 2026-09-26)
+
+**Purpose:** a chat log + 10 downloaded files arrived claiming to "engineer" new infrastructure (Prisma/Postgres, honeypots, proxy rotation, an SSRF HTML-injection mirror, a WebSocket sysmon bridge, themed CSS). Audit in `docs/ANALYSIS.md`: every one of those files is non-runnable on this stack *and* duplicates a correct implementation already shipped. This round ports the salvageable ideas into D1 + service bindings and rejects the rest with reasons.
+
+**Coordination note:** `jake`'s #32–#38 tree is still uncommitted. Files I touch that are dirty in that tree (`TASKS.md`, `src/lib/config.ts`, `src/routes/lab/+page.svelte`, `.github/workflows/deploy-cloudflare-backend.yml`) get **append-only** edits — no clobber, no reformat. `workers/gateway/*`, `workers/admin-console/*`, `workers/scheduler/*`, `workers/shared/*` were clean, so those are normal edits.
+
+| # | Task | Files | Owner | Status |
+|---|------|-------|-------|--------|
+| 61 | Teardown + port map for the 10 downloaded files | `docs/ANALYSIS.md` (new) | Nova | done |
+| 62 | `safeFetch` — timeout via AbortSignal, manual redirect cap, byte cap, error taxonomy (the `proxy_rotation.ts` descendant, minus the evasion) | `workers/shared/http.ts` (new) | Nova | done |
+| 63 | `auditSite()` — SSRF-safe audit engine, real checks only, documented rubric (absorbs `capture.ts` + `hive.ts` + `score.ts`) | `workers/shared/audit.ts` (new), `workers/admin-console/src/score.ts` (delegates) | Nova | done |
+| 64 | New `pwn4g3-audit`: public `POST /api/audit` + `GET /api/audit/summary`, D1 `0011_audit_runs.sql`, leads upsert on email | `workers/audit/*` (new), `workers/migrations/0011_audit_runs.sql` (new) | Nova | done |
+| 65 | Gateway route + binding + listing; backend workflow deploys audit before gateway | `workers/gateway/src/index.ts`, `workers/gateway/wrangler.jsonc`, `.github/workflows/deploy-cloudflare-backend.yml` | Nova | done |
+| 66 | Admin export: `GET /admin/api/export?dataset=&format=json\|csv` (the `export.ts` descendant) | `workers/admin-console/src/index.ts` | Nova | done |
+| 67 | Ops hardening: incident→notify alerts, audit-run retention, weekly D1→R2 export via the R2 API (the `alertSystem.ts` + `backup_pipeline.sh` + `purgeLogs.ts` descendants) | `workers/scheduler/src/index.ts`, `workers/scheduler/wrangler.jsonc` | Nova | done |
+| 68 | Repo-aware verify gate + manual D1 backup script (the `deploy_system.sh` descendant — it had the wrong paths) | `tools/verify.sh` (new), `tools/d1-backup.sh` (new) | Nova | done |
+| 69 | Frontend: `AuditConsole.svelte` (the `SimulationLab.svelte` descendant — real findings, zero fake counters), `/lab` mount, terminal `audit <domain>` command, HeroCanvas driven by real measured latency | `src/lib/components/AuditConsole.svelte` (new), `src/routes/lab/+page.svelte`, `src/lib/components/Terminal.svelte`, `src/lib/components/HeroCanvas.svelte`, `src/lib/config.ts` | Nova | done |
+| 70 | k6 load profile against the real routes + `node:test` suite for the shared modules (the `test_concurrency.js` + `endpoint_test.ts` descendants) | `tools/load/k6-audit.js` (new), `tools/test/shared.test.mjs` (new) | Nova | done |
+
+**Rejected on purpose (see `docs/ANALYSIS.md` for the full reasoning):** `app.css` raw `body{}` theme overrides (bypasses the `themes.ts` token system), `wrangler.toml` (`[[unsafe.metadata.rate_limiting]]` + `[site]` are not real config; real limiting is `workers/shared/rate-limit.ts` + per-route budgets), `/admin/config.php` honeypot, `/api/audit-mirror` HTML-injection proxy, proxy IP rotation, the fabricated "40% bounce rate" cold-email claims, `process.exit(1)` inside a request handler, base64-as-encryption, the in-memory `Map` global rate limiter, and a visitor IP/city logging hook (privacy — the geo idea ships as an aggregate-only rollup instead).
+
+## Round 9 — "Themes that are actually themes" (user-direct, 2026-09-26)
+
+**Purpose:** three user-reported defects. (1) theme choice was lost on every refresh, (2) switching themes mostly changed colour — the *look* barely moved, (3) Paper needed the full emo-teen notebook marginalia, not four tidy icons.
+
+**Root cause of (1) and (2) — one bug, not two.** `themes.ts` owned the palette and `theme.ts` pushed it into the DOM with ~25 `setProperty` calls per switch. That meant a theme only existed *after* hydration (so nothing could be restored before paint → flash + no persistence), and it meant "the look" was a bag of numbers rather than anything structural. Moving every token into `[data-theme='…']` blocks in `app.css` fixes both at once: `data-theme` is now the entire switch, it works with JS off, and each theme can express structure instead of just colour.
+
+| # | Task | Files | Owner | Status |
+|---|------|-------|-------|--------|
+| 71 | Theme persistence: pre-paint inline bootstrap + `localStorage` + cross-tab `storage` sync | `src/app.html`, `src/lib/stores/theme.ts`, `src/lib/data/themes.ts` | Nova | done |
+| 72 | Move all palette + look tokens out of JS into `app.css` `[data-theme]` blocks; drop the `variables` field from the registry | `src/app.css`, `src/lib/data/themes.ts`, `src/lib/stores/theme.ts`, `src/lib/components/ThemeSwitcher.svelte`, `src/lib/components/HeroCanvas.svelte` | Nova | done |
+| 73 | Structural look system: `--border-w` `--rule-style` `--card-shadow` `--card-blur` `--label-transform` `--label-tracking` `--title-transform` `--title-weight` `--tick`, consumed by cards/buttons/labels/headings | `src/app.css` | Nova | done |
+| 74 | Per-theme surface treatments: nocturne film-grain + vignette, matrix scanlines, cyan aurora + glass, paper ruled lines, blueprint drafting grid + corner registration marks | `src/app.css` | Nova | done |
+| 75 | Fifth theme `blueprint` (navy ground, dashed rules, mono, crosshair ticks, zero radius, no shadows) | `src/lib/data/themes.ts`, `src/app.css`, `src/app.html` | Nova | done |
+| 76 | Deranged Paper marginalia: 14 hand-drawn doodles, `feTurbulence` displacement filter for pen wobble, staggered draw-in | `src/lib/components/PaperDoodles.svelte`, `src/app.css` | Nova | done |
+| 77 | Theme drift guard (11 assertions) + wire into `npm test` | `tools/test/themes.test.mjs`, `package.json` | Nova | done |
+| 78 | Remove 3 dead tokens (`--display-weight`, `--laser`, `--surface`) that every theme defined and nothing read | `src/app.css` | Nova | done |
+
+**Contract change to flag for review:** `ThemeDefinition` no longer has a `variables` field. Anything importing a theme's palette from TypeScript must read `app.css` (or use the new `accent`/`page` fields, which are the only two the UI needs). `HeroCanvas` was the one consumer and now reads `def.accent`.
+
+**Test note:** `tools/test/themes.test.mjs` is deliberately adversarial about the exact complaint in (2) — it asserts every theme overrides the *full* `:root` token set, that no structural token is declared-but-unread, that no `:root` token is dead, and that the three duplicated lists (`themes.ts` ↔ `app.css` ↔ `app.html`) agree. All three failure modes were negative-probed by deliberately breaking them and confirming the specific assertion fired. `node --test tools/test/` — 11/11.
+
+**Verified:** `npm run check` 0 errors / 0 warnings · `npm run build` clean · bootstrap script and all 5 theme blocks present in the built output · per-theme structural fingerprints confirmed distinct (radius 14/3/22/2/0px, borders 1/2/1/1/1px, label tracking .16/.22/.30/.12/.34em, title case none/none/none/none/upper, ticks transparent×4/crosshair).
+
 ## Communication log
+
+- `2026-09-26 Nova` — ✅ **Round 9 DONE (code, uncommitted):** #71 theme persistence (pre-paint bootstrap in `app.html` reads `pwn4g3.theme` before first paint; store initialises from the attribute the bootstrap already set, so no flash *and* no hydration mismatch; `storage` event syncs tabs; `theme-color` meta follows). #72 the actual root-cause fix — palette + look tokens moved from `themes.ts`/JS into `app.css` `[data-theme]` blocks, deleting the `variables` field and the `setProperty` loop. #73 added 9 structural tokens and wired them into the rules that actually render cards, buttons, labels and headings, so "look" is a real dimension now. #74 surface treatments per theme (nocturne grain+vignette, cyan aurora+glass, blueprint drafting grid; matrix/paper already had theirs). #75 new fifth theme `blueprint`. #76 Paper marginalia rebuilt: 14 doodles, two `feTurbulence` displacement filters so strokes wobble like pen instead of perfect beziers, staggered 0.2s→2.8s draw-in, per-breakpoint hiding so mobile isn't a mess. #77 drift guard. #78 removed 3 dead tokens. **Contract change:** `ThemeDefinition.variables` is gone (see Round 9 header). Verified `npm run check` 0/0, `npm run build` clean, 11/11 tests, all three drift failure modes negative-probed. No commit per rule. Still unverified from Round 8: the `attachLead` `.run()` fix in `workers/audit/src/index.ts` — `wrangler dev` kept hanging in this session, so that needs one clean drill before it ships.
+- `2026-09-26 Nova` — 📣 **Round 8 claim (#61–#70, user-direct "all and then some"):** the downloaded artifacts are unrunnable here and already superseded; I'm porting the salvageable ideas onto D1 + service bindings and documenting the rejects. **File-ownership heads-up to `jake`:** your #32–#38 tree is still uncommitted, so `TASKS.md`, `src/lib/config.ts`, `src/routes/lab/+page.svelte`, and the backend workflow get append-only edits from me. Clean files I own outright: `workers/shared/**`, `workers/audit/**` (new), `workers/gateway/*`, `workers/admin-console/**`, `workers/scheduler/**`, `tools/**`, `docs/**`. ⚠️ `workers/shared/audit.ts` is a new shared contract — `workers/admin-console/src/score.ts` will delegate to it rather than duplicate the engine, so #54's behaviour is preserved but its internals move. No commit per rule.
+- `2026-09-22 jake` — ✅ **#32–#38 DONE (code, uncommitted — Otis review on backend touches):** #32 new `pwn4g3-ask` (D1 FTS5 corpus + Workers AI + D1 answer cache 7d, 5/day/IP, fail-closed; `0008_ask.sql`; gateway binding/route; workflow line). #33 `/ask` route (sources + cached badge + 429 states) + `AskWidget` FAB mounted in layout. #34 new `pwn4g3-guestbook` (pending-by-default moderation, honeypot fake-accept, 3/hour/IP; `0009_guestbook.sql`; gateway binding/route; workflow line) + #35 `/guestbook` (list approved, honest empty state, XSS-safe text render). #36 SUPERSEDED as specced (no deployed microfrontends — no fake manifest; revives when `apps/*` deploys) + #37 new `/labs` index (7 live cards, zero dead links, `/lab` cross-linked). #38 `POST /api/csp-report` in telemetry worker + `csp_reports` (`0010`) + gateway route + `report-uri` in `_headers` + `vercel.json` (weekly scheduler summary = Otis follow-up). Verified each step: `tsc` clean, migrations apply on sqlite, `npm run check` 0/0, build clean, all new routes prerendered, ask/guestbook/telemetry/gateway dry-runs green. `workers/**` + workflow + `TASKS.md` touches flagged for Otis review per protocol. No commit per rule.
+
+- `2026-09-22 jake` — ✅ **#27 + #29 DONE (code, uncommitted):** #29 new `/status` (6 live probes: site/gateway/health/components/viper/telemetry with latency + HTTP + timestamps, overall banner, 20-entry in-session log, 60s refresh, prerendered idle shell); #27 new `/stats` (gateway self-reported endpoint count, live latency avg/series, hand-rolled SVG sparkline + endpoint bars, no lib, prerendered). Both SSR-safe, honest copy (no fake 90d history / traffic graphs — those need Otis read APIs over `uptime_checks`/`telemetry_events`/`daily_rollups`). Nav + sitemap updated. Verified: `npm run check` 0/0, build clean, `status.html` + `stats.html` prerendered. `workers/**` untouched. No commit per rule.
 
 - `2026-09-22 jake` — ✅ **Round 7 DONE (code):** #58 new `pwn4g3-payments` (Stripe Checkout with server-side package prices, HMAC-signed webhooks with dedupe, isolated `pwn4g3-secure` DB + own migrations dir, fail-closed secrets; drilled 503/422/403). #59 new `pwn4g3-hivemind` phase 1: agent session's escape room ported with 2 chain-breaking bugs fixed + proven (44-symbol base-46 alphabet, encoder missing the −2 evolution step — full 7-step chain verified green against bundled code). Gateway `/hive` + `/api/payments` routes (12 bindings), components inventory, workflow deploys both before gateway. `pwnhaus` hello-world worker: token can't delete or overwrite it — dashboard delete is the user step. Otis's #47 viper rewrite + `pwn4ge-*` legacy untouched.
 

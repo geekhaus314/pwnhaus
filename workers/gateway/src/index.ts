@@ -12,8 +12,11 @@ interface Env {
 	DISCORD_SERVICE: { fetch(request: Request): Promise<Response> };
 	REDDIT_SERVICE: { fetch(request: Request): Promise<Response> };
 	PAYMENTS_SERVICE: { fetch(request: Request): Promise<Response> };
+	ASK_SERVICE: { fetch(request: Request): Promise<Response> };
+	GUESTBOOK_SERVICE: { fetch(request: Request): Promise<Response> };
 	HIVEMIND_SERVICE: { fetch(request: Request): Promise<Response> };
 	TELEMETRY_SERVICE: { fetch(request: Request): Promise<Response> };
+	AUDIT_SERVICE: { fetch(request: Request): Promise<Response> };
 	PWN4G3_ASSETS_URL?: string;
 }
 
@@ -36,11 +39,15 @@ export default {
 		if (route(pathname, '/api/components')) return env.COMPONENTS_SERVICE.fetch(request);
 		if (route(pathname, '/api/viper-web3')) return env.VIPER_SERVICE.fetch(request);
 		if (route(pathname, '/api/telemetry')) return env.TELEMETRY_SERVICE.fetch(request);
+		if (route(pathname, '/api/csp-report')) return env.TELEMETRY_SERVICE.fetch(request);
+		if (route(pathname, '/api/audit')) return env.AUDIT_SERVICE.fetch(request);
 		if (route(pathname, '/api/booking')) return env.BOOKING_SERVICE.fetch(request);
 		if (route(pathname, '/api/notify')) return env.NOTIFY_SERVICE.fetch(request);
 		if (route(pathname, '/api/discord')) return env.DISCORD_SERVICE.fetch(request);
 		if (route(pathname, '/api/reddit')) return env.REDDIT_SERVICE.fetch(request);
 		if (route(pathname, '/api/payments')) return env.PAYMENTS_SERVICE.fetch(request);
+		if (route(pathname, '/api/ask')) return env.ASK_SERVICE.fetch(request);
+		if (route(pathname, '/api/guestbook')) return env.GUESTBOOK_SERVICE.fetch(request);
 		if (route(pathname, '/hive')) return env.HIVEMIND_SERVICE.fetch(request);
 		if (route(pathname, '/admin')) return env.ADMIN_SERVICE.fetch(request);
 		if (pathname === '/assets' || pathname.startsWith('/assets/')) return env.ASSETS_SERVICE.fetch(request);
@@ -51,7 +58,7 @@ export default {
 				service: 'pwn4g3',
 				site: 'https://pwn4g3.pages.dev',
 				status: 'available',
-				architecture: 'gateway -> service bindings (health, components, viper, assets, booking, telemetry, notify, discord, reddit, admin, payments, hivemind)',
+				architecture: 'gateway -> service bindings (health, components, viper, assets, booking, telemetry, notify, discord, reddit, admin, payments, hivemind, ask, guestbook, audit)',
 				assets: env.PWN4G3_ASSETS_URL ?? 'https://pwn4g3.geekhaus314.workers.dev/assets',
 				endpoints: {
 					health: 'GET /health',
@@ -66,6 +73,9 @@ export default {
 					reddit: 'POST /api/reddit/submit { id? } + GET /api/reddit/modmail (admin bearer)',
 				admin: 'GET /admin  (admin console, token-gated API)',
 				payments: 'POST /api/payments/checkout { package, email } + POST /api/payments/webhook (Stripe)',
+					ask: 'POST /api/ask { question } (5/day/IP, cached)',
+					audit: 'POST /api/audit { website, email?, name? } (10/hr/IP) + GET /api/audit/summary (public aggregate)',
+					guestbook: 'GET /api/guestbook (approved) + POST /api/guestbook { name, message } (moderated)',
 				hivemind: 'GET /hive/status (escape room step 1) + hidden doors',
 				assets: 'GET /assets/<key>  e.g. /assets/resume.pdf  (R2 bucket pwn4g3-assets)'
 				}

@@ -23,7 +23,7 @@
 	let accentHex = $state('#a51d37');
 	const unsubscribe = themeStore.subscribe((name) => {
 		const def = themes[name as keyof typeof themes];
-		accentHex = def?.variables.accent ?? '#a51d37';
+		accentHex = def?.accent ?? '#a51d37';
 	});
 
 	function traceColor(alpha: number): string {

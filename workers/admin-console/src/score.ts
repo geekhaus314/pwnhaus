@@ -2,10 +2,19 @@
  * Lead-desk site scoring (#54).
  *
  * Scores a local business website 0–100 for *redesign need* (higher =
- * worse site = better prospect). Pure static heuristics over one fetched
- * HTML document — no browser, fits the Workers free tier (10s fetch
- * timeout, ~500KB cap, sequential scoring).
+ * worse site = better prospect).
+ *
+ * The measurement engine now lives in `workers/shared/audit.ts` (#63) so
+ * the public audit tool and the lead desk run identical checks instead of
+ * two drifting copies. This module keeps the lead-desk *view*: same 17
+ * checks, same point values, same `pains[]` strings in the same order,
+ * because the outreach drafts (#55) quote the first two verbatim. The
+ * translation table below is the contract — if you change a pain string
+ * here, you change what gets emailed to a real business.
  */
+
+import { auditSite, LEAD_DESK_CHECK_IDS, type AuditCheck } from '../../shared/audit';
+import { validatePublicUrl } from '../../shared/http';
 
 export interface SiteScore {
 	website: string;
@@ -23,95 +32,87 @@ export interface SiteScore {
 	truncated: boolean;
 }
 
-const MAX_BYTES = 500_000;
 const FETCH_TIMEOUT_MS = 10_000;
 
 export const normalizeWebsite = (input: string): string | null => {
 	const trimmed = input.trim();
 	if (!trimmed || trimmed.length > 2048) return null;
 	if (/^https?:\/\//i.test(trimmed)) return trimmed;
-	if (/^[\w-]+(\.[\w-]+)+(:\d+)?(\/\S*)?$/.test(trimmed)) return `https://${trimmed}`;
-	return null;
+	if (!/^[\w-]+(\.[\w-]+)+(:\d+)?(\/\S*)?$/.test(trimmed)) return null;
+	// Same SSRF containment the public audit tool uses: literal private /
+	// loopback / metadata addresses, internal TLDs and non-default ports are
+	// rejected even though the console is token-gated. Costs nothing, and
+	// a mistyped target in the scanner shouldn't reach 169.254.169.254.
+	const validated = validatePublicUrl(trimmed);
+	return validated.ok && validated.url ? validated.url : null;
 };
 
-const count = (html: string, re: RegExp): number => (html.match(re) ?? []).length;
+/**
+ * Legacy pain strings, verbatim. Keyed by check id; a function returns the
+ * string to append, or `null` to append nothing (the check passed, or is a
+ * new check that isn't part of the redesign-need score).
+ */
+const LEGACY_PAIN: Record<string, (c: AuditCheck) => string | null> = {
+	https: (c) => (c.status === 'fail' ? 'No HTTPS — browsers flag the site insecure' : null),
+	viewport: (c) => (c.status === 'fail' ? 'No viewport tag — likely broken on phones' : null),
+	responsive: (c) => (c.status === 'fail' ? 'No responsive-design signals' : null),
+	page_title: (c) => (c.status === 'fail' ? 'Missing page title (SEO basics absent)' : null),
+	meta_description: (c) => (c.status === 'fail' ? 'Missing meta description' : null),
+	table_layout: (c) => (c.status === 'fail' ? 'Table-based layout — pre-responsive era build' : null),
+	flash: (c) => (c.status === 'fail' ? 'Flash references — dead plugin era' : null),
+	marquee: (c) => (c.status === 'fail' ? 'Marquee/blink tags — 90s markup' : null),
+	font_tags: (c) => (c.status === 'fail' ? 'Deprecated <font> tags' : null),
+	jquery_1x: (c) => (c.status === 'fail' ? 'jQuery 1.x — unsupported, known CVEs' : null),
+	ie_compat: (c) => (c.status === 'fail' ? 'IE-compatibility mode forced' : null),
+	mixed_content: (c) => (c.status === 'fail' ? 'Mixed content — loads scripts over HTTP' : null),
+	ttfb: (c) =>
+		c.status === 'fail' ? `Slow server response (${((c.value ?? 0) / 1000).toFixed(1)}s TTFB)` : null,
+	html_weight: (c) => (c.status === 'fail' ? 'Heavy homepage (500KB+ of HTML)' : null),
+	contact_paths: (c) => (c.status === 'fail' ? 'No click-to-call or click-to-email contact' : null),
+	semantic_html: (c) => (c.status === 'fail' ? 'No semantic HTML5 structure' : null),
+	freshness: (c) =>
+		c.status === 'warn' ? `Stale copyright (${c.value ?? '????'}) — site looks abandoned` : null
+};
 
 export async function scoreSite(website: string, fetchTimeoutMs = FETCH_TIMEOUT_MS): Promise<SiteScore> {
-	const start = Date.now();
-	const res = await fetch(website, {
-		redirect: 'follow',
-		headers: { 'User-Agent': 'pwn4g3-leadbot/1.0 (+https://pwn4g3.pages.dev)', Accept: 'text/html' },
-		signal: AbortSignal.timeout(fetchTimeoutMs)
-	});
-	const ttfbMs = Date.now() - start;
-	if (!res.ok) throw new Error(`fetch_${res.status}`);
-	const ctype = res.headers.get('content-type') ?? '';
-	if (ctype && !/text\/html|application\/xhtml/i.test(ctype)) throw new Error('not_html');
+	const report = await auditSite(website, { timeoutMs: fetchTimeoutMs });
 
-	const buf = new Uint8Array(await res.arrayBuffer());
-	const truncated = buf.length > MAX_BYTES;
-	const html = new TextDecoder().decode(buf.slice(0, MAX_BYTES)).toLowerCase();
-	const finalUrl = res.url || website;
-	const https = finalUrl.startsWith('https://');
-
-	let need = 0;
-	const pains: string[] = [];
-	const tech: string[] = [];
-	const add = (points: number, pain: string) => {
-		need += points;
-		pains.push(pain);
-	};
-
-	if (!https) add(15, 'No HTTPS — browsers flag the site insecure');
-	if (!/<meta[^>]+name=["']viewport["']/i.test(html)) add(15, 'No viewport tag — likely broken on phones');
-	if (!/media[ -]?quer|bootstrap|tailwind|flex|grid|mobile/i.test(html)) add(10, 'No responsive-design signals');
-	if (!/<title>[^<]{3,}<\/title>/i.test(html)) add(8, 'Missing page title (SEO basics absent)');
-	if (!/<meta[^>]+name=["']description["']/i.test(html)) add(5, 'Missing meta description');
-	if (/<table[^>]*>.*<table/is.test(html) || count(html, /<table/g) >= 3) add(12, 'Table-based layout — pre-responsive era build');
-	if (/\.swf|shockwave-flash|x-shockwave/i.test(html)) add(10, 'Flash references — dead plugin era');
-	if (/<marquee|<blink/i.test(html)) add(8, 'Marquee/blink tags — 90s markup');
-	if (/<font[ >]/i.test(html)) add(5, 'Deprecated <font> tags');
-	if (/jquery-1\.|jquery\/1\.|jquery\.min\.js\?ver=1/i.test(html)) add(8, 'jQuery 1.x — unsupported, known CVEs');
-	if (/x-ua-compatible["']?\s*content=["']?ie=/i.test(html)) add(7, 'IE-compatibility mode forced');
-	if (/src="http:\/\//i.test(html)) add(8, 'Mixed content — loads scripts over HTTP');
-	if (ttfbMs > 1500) add(8, `Slow server response (${(ttfbMs / 1000).toFixed(1)}s TTFB)`);
-	if (truncated) add(5, 'Heavy homepage (500KB+ of HTML)');
-	if (!/mailto:|tel:/i.test(html)) add(5, 'No click-to-call or click-to-email contact');
-	if (!/<header|<nav|<main|<footer/i.test(html)) add(5, 'No semantic HTML5 structure');
-	const yearMatch = /©|&copy;|copyright[^0-9]{0,10}(19|20)\d{2}/i.exec(html);
-	const copyYear = yearMatch ? Number(yearMatch[0].slice(-4)) : null;
-	if (copyYear !== null && copyYear < new Date().getFullYear() - 1) {
-		add(5, `Stale copyright (${copyYear}) — site looks abandoned`);
+	// Preserve the original error taxonomy — admin-console routes and the
+	// scanner UI branch on these strings.
+	if (!report.facts) {
+		throw new Error(`fetch_${report.error ?? 'failed'}${report.reason ? `_${report.reason}` : ''}`);
+	}
+	const facts = report.facts;
+	if (facts.status >= 400) throw new Error(`fetch_${facts.status}`);
+	if (facts.contentType && !/text\/html|application\/xhtml/i.test(facts.contentType)) {
+		throw new Error('not_html');
 	}
 
-	if (/wp-content|wp-includes/i.test(html)) tech.push('wordpress');
-	if (/wix\.com|\.wixstatic/i.test(html)) tech.push('wix');
-	if (/squarespace/i.test(html)) tech.push('squarespace');
-	if (/godaddy/i.test(html)) tech.push('godaddy');
-	if (/shopify/i.test(html)) tech.push('shopify');
-	if (/react|next\/|__next/i.test(html)) tech.push('react');
-	if (/jquery/i.test(html)) tech.push('jquery');
-	if (/bootstrap/i.test(html)) tech.push('bootstrap');
-	if (/tailwind/i.test(html)) tech.push('tailwind');
-
-	const emailMatch = /mailto:([^\s"'<>]+@[^\s"'<>]+)/i.exec(html);
-	const phoneMatch = /tel:([+\d][\d\s().-]{6,})/i.exec(html);
-
-	const titleMatch = /<title>([^<]{1,140})<\/title>/i.exec(html);
+	const byId = new Map(report.checks.map((c) => [c.id, c]));
+	let need = 0;
+	const pains: string[] = [];
+	for (const id of LEAD_DESK_CHECK_IDS) {
+		const c = byId.get(id);
+		if (!c) continue;
+		const pain = LEGACY_PAIN[id]?.(c) ?? null;
+		if (pain === null) continue;
+		need += c.points;
+		pains.push(pain);
+	}
 
 	return {
 		website,
-		finalUrl,
-		https,
+		finalUrl: facts.finalUrl,
+		https: facts.https,
 		score: Math.min(100, need),
 		pains,
-		tech,
-		email: emailMatch ? emailMatch[1].slice(0, 254) : null,
-		phone: phoneMatch ? phoneMatch[1].slice(0, 64) : null,
-		title: titleMatch ? titleMatch[1].trim() : null,
-		ttfbMs,
-		bytes: buf.length,
-		truncated
+		tech: [...facts.tech],
+		email: facts.email,
+		phone: facts.phone,
+		title: facts.title,
+		ttfbMs: facts.ttfbMs,
+		bytes: facts.bytes,
+		truncated: facts.truncated
 	};
 }
 

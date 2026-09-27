@@ -32,7 +32,6 @@
 	/* look — swapped wholesale by the theme switcher (themes.ts) */
 	--font-heading: 'Cormorant Garamond', Georgia, serif;
 	--font-display: Inter, system-ui, sans-serif;
-	--display-weight: 800;
 	--font-body: Inter, system-ui, sans-serif;
 	--heading-case: none;
 	--heading-spacing: -0.03em;
@@ -47,12 +46,10 @@
 	--accent-bright: #e33d5c;
 	--accent-soft: rgba(165, 29, 55, 0.2);
 	--page: #050608;
-	--surface: #080a0d;
 	--surface-raised: #0b0d10;
 	--ink: #ece7e0;
 	--muted: #898681;
 	--grid: rgba(165, 29, 55, 0.18);
-	--laser: rgba(227, 61, 92, 0.9);
 	--shadow: rgba(0, 0, 0, 0.7);
 	--selection: #a51d37;
 
@@ -65,6 +62,234 @@
 
 	--radius: 14px;
 	--radius-sm: 9px;
+
+	/* structural tokens — these are what make a theme a *look* rather than
+	   a palette. Every one is overridden per theme below. */
+	--border-w: 1px;
+	--rule-style: solid;
+	--card-shadow: 0 18px 44px -22px var(--shadow);
+	--card-blur: none;
+	--label-transform: uppercase;
+	--label-tracking: 0.16em;
+	--title-transform: none;
+	--title-weight: 700;
+	--tick: transparent;
+}
+
+/* ----------------------------------------------------------
+   Themes
+   The single source of truth for palette + look. `data-theme` on
+   <html> is the entire switch — which is why a saved theme can be
+   restored before any JS runs (see the bootstrap in app.html).
+   Registry/labels live in src/lib/data/themes.ts; the drift guard is
+   tools/test/themes.test.mjs. Keep variable *names* in sync with the
+   :root block above — every other rule in this file consumes them.
+   ---------------------------------------------------------- */
+
+/* NOCTURNE — editorial dark. Hairline rules, no texture, light bloom on
+   hover, italic serif section heads, pill buttons. */
+[data-theme='nocturne'] {
+	color-scheme: dark;
+
+	--accent: #a51d37;
+	--accent-bright: #e33d5c;
+	--accent-soft: rgba(165, 29, 55, 0.2);
+	--page: #050608;
+	--surface-raised: #0b0d10;
+	--ink: #ece7e0;
+	--muted: #898681;
+	--grid: rgba(165, 29, 55, 0.18);
+	--shadow: rgba(0, 0, 0, 0.7);
+	--selection: #a51d37;
+	--ok: #35d07f;
+	--warn: #e5a63d;
+	--crit: #e5484d;
+	--line: rgba(236, 231, 224, 0.09);
+	--card: #0b0d10;
+
+	--font-heading: 'Cormorant Garamond', Georgia, serif;
+	--font-body: Inter, system-ui, sans-serif;
+	--font-display: Inter, system-ui, sans-serif;
+	--heading-case: none;
+	--heading-spacing: -0.03em;
+	--heading-style: italic;
+
+	--radius: 14px;
+	--radius-sm: 9px;
+	--border-w: 1px;
+	--rule-style: solid;
+	--card-shadow: 0 18px 44px -22px var(--shadow);
+	--card-blur: none;
+	--label-transform: uppercase;
+	--label-tracking: 0.16em;
+	--title-transform: none;
+	--title-weight: 700;
+	--tick: transparent;
+}
+
+/* MATRIX — terminal. Zero radius, thick saturated borders, uppercase
+   everything, scanlines, hard phosphor bloom instead of soft shadow. */
+[data-theme='matrix'] {
+	color-scheme: dark;
+
+	--accent: #35d07f;
+	--accent-bright: #8affb8;
+	--accent-soft: rgba(53, 208, 127, 0.2);
+	--page: #030705;
+	--surface-raised: #0a160f;
+	--ink: #e1f7e9;
+	--muted: #85a792;
+	--grid: rgba(53, 208, 127, 0.2);
+	--shadow: rgba(0, 20, 10, 0.75);
+	--selection: #16834a;
+	--ok: #35d07f;
+	--warn: #e5c53d;
+	--crit: #ff5f56;
+	--line: rgba(225, 247, 233, 0.1);
+	--card: #081009;
+
+	--font-heading: 'IBM Plex Mono', ui-monospace, monospace;
+	--font-body: 'IBM Plex Mono', ui-monospace, monospace;
+	--font-display: 'IBM Plex Mono', ui-monospace, monospace;
+	--heading-case: uppercase;
+	--heading-spacing: 0.04em;
+	--heading-style: normal;
+
+	--radius: 3px;
+	--radius-sm: 2px;
+	--border-w: 2px;
+	--rule-style: solid;
+	--card-shadow: 6px 6px 0 rgba(0, 0, 0, 0.55);
+	--card-blur: none;
+	--label-transform: uppercase;
+	--label-tracking: 0.22em;
+	--title-transform: uppercase;
+	--title-weight: 700;
+	--tick: transparent;
+}
+
+/* CYAN FIELD — glass console. Big soft radii, frosted translucent panels,
+   ambient radial wash, wide open tracking, no hard shadows at all. */
+[data-theme='cyan'] {
+	color-scheme: dark;
+
+	--accent: #16b7d8;
+	--accent-bright: #73edff;
+	--accent-soft: rgba(22, 183, 216, 0.2);
+	--page: #04080b;
+	--surface-raised: #0b1820;
+	--ink: #e5f9fc;
+	--muted: #82aab1;
+	--grid: rgba(22, 183, 216, 0.2);
+	--shadow: rgba(0, 15, 25, 0.75);
+	--selection: #087f9a;
+	--ok: #3ddc84;
+	--warn: #f0b429;
+	--crit: #ff5f56;
+	--line: rgba(229, 249, 252, 0.1);
+	--card: #08121a;
+
+	--font-heading: Inter, system-ui, sans-serif;
+	--font-body: Inter, system-ui, sans-serif;
+	--font-display: Inter, system-ui, sans-serif;
+	--heading-case: none;
+	--heading-spacing: -0.045em;
+	--heading-style: normal;
+
+	--radius: 22px;
+	--radius-sm: 14px;
+	--border-w: 1px;
+	--rule-style: solid;
+	--card-shadow: 0 24px 60px -30px rgba(22, 183, 216, 0.45);
+	--card-blur: blur(14px) saturate(1.3);
+	--label-transform: uppercase;
+	--label-tracking: 0.3em;
+	--title-transform: none;
+	--title-weight: 800;
+	--tick: transparent;
+}
+
+/* PAPER — composition notebook. Zero radius, hard offset shadows (no blur),
+   ruled blue lines, red margin, serif everywhere, ink-on-paper. */
+[data-theme='paper'] {
+	color-scheme: light;
+
+	--accent: #b52b35;
+	--accent-bright: #8f1d27;
+	--accent-soft: rgba(181, 43, 53, 0.16);
+	--page: #e8e3d8;
+	--surface-raised: #f7f4ed;
+	--ink: #171717;
+	--muted: #5e5b55;
+	--grid: rgba(23, 23, 23, 0.14);
+	--shadow: rgba(30, 25, 15, 0.2);
+	--selection: #b52b35;
+	--ok: #1d7a3d;
+	--warn: #a96a12;
+	--crit: #c22f36;
+	--line: rgba(23, 23, 23, 0.12);
+	--card: #f2eee5;
+
+	--font-heading: 'Cormorant Garamond', Georgia, serif;
+	--font-body: 'Cormorant Garamond', Georgia, serif;
+	--font-display: 'Cormorant Garamond', Georgia, serif;
+	--heading-case: none;
+	--heading-spacing: -0.01em;
+	--heading-style: normal;
+
+	--radius: 2px;
+	--radius-sm: 2px;
+	--border-w: 1px;
+	--rule-style: solid;
+	--card-shadow: 5px 5px 0 rgba(23, 23, 23, 0.9);
+	--card-blur: none;
+	--label-transform: uppercase;
+	--label-tracking: 0.12em;
+	--title-transform: none;
+	--title-weight: 600;
+	--tick: transparent;
+}
+
+/* BLUEPRINT — drafting table. Navy ground, dashed construction lines,
+   double-ruled cards with corner tick marks, mono everywhere, no shadows
+   at all (drafting plots don't cast them). */
+[data-theme='blueprint'] {
+	color-scheme: dark;
+
+	--accent: #7cc4ff;
+	--accent-bright: #c9e6ff;
+	--accent-soft: rgba(124, 196, 255, 0.18);
+	--page: #061a2e;
+	--surface-raised: #0b2a49;
+	--ink: #dceaf7;
+	--muted: #7d9cb8;
+	--grid: rgba(124, 196, 255, 0.22);
+	--shadow: rgba(2, 10, 20, 0.8);
+	--selection: #2f6ea8;
+	--ok: #5fe0a8;
+	--warn: #ffcf6b;
+	--crit: #ff8080;
+	--line: rgba(124, 196, 255, 0.28);
+	--card: #0a2440;
+
+	--font-heading: 'IBM Plex Mono', ui-monospace, monospace;
+	--font-body: 'IBM Plex Mono', ui-monospace, monospace;
+	--font-display: 'IBM Plex Mono', ui-monospace, monospace;
+	--heading-case: uppercase;
+	--heading-spacing: 0.1em;
+	--heading-style: normal;
+
+	--radius: 0px;
+	--radius-sm: 0px;
+	--border-w: 1px;
+	--rule-style: dashed;
+	--card-shadow: none;
+	--card-blur: none;
+	--label-transform: uppercase;
+	--label-tracking: 0.34em;
+	--title-transform: uppercase;
+	--title-weight: 600;
+	--tick: crosshair;
 }
 
 /* ----------------------------------------------------------
@@ -194,11 +419,11 @@ section[id] { scroll-margin-top: 4.5rem; }
 	justify-content: center;
 	gap: 0.6rem;
 	padding: 0.95rem 1.6rem;
-	border-radius: 999px;
-	border: 1px solid var(--line);
+	border-radius: var(--radius-sm);
+	border: var(--border-w) solid var(--line);
 	font: 600 0.75rem var(--font-mono);
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
+	text-transform: var(--label-transform);
+	letter-spacing: var(--label-tracking);
 	transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s, background 0.2s;
 	position: relative;
 }
@@ -256,11 +481,11 @@ section[id] { scroll-margin-top: 4.5rem; }
 .hero h1 {
 	margin: 1.4rem 0 0;
 	font-family: var(--font-display);
-	font-weight: var(--display-weight);
+	font-weight: var(--title-weight);
 	font-size: clamp(2.9rem, 7.2vw, 5.9rem);
 	line-height: 0.98;
 	letter-spacing: var(--heading-spacing);
-	text-transform: var(--heading-case);
+	text-transform: var(--title-transform);
 	text-wrap: balance;
 }
 .hero h1 em {
@@ -464,8 +689,8 @@ section[id] { scroll-margin-top: 4.5rem; }
 .section-kicker {
 	display: inline-block;
 	font: 600 0.68rem var(--font-mono);
-	letter-spacing: 0.15em;
-	text-transform: uppercase;
+	letter-spacing: var(--label-tracking);
+	text-transform: var(--label-transform);
 	color: var(--accent-bright);
 }
 .eyebrow {
@@ -474,8 +699,8 @@ section[id] { scroll-margin-top: 4.5rem; }
 	gap: 0.65rem;
 	color: var(--muted);
 	font: 600 0.68rem var(--font-mono);
-	letter-spacing: 0.15em;
-	text-transform: uppercase;
+	letter-spacing: var(--label-tracking);
+	text-transform: var(--label-transform);
 }
 .eyebrow i {
 	width: 7px;
@@ -523,18 +748,21 @@ section[id] { scroll-margin-top: 4.5rem; }
 	height: 100%;
 	text-align: left;
 	background: var(--card);
-	border: 1px solid var(--line);
+	border: var(--border-w) solid var(--line);
 	border-radius: var(--radius);
+	box-shadow: var(--card-shadow);
+	backdrop-filter: var(--card-blur);
 	overflow: hidden;
 	cursor: pointer;
 	transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
 	color: var(--ink);
 	padding: 0;
+	position: relative;
 }
 .project-card:hover {
 	border-color: color-mix(in srgb, var(--accent) 65%, transparent);
 	transform: translateY(-5px);
-	box-shadow: 0 24px 60px var(--shadow), 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+	box-shadow: var(--card-shadow), 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 .project-media {
@@ -935,9 +1163,11 @@ section[id] { scroll-margin-top: 4.5rem; }
    ---------------------------------------------------------- */
 .infra-grid { display: grid; grid-template-columns: 1fr 1fr 0.85fr; gap: 1.1rem; }
 .infra-card {
-	border: 1px solid var(--line);
+	border: var(--border-w) solid var(--line);
 	border-radius: var(--radius);
 	background: var(--card);
+	box-shadow: var(--card-shadow);
+	backdrop-filter: var(--card-blur);
 	padding: 1.5rem;
 	position: relative;
 	overflow: hidden;
@@ -951,6 +1181,27 @@ section[id] { scroll-margin-top: 4.5rem; }
 	height: 2px;
 	background: linear-gradient(90deg, var(--accent), transparent);
 	opacity: 0.7;
+}
+
+/* Corner registration marks. One rule for every theme; `--tick` is the
+   switch (transparent everywhere except Blueprint, which sets it to a
+   crosshair colour). Eight gradient tiles instead of eight extra elements. */
+.project-card::before,
+.infra-card::before {
+	content: '';
+	position: absolute;
+	inset: 6px;
+	pointer-events: none;
+	opacity: 0.75;
+	background:
+		linear-gradient(var(--tick), var(--tick)) 0 0 / 12px 1px no-repeat,
+		linear-gradient(var(--tick), var(--tick)) 0 0 / 1px 12px no-repeat,
+		linear-gradient(var(--tick), var(--tick)) 100% 0 / 12px 1px no-repeat,
+		linear-gradient(var(--tick), var(--tick)) 100% 0 / 1px 12px no-repeat,
+		linear-gradient(var(--tick), var(--tick)) 0 100% / 12px 1px no-repeat,
+		linear-gradient(var(--tick), var(--tick)) 0 100% / 1px 12px no-repeat,
+		linear-gradient(var(--tick), var(--tick)) 100% 100% / 12px 1px no-repeat,
+		linear-gradient(var(--tick), var(--tick)) 100% 100% / 1px 12px no-repeat;
 }
 .infra-card .section-kicker { margin-bottom: 0.75rem; }
 .infra-card strong { display: block; margin: 0.4rem 0; font-family: var(--font-mono); font-size: 0.95rem; font-weight: 600; word-break: break-all; }
@@ -1219,11 +1470,11 @@ html.js .reveal.revealed {
 .page-hero h1 {
 	margin: 1rem 0 0;
 	font-family: var(--font-display);
-	font-weight: var(--display-weight);
+	font-weight: var(--title-weight);
 	font-size: clamp(2.8rem, 6.5vw, 5.2rem);
 	line-height: 0.98;
 	letter-spacing: var(--heading-spacing);
-	text-transform: var(--heading-case);
+	text-transform: var(--title-transform);
 	text-wrap: balance;
 }
 .page-hero h1 em {
@@ -1321,19 +1572,36 @@ html.js [data-theme='paper'] .rip-wrap.revealed .rip-tape {
 	to { transform: rotate(-1.5deg) scaleX(1); opacity: 1; }
 }
 
-/* Doodle draw-in (PaperDoodles.svelte) — paper only */
+/* Doodle draw-in (PaperDoodles.svelte) — paper only.
+   Every stroke animates in on its own delay so the marginalia scrawls
+   itself on over a couple of seconds instead of appearing at once. */
 [data-theme='paper'] .doodles .doodle { display: block; }
 [data-theme='paper'] .doodles .doodle path {
 	stroke-dasharray: 420;
 	stroke-dashoffset: 420;
 	animation: doodle-draw 1.8s ease forwards;
 }
-[data-theme='paper'] .doodles .doodle-star path { animation-delay: 0.9s; }
-[data-theme='paper'] .doodles .doodle-squiggle path { animation-delay: 1.4s; }
-[data-theme='paper'] .doodles .doodle-check path { animation-delay: 1.9s; }
 [data-theme='paper'] .doodles .doodle-text { opacity: 0; animation: doodle-fade 0.8s ease forwards; }
-[data-theme='paper'] .doodles .doodle-arrow .doodle-text { animation-delay: 1.2s; }
-[data-theme='paper'] .doodles .doodle-check .doodle-text { animation-delay: 2.6s; }
+[data-theme='paper'] .doodles .d-star path { animation-delay: 0.2s; }
+[data-theme='paper'] .doodles .d-squiggle path { animation-delay: 0.4s; }
+[data-theme='paper'] .doodles .d-arrow path { animation-delay: 0.6s; }
+[data-theme='paper'] .doodles .d-arrow .doodle-text { animation-delay: 1.2s; }
+[data-theme='paper'] .doodles .d-spiral path { animation-delay: 0.8s; }
+[data-theme='paper'] .doodles .d-skull path { animation-delay: 1s; }
+[data-theme='paper'] .doodles .d-skull .doodle-text { animation-delay: 2.4s; }
+[data-theme='paper'] .doodles .d-cloud path { animation-delay: 1.4s; }
+[data-theme='paper'] .doodles .d-bolt path { animation-delay: 1.6s; }
+[data-theme='paper'] .doodles .d-bolt .doodle-text { animation-delay: 2.6s; }
+[data-theme='paper'] .doodles .d-burst path { animation-delay: 1.8s; }
+[data-theme='paper'] .doodles .d-burst .doodle-text { animation-delay: 2.8s; }
+[data-theme='paper'] .doodles .d-strike path { animation-delay: 2s; }
+[data-theme='paper'] .doodles .d-strike .doodle-text { animation-delay: 2.4s; }
+[data-theme='paper'] .doodles .d-eye path { animation-delay: 2.2s; }
+[data-theme='paper'] .doodles .d-blade path { animation-delay: 2.4s; }
+[data-theme='paper'] .doodles .d-sigil path { animation-delay: 2.6s; }
+[data-theme='paper'] .doodles .d-tally path { animation-delay: 2.8s; }
+[data-theme='paper'] .doodles .d-check path { animation-delay: 1s; }
+[data-theme='paper'] .doodles .d-check .doodle-text { animation-delay: 2.6s; }
 @keyframes doodle-draw { to { stroke-dashoffset: 0; } }
 @keyframes doodle-fade { to { opacity: 1; } }
 [data-theme='paper'] body {
@@ -1369,14 +1637,14 @@ html.js [data-theme='paper'] .rip-wrap.revealed .rip-tape {
 }
 [data-theme='paper'] .nav { backdrop-filter: none; }
 
-/* CYAN — glass console: translucent blurred cards, gradient edges */
+/* CYAN — glass console: translucent blurred cards, gradient edges.
+   The blur comes from --card-blur so glass is a token, not a one-off. */
 [data-theme='cyan'] .project-card,
 [data-theme='cyan'] .infra-card,
 [data-theme='cyan'] .lab-panel,
 [data-theme='cyan'] .trust-grid,
 [data-theme='cyan'] .hire-panel {
 	background: color-mix(in srgb, var(--card) 72%, transparent);
-	backdrop-filter: blur(14px);
 }
 [data-theme='cyan'] .infra-card::after {
 	background: linear-gradient(90deg, var(--accent-bright), transparent);
@@ -1387,6 +1655,111 @@ html.js [data-theme='paper'] .rip-wrap.revealed .rip-tape {
 [data-theme='cyan'] .ticker {
 	background: linear-gradient(90deg, var(--accent), var(--accent-bright));
 }
+/* Ambient wash — two soft off-centre lights so the flat dark ground stops
+   reading as "matrix with a different hue". */
+[data-theme='cyan'] .site-shell::before {
+	background-image:
+		radial-gradient(58rem 34rem at 12% -6%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 62%),
+		radial-gradient(46rem 30rem at 92% 8%, color-mix(in srgb, var(--accent-bright) 14%, transparent), transparent 60%),
+		linear-gradient(var(--grid) 1px, transparent 1px),
+		linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+	background-size: 100% 100%, 100% 100%, 72px 72px, 72px 72px;
+	opacity: 0.85;
+}
+
+/* NOCTURNE — film grain + corner vignette. Nothing structural changes here;
+   the theme's identity is restraint, so the treatment stays invisible until
+   you look for it. Sits under the base grid, above the page. */
+[data-theme='nocturne'] body::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 1;
+	opacity: 0.5;
+	background:
+		radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(0, 0, 0, 0.55) 100%),
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* BLUEPRINT — drafting table. Fine 10px construction grid under a coarse
+   80px grid, brighter than the shared overlay, plus registration ticks in
+   the corners of every panel. No shadows: a plot doesn't cast one. */
+[data-theme='blueprint'] .site-shell::before {
+	background-image:
+		linear-gradient(var(--grid) 1px, transparent 1px),
+		linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+		linear-gradient(color-mix(in srgb, var(--accent) 34%, transparent) 1px, transparent 1px),
+		linear-gradient(90deg, color-mix(in srgb, var(--accent) 34%, transparent) 1px, transparent 1px);
+	background-size: 10px 10px, 10px 10px, 80px 80px, 80px 80px;
+	opacity: 0.6;
+	mask-image: none;
+}
+[data-theme='blueprint'] .project-card,
+[data-theme='blueprint'] .infra-card,
+[data-theme='blueprint'] .lab-panel,
+[data-theme='blueprint'] .hire-panel,
+[data-theme='blueprint'] .note-card,
+[data-theme='blueprint'] .terminal {
+	border-style: var(--rule-style);
+	box-shadow: none;
+	background: color-mix(in srgb, var(--card) 88%, transparent);
+}
+[data-theme='blueprint'] .hero h1,
+[data-theme='blueprint'] .page-hero h1 {
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+[data-theme='blueprint'] .ticker {
+	background: transparent;
+	border-top: 1px dashed var(--accent);
+	border-bottom: 1px dashed var(--accent);
+	color: var(--accent-bright);
+}
+[data-theme='blueprint'] .button.primary {
+	background: transparent;
+	color: var(--accent-bright);
+	border-color: var(--accent);
+}
+[data-theme='blueprint'] .button.primary:hover {
+	background: var(--accent);
+	color: var(--page);
+}
+[data-theme='blueprint'] .eyebrow i { border-radius: 0; }
+
+
+/* ----------------------------------------------------------
+   Field notes teaser (home)
+   ---------------------------------------------------------- */
+.notes-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1.1rem;
+}
+.note-card {
+	display: block;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	background: var(--card);
+	padding: 1.5rem;
+	transition: transform 0.2s, border-color 0.2s;
+}
+.note-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+.note-date {
+	font: 600 0.62rem var(--font-mono);
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--accent-bright);
+}
+.note-card h3 {
+	margin: 0.6rem 0 0.5rem;
+	font-family: var(--font-heading);
+	font-weight: 500;
+	font-size: 1.35rem;
+	line-height: 1.1;
+}
+.note-card p { margin: 0; color: var(--muted); font-size: 0.84rem; line-height: 1.65; }
+.note-card .read-more { display: inline-block; margin-top: 0.9rem; color: var(--accent-bright); font: 600 0.65rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
 
 /* ----------------------------------------------------------
    Responsive
@@ -1424,6 +1797,7 @@ html.js [data-theme='paper'] .rip-wrap.revealed .rip-tape {
 	.trust-grid { grid-template-columns: 1fr 1fr; }
 	.trust-cell { padding: 1.1rem 1rem; }
 	.project-grid { grid-template-columns: 1fr; }
+	.notes-grid { grid-template-columns: 1fr; }
 	.project-grid > .reveal:first-child { grid-column: auto; }
 	.project-grid > .reveal:first-child .project-media { aspect-ratio: 16/10; }
 	.fact-list { grid-template-columns: 1fr; }

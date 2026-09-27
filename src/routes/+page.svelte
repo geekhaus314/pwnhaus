@@ -8,6 +8,7 @@
 
 	import { projects, type Project } from '$lib/data/projects';
 	import { profile, capabilities } from '$lib/data/profile';
+	import { posts } from '$lib/data/posts';
 
 	let activeProject = $state<Project | null>(null);
 
@@ -177,10 +178,32 @@
 	</div>
 </section>
 
+<!-- ══════════ FIELD NOTES ══════════ -->
+<section class="section" aria-label="Field notes">
+	<div class="rail reveal">
+		<span class="rail-num">04</span>
+		<h2>Notes from <em>the field</em></h2>
+		<p class="rail-desc">
+			Case studies, pricing in public, practical advice. <a href="/blog">All posts →</a>
+		</p>
+	</div>
+
+	<div class="notes-grid">
+		{#each posts.slice(0, 3) as post}
+			<a class="note-card reveal" href="/blog/{post.slug}">
+				<span class="note-date">{post.date}</span>
+				<h3>{post.title}</h3>
+				<p>{post.excerpt}</p>
+				<span class="read-more">Read →</span>
+			</a>
+		{/each}
+	</div>
+</section>
+
 <!-- ══════════ HIRE ══════════ -->
 <section class="section" aria-label="Hire me">
 	<div class="rail reveal">
-		<span class="rail-num">04</span>
+		<span class="rail-num">05</span>
 		<h2>One email <em>starts it</em></h2>
 		<p class="rail-desc">Full-time roles, part-time IT and security work, freelance builds.</p>
 	</div>
