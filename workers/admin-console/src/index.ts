@@ -9,6 +9,7 @@ import {
 	STL_BBOX
 } from './score';
 import { createLeadId, parseSignals } from '../../shared/leads';
+import { parseAllowlist, ipAllowed, sourceIp } from './ip-gate';
 
 /**
  * Admin console (#43).
@@ -19,6 +20,11 @@ import { createLeadId, parseSignals } from '../../shared/leads';
  * the notify worker) with a constant-time compare and fails closed (503)
  * when the secret is missing.
  *
+ * On top of that (#79): the whole /admin surface is source-IP gated, checked
+ * once up front before any route dispatch so no handler can be reached
+ * without passing it. The token check still runs afterwards on every API
+ * route — this is a second lock, not a replacement.
+ *
  * The console never holds delivery secrets: compose forwards the operator's
  * own Authorization header to the NOTIFY_SERVICE binding, channel status
  * comes from notify's public info endpoint, and the ledger reads D1
@@ -28,6 +34,14 @@ import { createLeadId, parseSignals } from '../../shared/leads';
 interface Env {
 	DB: D1Database;
 	ADMIN_TOKEN?: string;
+	/**
+	 * Comma-separated source-IP allowlist, e.g.
+	 * `203.0.113.7,2001:db8:1234:e3d0::/64` (RFC 5737 / RFC 3849 documentation
+	 * ranges — the real value is private and lives only in the Wrangler secret).
+	 * Absent or unparseable => zero entries => every request 403s (see
+	 * `ip-gate.ts`).
+	 */
+	ADMIN_IPS?: string;
 	NOTIFY_SERVICE: { fetch(request: Request): Promise<Response> };
 }
 
@@ -143,6 +157,35 @@ async function insertLead(
 		.run();
 	return id;
 }
+/**
+ * First lock: source IP (#79). Returns a 403 response to hand back, or null
+ * to let the request through to `gate`.
+ *
+ * Parsed per request rather than cached at startup. It is two entries, so the
+ * cost is noise, and it means `wrangler secret put ADMIN_IPS` takes effect on
+ * the next request instead of the next deploy — worth it, because the failure
+ * mode of a bad allowlist is locking yourself out.
+ */
+const ipGate = (request: Request, env: Env): Response | null => {
+	const allowlist = parseAllowlist(env.ADMIN_IPS);
+	// A typo must be visible, not silent: an entry that fails to parse drops
+	// the list to fewer entries than intended, or to none at all.
+	if (allowlist.invalid.length > 0) {
+		console.error(JSON.stringify({ msg: 'admin_ips_invalid', invalid: allowlist.invalid }));
+	}
+	if (allowlist.entries.length === 0) {
+		// Fail closed. No allowlist means no access, for anyone including us.
+		console.error(JSON.stringify({ msg: 'admin_ips_unconfigured' }));
+		return fail('forbidden', 403);
+	}
+	const ip = sourceIp(request);
+	if (!ipAllowed(ip, allowlist)) {
+		console.log(JSON.stringify({ msg: 'admin_ip_denied', ip }));
+		return fail('forbidden', 403);
+	}
+	return null;
+};
+
 const gate = async (request: Request, env: Env): Promise<Response | null> => {
 	if (!env.ADMIN_TOKEN) return fail('admin_not_configured', 503);
 	const token = bearerToken(request);
@@ -317,6 +360,16 @@ export default {
 
 		const url = new URL(request.url);
 		const path = url.pathname;
+
+		// Front door (#79). Checked once, before route dispatch, so every
+		// handler under /admin — the page and all of the API — sits behind it,
+		// and no route added later can accidentally bypass it by forgetting to
+		// call its own check. Runs before rate limiting so a denied request
+		// never consumes a bucket. The per-route token `gate` still runs after.
+		if (path === '/admin' || path.startsWith('/admin/')) {
+			const denied = ipGate(request, env);
+			if (denied) return denied;
+		}
 
 		if (path === '/admin' || path === '/admin/') {
 			if (request.method !== 'GET') return fail('method_not_allowed', 405);
