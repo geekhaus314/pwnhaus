@@ -20,6 +20,10 @@ pnpm-debug.log*
 .env
 .env.production
 .env.local
+# Wrangler local dev vars. Holds ADMIN_IPS — the operator's own address — and
+# this repo is PUBLIC, so committing it would publish the one thing that
+# restricts access to /admin. Production value lives in a Wrangler secret.
+.dev.vars
 
 # Build artifacts (legacy)
 dist/
