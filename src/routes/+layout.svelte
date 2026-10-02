@@ -1,16 +1,35 @@
 <script lang="ts">
 	import '../app.css';
+	import '../print.css';
+	import '../motion.css';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { afterNavigate } from '$app/navigation';
+	import { afterNavigate, onNavigate } from '$app/navigation';
 	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
 	import BootSequence from '$lib/components/BootSequence.svelte';
 	import AskWidget from '$lib/components/AskWidget.svelte';
+	import KonamiEgg from '$lib/components/KonamiEgg.svelte';
 	import { profile } from '$lib/data/profile';
 
 	let { children, data }: { children: import('svelte').Snippet; data: { canonical: string } } = $props();
 
 	let menuOpen = $state(false);
+
+	// View transitions (#82). Progressive enhancement: unsupported browsers
+	// and reduced-motion users get the normal instant swap.
+	onNavigate((navigation) => {
+		const doc = document as Document & {
+			startViewTransition?: (update: () => Promise<void>) => unknown;
+		};
+		if (!doc.startViewTransition) return;
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		return new Promise<void>((resolve) => {
+			doc.startViewTransition!(async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
+	});
 
 	const links = [
 		{ href: '/', label: 'Home' },
@@ -151,6 +170,8 @@
 	{:else}
 		<div class="build-info">Deployed via Cloudflare Pages</div>
 	{/if}
+
+	<KonamiEgg />
 </div>
 
 <style>
