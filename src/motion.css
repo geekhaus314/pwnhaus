@@ -1,0 +1,46 @@
+/* ============================================================
+   pwn4g3 — view-transition motion (#82, Sir Pushalot)
+   Client-side nav crossfade. Progressive enhancement: rules are
+   inert until a `document.startViewTransition` call names the
+   elements, and the layout only calls it when the API exists and
+   the user has not asked for reduced motion.
+   ============================================================ */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: 220ms;
+	animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-old(root) {
+	animation-name: vt-fade-out;
+}
+
+::view-transition-new(root) {
+	animation-name: vt-fade-in;
+}
+
+@keyframes vt-fade-out {
+	from { opacity: 1; }
+	to { opacity: 0; }
+}
+
+@keyframes vt-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Users who opted out of motion get an instant swap: the layout
+   never starts a transition for them, and these are a belt anyway. */
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation: none;
+	}
+}

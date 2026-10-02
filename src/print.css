@@ -1,0 +1,111 @@
+/* ============================================================
+   pwn4g3 — print stylesheet (#81, Sir Pushalot)
+   Recruiter-ready output: ink-friendly, chrome-free, links
+   expanded. Imported by +layout.svelte; global on purpose.
+   ============================================================ */
+
+@media print {
+	@page {
+		margin: 1.8cm 2cm;
+	}
+
+	/* ---- Chrome away: anything that only makes sense on a screen ---- */
+	header.nav,
+	.mobile-menu,
+	.skip-link,
+	footer,
+	.build-info,
+	.boot,
+	.ask-widget,
+	canvas,
+	video,
+	iframe,
+	button,
+	input,
+	select,
+	textarea,
+	form .button,
+	.site-shell::before {
+		display: none !important;
+	}
+
+	/* ---- Ink-friendly base ---- */
+	html,
+	body {
+		background: #fff !important;
+		color: #000 !important;
+	}
+
+	body {
+		font-size: 11pt;
+		line-height: 1.55;
+	}
+
+	/* Dark surfaces become white with a hairline border so cards and
+	   panels keep their structure without burning a toner cartridge. */
+	section,
+	article,
+	main,
+	div {
+		background: transparent !important;
+		background-image: none !important;
+		box-shadow: none !important;
+		text-shadow: none !important;
+		color: inherit;
+	}
+
+	h1, h2, h3, h4, p, li, span, strong, em, blockquote, td, th, a {
+		color: #000 !important;
+	}
+
+	/* ---- Links: print the destination for anything off-site ---- */
+	main a[href^='http']::after {
+		content: ' (' attr(href) ')';
+		font-size: 0.78em;
+		color: #444 !important;
+		word-break: break-all;
+	}
+	/* …but not for LinkedIn/OG chrome, images, or mailto self-links. */
+	main a:has(img)::after,
+	a[href^='mailto']::after {
+		content: none;
+	}
+
+	a {
+		text-decoration: underline;
+		text-decoration-color: #666;
+	}
+
+	/* ---- Page-break discipline ---- */
+	h1, h2, h3, h4 {
+		break-after: avoid;
+		page-break-after: avoid;
+	}
+	img, figure, blockquote, table, pre,
+	.career-card, .cap, .project-card, .arch-card, .career-grid {
+		break-inside: avoid;
+		page-break-inside: avoid;
+	}
+	section {
+		padding: 0.6cm 0 !important;
+	}
+
+	pre, code {
+		font-size: 8.5pt;
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+
+	img {
+		max-width: 100% !important;
+		max-height: 9cm;
+		filter: none !important;
+	}
+
+	/* Reveal-on-scroll classes must not leave content invisible in print —
+	   the observer never runs there, so force the end state. */
+	.reveal {
+		opacity: 1 !important;
+		transform: none !important;
+	}
+}
