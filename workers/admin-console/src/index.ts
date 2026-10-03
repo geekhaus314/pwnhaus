@@ -10,6 +10,8 @@ import {
 } from './score';
 import { createLeadId, parseSignals } from '../../shared/leads';
 import { parseAllowlist, ipAllowed, sourceIp } from './ip-gate';
+import { parseLocalOutreachImport } from './local-import';
+import { validatePublicUrl } from '../../shared/http';
 
 /**
  * Admin console (#43).
@@ -53,6 +55,34 @@ const json = (data: unknown, status = 200): Response =>
 		status,
 		headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...corsHeaders(METHODS) }
 	});
+
+const readBodyLimited = async (request: Request, maxBytes: number): Promise<string | null> => {
+	const declaredLength = Number(request.headers.get('content-length'));
+	if (Number.isFinite(declaredLength) && declaredLength > maxBytes) return null;
+	const reader = request.body?.getReader();
+	if (!reader) return '';
+
+	const chunks: Uint8Array[] = [];
+	let size = 0;
+	while (true) {
+		const { done, value } = await reader.read();
+		if (done) break;
+		size += value.byteLength;
+		if (size > maxBytes) {
+			await reader.cancel();
+			return null;
+		}
+		chunks.push(value);
+	}
+
+	const bytes = new Uint8Array(size);
+	let offset = 0;
+	for (const chunk of chunks) {
+		bytes.set(chunk, offset);
+		offset += chunk.byteLength;
+	}
+	return new TextDecoder().decode(bytes);
+};
 
 const ok = (data: unknown, status = 200): Response => json({ ok: true, data }, status);
 const fail = (error: string, status = 400): Response => json({ ok: false, error }, status);
@@ -146,14 +176,14 @@ const withLeadSignals = (row: LeadRow) => ({ ...row, signals: parseSignals(row.s
 
 async function insertLead(
 	env: Env,
-	lead: { name: string; website: string; email: string | null; phone: string | null; niche: string; source: string; signals: Record<string, unknown>; status?: string }
+	lead: { name: string; website: string | null; email: string | null; phone: string | null; city?: string; niche: string; source: string; signals: Record<string, unknown>; status?: string }
 ): Promise<string> {
 	const id = createLeadId();
 	const now = Math.floor(Date.now() / 1000);
 	await env.DB.prepare(
 		'INSERT INTO leads (id, name, website, email, phone, city, niche, source, signals, status, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)'
 	)
-		.bind(id, lead.name, lead.website, lead.email, lead.phone, 'St. Louis', lead.niche, lead.source, JSON.stringify(lead.signals), lead.status ?? 'new', now, now)
+		.bind(id, lead.name, lead.website, lead.email, lead.phone, lead.city ?? 'St. Louis', lead.niche, lead.source, JSON.stringify(lead.signals), lead.status ?? 'new', now, now)
 		.run();
 	return id;
 }
@@ -564,6 +594,100 @@ export default {
 			}
 
 			return fail('method_not_allowed', 405);
+		}
+
+		if (path === '/admin/api/leads/import') {
+			if (request.method !== 'POST') return fail('method_not_allowed', 405);
+			const denied = await gate(request, env);
+			if (denied) return denied;
+			const limited = rateLimitOr429(
+				request,
+				{ limit: 20, windowMs: 60 * 60_000, prefix: 'admin-lead-import' },
+				'admin-lead-import'
+			);
+			if (limited) return limited;
+
+			let raw: string | null;
+			try {
+				raw = await readBodyLimited(request, MAX_BODY_BYTES);
+			} catch {
+				return fail('body_read_failed', 400);
+			}
+			if (raw === null) return fail('body_too_large', 413);
+			let body: unknown;
+			try {
+				body = JSON.parse(raw) as unknown;
+			} catch {
+				return fail('invalid_json', 400);
+			}
+			const parsed = parseLocalOutreachImport(body);
+			if (!parsed.ok) return fail(parsed.error, 422);
+			const lead = parsed.value;
+			const checkedWebsite = lead.website ? validatePublicUrl(lead.website) : null;
+			if (checkedWebsite && (!checkedWebsite.ok || !checkedWebsite.url)) {
+				return fail('invalid_website', 422);
+			}
+			const website = checkedWebsite?.url ?? null;
+			const niche =
+				/\b(dental|dentist|chiropr|healthcare|physical therapy|veterinar)/i.test(lead.industry)
+					? 'clinic'
+					: 'local-service';
+
+			try {
+				const duplicate = await env.DB.prepare(
+					`SELECT id FROM leads
+					 WHERE (? IS NOT NULL AND lower(website) = lower(?))
+					    OR (? IS NOT NULL AND phone = ? AND lower(name) = lower(?))
+					    OR (? IS NULL AND ? IS NULL AND lower(name) = lower(?) AND city = ?)
+					 LIMIT 1`
+				)
+					.bind(
+						website,
+						website,
+						lead.phone,
+						lead.phone,
+						lead.name,
+						lead.website,
+						lead.phone,
+						lead.name,
+						lead.city
+					)
+					.first<{ id: string }>();
+				if (duplicate) return fail('lead_exists', 409);
+
+				const id = await insertLead(env, {
+					name: lead.name,
+					website,
+					email: null,
+					phone: lead.phone,
+					city: lead.city,
+					niche,
+					source: 'local-outreach',
+					status: 'enriched',
+					signals: {
+						industry: lead.industry,
+						classification: lead.classification,
+						opportunityScore: lead.opportunityScore,
+						needScore: lead.needScore,
+						valueScore: lead.valueScore,
+						siteHealth: lead.siteHealth,
+						rating: lead.rating,
+						reviewCount: lead.reviewCount,
+						auditSummary: lead.auditSummary,
+						pitchFacts: lead.pitchFacts,
+						painPoints: lead.pitchFacts,
+						sources: lead.sources,
+						lowConfidence: lead.lowConfidence,
+						lastAudited: lead.lastAudited,
+						address: lead.address
+					}
+				});
+				console.log(JSON.stringify({ msg: 'admin_lead_imported', id, source: 'local-outreach' }));
+				return ok({ id, name: lead.name, source: 'local-outreach', status: 'enriched' }, 201);
+			} catch {
+				console.error(JSON.stringify({ msg: 'admin_lead_import_failed' }));
+				return fail('store_unavailable', 500);
+			}
 		}
 
 		if (path === '/admin/api/scan') {
