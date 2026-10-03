@@ -97,6 +97,19 @@ clear            reset terminal
 help             show all commands
 ```
 
+## Local-outreach CRM import
+
+`POST /admin/api/leads/import` accepts one schema-versioned record from the
+separate `local-outreach` CLI. It is behind both the admin source-IP allowlist
+and `ADMIN_TOKEN`, rate-limited, validates public website URLs, rejects
+duplicate records, and stores the imported audit/scoring fields in the existing
+`leads.signals` JSON column. Imports are marked `local-outreach` / `enriched`.
+
+This is deliberately a one-record ingest endpoint, not a sync or outreach
+sender. The local tool asks for confirmation before transmitting and sends no
+persona notes or message drafts. Google Maps HTML-scraped records are rejected.
+It requires no D1 migration.
+
 ## Agent notes
 
 See `AGENTS.md` and `TASKS.md` for multi-agent coordination and the active task list.

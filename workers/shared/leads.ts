@@ -24,7 +24,8 @@ export type LeadSource =
   | 'chamber'
   | 'category'
   | 'research'
-  | 'inbound';
+  | 'inbound'
+  | 'local-outreach';
 
 export interface LeadSignals {
   tech?: string[];
