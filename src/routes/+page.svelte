@@ -43,7 +43,7 @@
 		</p>
 
 		<div class="hero-actions">
-			<a href="/book" class="button primary big">Book a project <span aria-hidden="true">→</span></a>
+			<a href="https://webrehabstl.pages.dev/book" class="button primary big">Book a project <span aria-hidden="true">→</span></a>
 			<a href="/work" class="button ghost">See live work <span aria-hidden="true">→</span></a>
 		</div>
 
@@ -125,7 +125,7 @@
 		<h2>Fixed price, <em>no mystery invoices</em></h2>
 		<p class="rail-desc">
 			Launch sites from $1,200 · custom apps from $2,800 · ongoing engineering partnerships.
-			<a href="/services">Full pricing →</a>
+			<a href="https://webrehabstl.pages.dev/services">Full pricing →</a>
 		</p>
 	</div>
 
@@ -219,7 +219,7 @@
 			</ul>
 		</div>
 		<div class="hire-cta">
-			<a href="/book" class="button primary">Book a project <span aria-hidden="true">→</span></a>
+			<a href="https://webrehabstl.pages.dev/book" class="button primary">Book a project <span aria-hidden="true">→</span></a>
 			<a
 				href={profile.resumeUrl}
 				target="_blank"
@@ -240,7 +240,7 @@
 	<p>pwn4g3 · Jake Viefhaus · St. Louis, MO</p>
 </section>
 
-<a href="/book" class="mobile-cta">Get a free quote →</a>
+<a href="https://webrehabstl.pages.dev/book" class="mobile-cta">Get a free quote →</a>
 
 <!-- ══════════ PROJECT MODAL ══════════ -->
 {#if activeProject}

@@ -21,7 +21,7 @@
 	<h1>Live work, <em>not mockups</em></h1>
 	<p class="lede">
 		Green badge = running in production today. Click any card for the full
-		breakdown, screenshots, and links. Like what you see? <a href="/book">Get a free quote →</a>
+		breakdown, screenshots, and links. Like what you see? <a href="https://webrehabstl.pages.dev/book">Get a free quote →</a>
 	</p>
 </section>
 
@@ -49,7 +49,7 @@
 	<p class="eyebrow"><i aria-hidden="true"></i> Your project here</p>
 	<h2>Want this <em>standard?</em></h2>
 	<p>Fixed scope, clear timeline, reply within 24 hours.</p>
-	<a class="button primary" href="/book">Book a project <span>→</span></a>
+	<a class="button primary" href="https://webrehabstl.pages.dev/book">Book a project <span>→</span></a>
 </section>
 
 {#if activeProject}

@@ -68,7 +68,7 @@
 	<p class="eyebrow"><i aria-hidden="true"></i> Convinced?</p>
 	<h2>Put it to <em>work.</em></h2>
 	<p>Security-hardened builds, APIs, and infrastructure — fixed scope, 24h response.</p>
-	<a class="button primary" href="/book">Book a project <span>→</span></a>
+	<a class="button primary" href="https://webrehabstl.pages.dev/book">Book a project <span>→</span></a>
 </section>
 
 <style>
