@@ -61,7 +61,7 @@
 			<a href={profile.coverLetterUrl} target="_blank" rel="noopener noreferrer" class="button ghost">
 				Cover letter (PDF) <span aria-hidden="true">→</span>
 			</a>
-			<a href="/book" class="button ghost">Book a project</a>
+			<a href="https://webrehabstl.pages.dev/book" class="button ghost">Book a project</a>
 			<a class="contact-link" href="mailto:{profile.email}">or email {profile.email} directly</a>
 		</div>
 	</div>

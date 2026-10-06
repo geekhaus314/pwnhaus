@@ -43,7 +43,7 @@
 		<div class="ask-pop" role="dialog" aria-label="Ask the concierge">
 			<div class="ask-pop-head">
 				<strong>Ask pwn4g3</strong>
-				<a href="/ask">full page →</a>
+				<a href="https://webrehabstl.pages.dev/ask">full page →</a>
 				<button class="button ghost" onclick={() => (open = false)} aria-label="Close concierge">✕</button>
 			</div>
 			<div class="ask-pop-body" aria-live="polite">

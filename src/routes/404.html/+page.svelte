@@ -13,7 +13,7 @@
 	<p class="lede">The page you're looking for doesn't exist — or it moved.</p>
 	<div class="hero-actions">
 		<a href="/" class="button primary">Back to home <span>→</span></a>
-		<a href="/book" class="button ghost">Book a project <span>→</span></a>
+		<a href="https://webrehabstl.pages.dev/book" class="button ghost">Book a project <span>→</span></a>
 	</div>
 	<p class="meta">
 		<a href={profile.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>

@@ -21,17 +21,25 @@
 		{ text: `session established${SESSION_DATE ? ` · ${SESSION_DATE}` : ''}`, type: 'success' }
 	];
 
-	const PAGES: Record<string, string> = {
+		const PAGES: Record<string, string> = {
 		home: '/',
 		work: '/work',
-		services: '/services',
-		shop: '/shop',
-		ask: '/ask',
 		status: '/status',
 		stats: '/stats',
 		lab: '/lab',
 		about: '/about',
-		book: '/book'
+		shop: 'https://webrehabstl.pages.dev/shop',
+		ask: 'https://webrehabstl.pages.dev/ask',
+		book: 'https://webrehabstl.pages.dev/book',
+		services: 'https://webrehabstl.pages.dev/services'
+	};
+
+	const travel = async (dest: string): Promise<void> => {
+		if (dest.startsWith('http')) {
+			window.location.href = dest;
+			return;
+		}
+		await travel(dest);
 	};
 
 	let history = $state<TerminalLine[]>([...BOOT]);
@@ -74,7 +82,7 @@
 				emit([{ text: `Usage: goto <${Object.keys(PAGES).join('|')}>`, type: 'error' }]);
 			} else {
 				emit([{ text: `→ navigating to ${dest}`, type: 'success' }]);
-				await goto(dest);
+				await travel(dest);
 			}
 			return;
 		}
@@ -124,18 +132,18 @@
 				{ text: 'Available commands:', type: 'output' as const },
 				{ text: '  whoami / about / identity — who I am', type: 'output' as const },
 				{ text: '  work / skills / stack / contact — the facts', type: 'output' as const },
-				{ text: '  goto <home|work|services|shop|lab|about|book> — travel', type: 'output' as const },
+				{ text: '  goto <home|work|status|stats|lab|about|shop|ask|book|services> — travel', type: 'output' as const },
 				{ text: '  status        — live edge health, straight from the gateway', type: 'output' as const },
 				{ text: '  hire          — the pitch in three lines', type: 'output' as const },
 				{ text: '  themes / theme <name> — restyle the whole site', type: 'output' as const },
-				{ text: '  shop          — shortcut to /shop', type: 'output' as const },
+				{ text: '  shop          — shortcut to the shop', type: 'output' as const },
 				{ text: '  clear         — reset the console', type: 'output' as const }
 			]
 		}[cmd];
 
 		if (cmd === 'shop') {
 			emit([{ text: '→ opening the shop: fixed prices, embedded checkout.', type: 'success' }]);
-			await goto('/shop');
+			await travel('https://webrehabstl.pages.dev/shop');
 			return;
 		}
 

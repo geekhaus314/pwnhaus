@@ -14,11 +14,11 @@
 
 	const labs: Lab[] = [
 		{ href: '/lab', code: 'VIPER', name: 'Solidity analyzer', tagline: 'Paste a contract, watch a real edge worker audit it.', proof: '22 checks · live POST' },
-		{ href: '/ask', code: 'ASK', name: 'Site concierge', tagline: 'Source-cited answers from this site\u2019s corpus.', proof: 'FTS + AI · cached' },
-		{ href: '/shop', code: 'SHOP', name: 'Fixed-price checkout', tagline: 'Real Stripe checkout for audits, redesigns, builds.', proof: 'embedded + hosted' },
+		{ href: 'https://webrehabstl.pages.dev/ask', code: 'ASK', name: 'Site concierge', tagline: 'Source-cited answers from this site\u2019s corpus.', proof: 'FTS + AI · cached' },
+		{ href: 'https://webrehabstl.pages.dev/shop', code: 'SHOP', name: 'Fixed-price checkout', tagline: 'Real Stripe checkout for audits, redesigns, builds.', proof: 'embedded + hosted' },
 		{ href: '/status', code: 'STATUS', name: 'Live health', tagline: 'Browser-probed edge health, 60s refresh.', proof: '6 probes · live' },
 		{ href: '/stats', code: 'STATS', name: 'Live numbers', tagline: 'Gateway inventory + latency charts, hand-rolled SVG.', proof: 'no fake graphs' },
-		{ href: '/guestbook', code: 'GUEST', name: 'Guestbook', tagline: 'Moderated sign-and-list on D1.', proof: 'spam-proofed' },
+		{ href: 'https://webrehabstl.pages.dev/guestbook', code: 'GUEST', name: 'Guestbook', tagline: 'Moderated sign-and-list on D1.', proof: 'spam-proofed' },
 		{
 			href: 'https://pwn4g3.geekhaus314.workers.dev/hive/status',
 			code: 'HIVE',

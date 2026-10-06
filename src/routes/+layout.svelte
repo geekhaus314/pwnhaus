@@ -9,6 +9,7 @@
 	import BootSequence from '$lib/components/BootSequence.svelte';
 	import AskWidget from '$lib/components/AskWidget.svelte';
 	import KonamiEgg from '$lib/components/KonamiEgg.svelte';
+	import StickyNote from '$lib/components/StickyNote.svelte';
 	import { profile } from '$lib/data/profile';
 
 	let { children, data }: { children: import('svelte').Snippet; data: { canonical: string } } = $props();
@@ -34,15 +35,11 @@
 	const links = [
 		{ href: '/', label: 'Home' },
 		{ href: '/work', label: 'Work' },
-		{ href: '/services', label: 'Services' },
-		{ href: '/shop', label: 'Shop' },
-		{ href: '/ask', label: 'Ask' },
-		{ href: '/guestbook', label: 'Guestbook' },
 		{ href: '/status', label: 'Status' },
 		{ href: '/stats', label: 'Stats' },
 		{ href: '/lab', label: 'Live Lab' },
 		{ href: '/about', label: 'About' },
-		{ href: '/book', label: 'Book' }
+		{ href: 'https://webrehabstl.pages.dev', label: 'Services' }
 	];
 
 	const isCurrent = (href: string): boolean =>
@@ -119,7 +116,7 @@
 
 		<div class="nav-right">
 			<ThemeSwitcher />
-			<a href="/book" class="nav-cta">Hire me</a>
+			<a href="https://webrehabstl.pages.dev/book" class="nav-cta">Hire me</a>
 			<button
 				type="button"
 				class="menu-toggle"
@@ -136,7 +133,7 @@
 			{#each links as link}
 				<a href={link.href} class:current={isCurrent(link.href)} onclick={() => (menuOpen = false)}>{link.label}</a>
 			{/each}
-			<a href="/book" class="button primary" onclick={() => (menuOpen = false)}>Hire me →</a>
+			<a href="https://webrehabstl.pages.dev/book" class="button primary" onclick={() => (menuOpen = false)}>Hire me →</a>
 		</nav>
 	{/if}
 
@@ -172,6 +169,7 @@
 	{/if}
 
 	<KonamiEgg />
+	<StickyNote />
 </div>
 
 <style>

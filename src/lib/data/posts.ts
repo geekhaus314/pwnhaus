@@ -32,7 +32,7 @@ export const posts: Post[] = [
 <h2>The result</h2>
 <p>Same-day recovery from dead to live at <a href="https://www.myhairloss.com">myhairloss.com</a> — and I stayed on as webmaster, so it can't rot again. Maintenance is the product as much as the build is.</p>
 <p><strong>The lesson for owners:</strong> if your site depends on one person who set it up years ago and vanished, you are one expired credential from invisible. A rebuild with a pipeline and a maintainer costs less than a month of lost bookings.</p>
-<p><a href="/book">In the same situation? Tell me about it — I reply in 24 hours.</a></p>`
+<p><a href="https://webrehabstl.pages.dev/book">In the same situation? Tell me about it — I reply in 24 hours.</a></p>`
 	}),
 	p({
 		slug: 'what-1200-website-includes',
@@ -42,7 +42,7 @@ export const posts: Post[] = [
 			'No mystery invoices. Here is the itemized anatomy of a launch site — every page, integration, and guarantee, priced in public.',
 		tags: ['pricing', 'transparency', 'services'],
 		body: `
-<p>Most web developers hide pricing behind a "book a call" wall. I publish mine on the <a href="/services">services page</a> and in the <a href="/shop">shop</a>. This post is the receipt-level detail for the $1,200 Launch package.</p>
+<p>Most web developers hide pricing behind a "book a call" wall. I publish mine on the <a href="https://webrehabstl.pages.dev/services">services page</a> and in the <a href="https://webrehabstl.pages.dev/shop">shop</a>. This post is the receipt-level detail for the $1,200 Launch package.</p>
 <h2>What you get</h2>
 <ul>
 <li><strong>Up to 5 custom pages</strong> — designed around your content, mobile-first, written to convert visitors into contacts.</li>
@@ -54,7 +54,7 @@ export const posts: Post[] = [
 <h2>What you don't get</h2>
 <p>Surprises. The price is fixed in a written scope: what we agree on is what you pay. You own the code outright on final payment — no lock-in, no monthly hostage fees to me.</p>
 <h2>Why I publish this</h2>
-<p>Price transparency filters for the right clients: people who want to know what they're buying. If that's you, <a href="/shop">the Launch package is one click away</a>, or start with a <a href="/shop">$350 audit</a> if you're not sure what's wrong yet.</p>`
+<p>Price transparency filters for the right clients: people who want to know what they're buying. If that's you, <a href="https://webrehabstl.pages.dev/shop">the Launch package is one click away</a>, or start with a <a href="https://webrehabstl.pages.dev/shop">$350 audit</a> if you're not sure what's wrong yet.</p>`
 	}),
 	p({
 		slug: 'portfolio-runs-own-edge-network',
@@ -73,7 +73,7 @@ export const posts: Post[] = [
 </ul>
 <h2>Why it matters to a buyer</h2>
 <p>A developer who operates their own infrastructure doesn't hand you a site and disappear — they hand you a system with logging, retries, status checks, and a human who knows where every wire goes. Open the <a href="/lab">Live Lab</a> and kick the tires: the analyzer and the service map are the same code your project would run on.</p>
-<p><a href="/book">Want infrastructure like this under your business? Start here.</a></p>`
+<p><a href="https://webrehabstl.pages.dev/book">Want infrastructure like this under your business? Start here.</a></p>`
 	}),
 	p({
 		slug: 'business-site-loses-phone-customers',
@@ -91,8 +91,8 @@ export const posts: Post[] = [
 <li><strong>HTTPS + basics</strong> — browsers flag insecure sites, and Google buries them. A surprising number of local sites still fail this free check.</li>
 </ul>
 <h2>How to know where you stand</h2>
-<p>I score local business sites on exactly these signals and more — HTTPS, mobile markup, speed, SEO basics, stale content — and turn it into a prioritized fix list. The <a href="/shop">$350 audit</a> gets you a video walkthrough plus the written report in 48 hours, credited toward any build within 30 days.</p>
-<p>St. Louis business? <a href="/book">Send me your URL</a> and I'll tell you the single worst thing on it, free.</p>`
+<p>I score local business sites on exactly these signals and more — HTTPS, mobile markup, speed, SEO basics, stale content — and turn it into a prioritized fix list. The <a href="https://webrehabstl.pages.dev/shop">$350 audit</a> gets you a video walkthrough plus the written report in 48 hours, credited toward any build within 30 days.</p>
+<p>St. Louis business? <a href="https://webrehabstl.pages.dev/book">Send me your URL</a> and I'll tell you the single worst thing on it, free.</p>`
 	})
 ];
 

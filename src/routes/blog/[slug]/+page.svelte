@@ -30,8 +30,8 @@
 	<div class="post-cta">
 		<h2>Want this standard <em>on your site?</em></h2>
 		<p>Fixed scope, 24h response, email or text.</p>
-		<a class="button primary" href="/book">Book a project →</a>
-		<a class="button ghost" href="/shop">Or buy the audit →</a>
+		<a class="button primary" href="https://webrehabstl.pages.dev/book">Book a project →</a>
+		<a class="button ghost" href="https://webrehabstl.pages.dev/shop">Or buy the audit →</a>
 	</div>
 </section>
 
