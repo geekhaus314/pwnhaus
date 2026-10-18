@@ -30,13 +30,41 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Schema first: every service below binds the same D1 database, and the
+      # gateway must not start routing to workers whose tables don't exist yet.
+      # Each --config points wrangler at that service's own migrations_dir, so
+      # the apply is scoped to the shared workers/migrations set and then to the
+      # separate payments schema.
+      - name: Apply D1 migrations
+        run: |
+          npx wrangler d1 migrations apply pwn4g3-db --config workers/telemetry/wrangler.jsonc --remote
+          npx wrangler d1 migrations apply pwn4g3-db --config workers/payments/wrangler.jsonc --remote
 
+      # Every service the gateway binds, deployed before the gateway itself —
+      # a binding to an undeployed service resolves at deploy time, so shipping
+      # gateway-first is how 404s get introduced. Order inside this list is not
+      # significant; gateway position is.
+      #
+      # hivemind is deliberately absent: `pwn4g3-hivemind` is deployed by the
+      # j4k3-hivemind-v004 repo, which owns the service. Adding it here would
+      # put two repos on the same Worker and last-writer-wins. workers/hivemind
+      # stays in the tree so the source exists and the gateway binding resolves;
+      # the gateway only needs it deployed, not deployed from here.
       - name: Deploy Workers
         run: |
           npx wrangler deploy --config workers/assets/wrangler.jsonc
           npx wrangler deploy --config workers/health/wrangler.jsonc
           npx wrangler deploy --config workers/components/wrangler.jsonc
           npx wrangler deploy --config workers/viper/wrangler.jsonc
+          npx wrangler deploy --config workers/telemetry/wrangler.jsonc
+          npx wrangler deploy --config workers/audit/wrangler.jsonc
+          npx wrangler deploy --config workers/booking/wrangler.jsonc
+          npx wrangler deploy --config workers/ask/wrangler.jsonc
+          npx wrangler deploy --config workers/guestbook/wrangler.jsonc
+          npx wrangler deploy --config workers/notify/wrangler.jsonc
+          npx wrangler deploy --config workers/payments/wrangler.jsonc
+          npx wrangler deploy --config workers/admin-console/wrangler.jsonc
+          npx wrangler deploy --config workers/scheduler/wrangler.jsonc
           npx wrangler deploy --config workers/discord-bot/wrangler.jsonc
           npx wrangler deploy --config workers/reddit-bot/wrangler.jsonc
           npx wrangler deploy --config workers/gateway/wrangler.jsonc

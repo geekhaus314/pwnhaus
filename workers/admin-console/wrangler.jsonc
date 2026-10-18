@@ -1,0 +1,38 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "pwn4g3-admin",
+  "main": "src/index.ts",
+  // Project convention is 2026-08-26 across all workers (see notify config).
+  "compatibility_date": "2026-08-26",
+  // Workers.dev is off so this worker is only reachable through the gateway,
+  // which sits behind Cloudflare. That is now load-bearing: the IP allowlist
+  // (#79) trusts CF-Connecting-IP, and Cloudflare only guarantees it controls
+  // that header on traffic it terminated itself. Turning this on would expose
+  // the worker directly and make the allowlist forgeable.
+  "workers_dev": false,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pwn4g3-db",
+      "database_id": "797bd506-7e63-4786-b2e7-7b94884211c0",
+      "migrations_dir": "../migrations"
+    }
+  ],
+  // Compose forwards to the notify worker with the operator's own bearer
+  // token — the console never holds secrets itself. ADMIN_TOKEN must still
+  // be bound here (same value as notify) so ledger/status verify locally.
+  //
+  // ADMIN_IPS (secret, #79) — comma-separated allowlist gating all of /admin:
+  //   npx wrangler secret put ADMIN_IPS --config workers/admin-console/wrangler.jsonc
+  // Locally, put it in workers/admin-console/.dev.vars (gitignored).
+  // It is deliberately NOT a var in this file: the repo is public and the
+  // value is the operator's own address. Fails closed — unset or typo'd
+  // means every request gets 403, including yours, so verify from an
+  // allowlisted network after setting it.
+  "services": [{ "binding": "NOTIFY_SERVICE", "service": "pwn4g3-notify" }],
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.01 }
+  }
+}

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-
   <url>
     <loc>https://pwn4g3.pages.dev/</loc>
     <changefreq>daily</changefreq>
@@ -17,18 +17,6 @@
 
   <url>
     <loc>https://pwn4g3.pages.dev/work</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
-    <loc>https://pwn4g3.pages.dev/services</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
-    <loc>https://pwn4g3.pages.dev/shop</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -64,12 +52,6 @@
   </url>
 
   <url>
-    <loc>https://pwn4g3.pages.dev/book</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
     <loc>https://pwn4g3.pages.dev/lab</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -88,18 +70,6 @@
   </url>
 
   <url>
-    <loc>https://pwn4g3.pages.dev/ask</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://pwn4g3.pages.dev/guestbook</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
     <loc>https://pwn4g3.pages.dev/labs</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -109,5 +79,33 @@
     <loc>https://pwn4g3.pages.dev/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+
+  <!-- Sales surface. /services, /shop, /book, /ask and /guestbook were split out
+       of pwn4g3 in b26b039 — they now live here, so only the live origin is
+       listed. Anything committed to this file must return 200; a URL here that
+       404s is a reported failing probe, not a search-engine hint. -->
+  <url>
+    <loc>https://webrehabstl.pages.dev/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://webrehabstl.pages.dev/services</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://webrehabstl.pages.dev/book</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://webrehabstl.pages.dev/ask</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>
