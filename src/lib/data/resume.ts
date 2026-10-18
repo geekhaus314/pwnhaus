@@ -73,7 +73,7 @@ export const resumeEducation: Array<{ school: string; degree: string; when: stri
 	{
 		school: 'Colorado Technical University',
 		degree: 'B.S. Computer Science / Cybersecurity Engineering',
-		when: 'Enrolled September 2025',
+		when: 'Enrolled December 2025',
 		detail:
 			"Dean's List. Coursework: Fundamentals of Networking, Fundamentals of Programming, Introduction to Programming (Python), Introduction to Computer Security, Information Security Fundamentals."
 	}
