@@ -39,6 +39,7 @@
 		{ href: '/stats', label: 'Stats' },
 		{ href: '/lab', label: 'Live Lab' },
 		{ href: '/about', label: 'About' },
+		{ href: '/resume', label: 'Resume' },
 		{ href: 'https://webrehabstl.pages.dev', label: 'Services' }
 	];
 
