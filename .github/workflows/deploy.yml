@@ -34,6 +34,12 @@ jobs:
       - name: Test
         run: npm run test
 
+      # Regenerated on every deploy so /resume.pdf can never disagree with
+      # /resume. Chrome is preinstalled on the runner; build.ts falls back to
+      # weasyprint if it isn't found.
+      - name: Build resume PDF
+        run: npm run resume
+
       - name: Build
         run: npm run build
         env:

@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "test": "node --experimental-strip-types --test tools/test/*.test.*"
+    "test": "node --experimental-strip-types --test tools/test/*.test.*",
+    "resume": "node --experimental-strip-types tools/resume/build.ts"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260905.1",
