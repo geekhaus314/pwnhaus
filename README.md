@@ -25,7 +25,7 @@ npm run check      # svelte-kit sync + svelte-check (types, a11y, diagnostics)
 ```
 src/
   app.html                  # HTML template with SEO meta + JSON-LD + manifest link
-  app.css                   # Global design system (4 themes: nocturne, matrix, cyan, paper)
+  app.css                   # Global design system (5 themes: nocturne, matrix, cyan, paper, blueprint)
   routes/
     +layout.svelte          # Nav, footer, scroll-spy, reveal observer, pointer tracking, canonical
     +page.svelte            # Main page (Hero, About, Portfolio, Career, Booking) — prerendered
@@ -37,7 +37,7 @@ src/
       Terminal.svelte       # Interactive CLI terminal with theme/whoami/help commands
       HeroCanvas.svelte     # Canvas crosshair + particle effect
       Signal.svelte         # Live Worker health check indicator
-      ThemeSwitcher.svelte  # Nocturne / Matrix / Cyan / Paper switcher
+      ThemeSwitcher.svelte  # Nocturne / Matrix / Cyan / Paper / Blueprint switcher
       ProjectCard.svelte    # Portfolio card
       ProjectModal.svelte   # Fullscreen project lightbox (native <dialog>)
       GitHubStats.svelte    # Live GitHub repo stats
@@ -56,7 +56,7 @@ apps/                      # Isolated lab apps (next-lab, nuxt-lab, services)
 
 ## Themes
 
-The design system ships four themes toggled via the nav bar:
+The design system ships five themes toggled via the nav bar:
 
 | Name | Palette |
 |------|---------|
@@ -64,6 +64,7 @@ The design system ships four themes toggled via the nav bar:
 | **Matrix** | Phosphor green + black glass |
 | **Cyan Field** | Cold blue + technical glass |
 | **Paper** | Warm off-white + ink black |
+| **Blueprint** | Navy drafting table + pale blue |
 
 ## Deployment
 
