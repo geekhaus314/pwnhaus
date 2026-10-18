@@ -128,6 +128,12 @@
 			stack: () => [{ text: 'JavaScript · TypeScript · React · Svelte · Astro · Vue · Vite · Solid · Node.', type: 'output' as const }],
 			contact: () => [{ text: `${profile.email} // ${profile.phone} // github.com/geekhaus314`, type: 'output' as const }],
 			themes: () => [{ text: `Themes: ${Object.keys(themes).join(' / ')} — each one restyles the whole site.`, type: 'output' as const }],
+			hint: () => [
+				{ text: 'You found the terminal. There is more than one thing hidden here.', type: 'output' as const },
+				{ text: 'The sticky note in the corner points to one of them.', type: 'output' as const },
+				{ text: 'The other one answers to a cartridge code from 1986.', type: 'output' as const },
+				{ text: '↑ ↑ ↓ ↓ ← → ← →  B  A', type: 'success' as const }
+			],
 			help: () => [
 				{ text: 'Available commands:', type: 'output' as const },
 				{ text: '  whoami / about / identity — who I am', type: 'output' as const },
@@ -137,6 +143,7 @@
 				{ text: '  hire          — the pitch in three lines', type: 'output' as const },
 				{ text: '  themes / theme <name> — restyle the whole site', type: 'output' as const },
 				{ text: '  shop          — shortcut to the shop', type: 'output' as const },
+				{ text: '  hint          — there are things hidden on this site', type: 'output' as const },
 				{ text: '  clear         — reset the console', type: 'output' as const }
 			]
 		}[cmd];

@@ -199,6 +199,7 @@ Two opencode agents are working on this repo in parallel. **Read this file first
 | 83 | Konami easter egg (↑↑↓↓←→←→BA) — toggles a hidden sixth "hacker" delight without touching Nova's theme system | `src/lib/components/KonamiEgg.svelte` (new), `src/routes/+layout.svelte` | Sir Pushalot | done |
 | 84 | Add repository-specific Copilot instructions | `TASKS.md`, `.github/copilot-instructions.md` | Copilot | done |
 | 85 | Add a one-record, authenticated local-outreach import to the lead desk | `workers/admin-console/*`, `workers/shared/leads.ts`, `tools/test/local-import.test.ts`, local `export_to_crm.py` | Copilot | done |
+| 86 | Add a `hint` terminal command — the Konami egg (#83) mounted in the layout with no entry point anywhere, so nothing pointed at it and nobody found it | `src/lib/components/Terminal.svelte` | jake | done |
 
 **Contract change to flag for review:** `ThemeDefinition` no longer has a `variables` field. Anything importing a theme's palette from TypeScript must read `app.css` (or use the new `accent`/`page` fields, which are the only two the UI needs). `HeroCanvas` was the one consumer and now reads `def.accent`.
 
