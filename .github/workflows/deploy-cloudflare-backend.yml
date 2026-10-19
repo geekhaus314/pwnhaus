@@ -68,3 +68,7 @@ jobs:
           npx wrangler deploy --config workers/discord-bot/wrangler.jsonc
           npx wrangler deploy --config workers/reddit-bot/wrangler.jsonc
           npx wrangler deploy --config workers/gateway/wrangler.jsonc
+          
+     # debloat unused issues
+    - name: Close Stale Issues
+      uses: actions/stale@v11.0.0
